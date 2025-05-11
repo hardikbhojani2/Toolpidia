@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interest Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 30px;
+            background-color: #e6f0ff;
+            color: #1a2a44;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(0, 82, 204, 0.15);
+            flex: 1;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #0052cc;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a2a44;
+            font-size: 1.1rem;
+        }
+        
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #80b3ff;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background-color: #f7faff;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #0052cc;
+            box-shadow: 0 0 8px rgba(0, 82, 204, 0.2);
+        }
+        
+        button {
+            background-color: #0052cc;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        
+        button:hover {
+            background-color: #003d99;
+            transform: translateY(-2px);
+        }
+        
+        #result {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e6f0ff;
+            border-radius: 8px;
+            border-left: 4px solid #0052cc;
+            display: none;
+        }
+        
+        .result-item {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .result-value {
+            font-weight: 700;
+            color: #0052cc;
+        }
+        
+        .calculator-type {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .calculator-type button {
+            padding: 12px;
+            background-color: #f7faff;
+            color: #1a2a44;
+            border: 2px solid #80b3ff;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .calculator-type button.active {
+            background-color: #0052cc;
+            color: #ffffff;
+            border-color: #0052cc;
+        }
+        
+        .currency-symbol {
+            font-weight: 400;
+            color: #4a6a99;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        #clearResults, #clearResults2 {
+            background-color: #ff4d4d;
+        }
+        
+        #clearResults:hover, #clearResults2:hover {
+            background-color: #cc0000;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+                background-color: #ffffff;
+            }
+            
+            .container {
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 4px 16px rgba(0, 82, 204, 0.1);
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: 20px;
+            }
+            
+            label {
+                font-size: 1rem;
+            }
+            
+            input[type="number"], select {
+                padding: 10px;
+                font-size: 0.95rem;
+                border-radius: 6px;
+            }
+            
+            button {
+                padding: 12px;
+                font-size: 1rem;
+            }
+            
+            .calculator-type {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .calculator-type button {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .form-group div[style*="display: flex"] {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            #timeUnit {
+                width: 100%;
+                margin-right: 0;
+            }
+            
+            #result {
+                padding: 15px;
+                margin-top: 20px;
+            }
+            
+            .result-item {
+                font-size: 0.9rem;
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interest Calculator</h1>
+        
+        <div class="calculator-type">
+            <button id="simpleInterestBtn" class="active">Simple Interest</button>
+            <button id="compoundInterestBtn">Compound Interest</button>
+        </div>
+        
+        <div class="form-group">
+            <label for="currency">Currency</label>
+            <select id="currency">
+                <option value="$">US Dollar ($)</option>
+                <option value="€">Euro (€)</option>
+                <option value="£">British Pound (£)</option>
+                <option value="¥">Japanese Yen (¥)</option>
+                <option value="₹">Indian Rupee (₹)</option>
+                <option value="₩">South Korean Won (₩)</option>
+                <option value="₽">Russian Ruble (₽)</option>
+                <option value="R$">Brazilian Real (R$)</option>
+                <option value="₪">Israeli Shekel (₪)</option>
+                <option value="₺">Turkish Lira (₺)</option>
+                <option value="₴">Ukrainian Hryvnia (₴)</option>
+                <option value="د.إ">UAE Dirham (د.إ)</option>
+                <option value="﷼">Saudi Riyal (﷼)</option>
+                <option value="CHF">Swiss Franc (CHF)</option>
+                <option value="CA$">Canadian Dollar (CA$)</option>
+                <option value="A$">Australian Dollar (A$)</option>
+                <option value="NZ$">New Zealand Dollar (NZ$)</option>
+            </select>
+        </div>
+        
+        <div id="simpleInterestForm">
+            <div class="form-group">
+                <label for="principal">Principal Amount (<span class="currency-symbol" id="principalCurrency">$</span>)</label>
+                <input type="number" id="principal" placeholder="Enter principal amount" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="rate">Interest Rate (% per year)</label>
+                <input type="number" id="rate" placeholder="Enter interest rate" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="time">Time Period</label>
+                <div style="display: flex;">
+                    <input type="number" id="time" placeholder="Enter time" min="0" step="0.01" style="flex: 1; margin-right: 10px;">
+                    <select id="timeUnit" style="width: 100px;">
+                        <option value="years">Years</option>
+                        <option value="months">Months</option>
+                        <option value="days">Days</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="calculateSimple">Calculate Simple Interest</button>
+                <button id="clearResults">Clear Results</button>
+            </div>
+        </div>
+        
+        <div id="compoundInterestForm" style="display: none;">
+            <div class="form-group">
+                <label for="cPrincipal">Principal Amount (<span class="currency-symbol" id="cPrincipalCurrency">$</span>)</label>
+                <input type="number" id="cPrincipal" placeholder="Enter principal amount" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="cRate">Interest Rate (% per year)</label>
+                <input type="number" id="cRate" placeholder="Enter interest rate" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="cTime">Time Period (Years)</label>
+                <input type="number" id="cTime" placeholder="Enter time in years" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="compounding">Compounding Frequency</label>
+                <select id="compounding">
+                    <option value="1">Annually</option>
+                    <option value="2">Semi-Annually</option>
+                    <option value="4">Quarterly</option>
+                    <option value="12">Monthly</option>
+                    <option value="365">Daily</option>
+                </select>
+            </div>
+            
+            <div class="button-group">
+                <button id="calculateCompound">Calculate Compound Interest</button>
+                <button id="clearResults2">Clear Results</button>
+            </div>
+        </div>
+        
+        <div id="result">
+            <h3>Calculation Results (<span id="resultCurrency">$</span>)</h3>
+            <div class="result-item">Principal Amount: <span class="result-value" id="resultPrincipal">$0.00</span></div>
+            <div class="result-item">Interest Rate: <span class="result-value" id="resultRate">0%</span></div>
+            <div class="result-item">Time Period: <span class="result-value" id="resultTime">0 years</span></div>
+            <div class="result-item">Total Interest: <span class="result-value" id="resultInterest">$0.00</span></div>
+            <div class="result-item">Total Amount: <span class="result-value" id="resultTotal">$0.00</span></div>
+        </div>
+    </div>
+
+    <script>
+        // Get currency elements
+        const currencySelect = document.getElementById('currency');
+        const principalCurrency = document.getElementById('principalCurrency');
+        const cPrincipalCurrency = document.getElementById('cPrincipalCurrency');
+        const resultCurrency = document.getElementById('resultCurrency');
+        
+        // Update currency symbols when selection changes
+        currencySelect.addEventListener('change', function() {
+            const selectedCurrency = this.value;
+            principalCurrency.textContent = selectedCurrency;
+            cPrincipalCurrency.textContent = selectedCurrency;
+            resultCurrency.textContent = selectedCurrency;
+            
+            // Update displayed results if any are shown
+            if (document.getElementById('result').style.display === 'block') {
+                const currentBtn = document.querySelector('.calculator-type button.active');
+                if (currentBtn.id === 'simpleInterestBtn') {
+                    document.getElementById('calculateSimple').click();
+                } else {
+                    document.getElementById('calculateCompound').click();
+                }
+            }
+        });
+        
+        // Toggle between simple and compound interest calculators
+        document.getElementById('simpleInterestBtn').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('compoundInterestBtn').classList.remove('active');
+            document.getElementById('simpleInterestForm').style.display = 'block';
+            document.getElementById('compoundInterestForm').style.display = 'none';
+        });
+        
+        document.getElementById('compoundInterestBtn').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('simpleInterestBtn').classList.remove('active');
+            document.getElementById('compoundInterestForm').style.display = 'block';
+            document.getElementById('simpleInterestForm').style.display = 'none';
+        });
+        
+        // Format currency with selected symbol
+        function formatCurrency(amount) {
+            const currencySymbol = currencySelect.value;
+            return currencySymbol + amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        }
+        
+        // Clear results function
+        function clearResults() {
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('principal').value = '';
+            document.getElementById('rate').value = '';
+            document.getElementById('time').value = '';
+            document.getElementById('cPrincipal').value = '';
+            document.getElementById('cRate').value = '';
+            document.getElementById('cTime').value = '';
+        }
+        
+        // Add clear results event listeners
+        document.getElementById('clearResults').addEventListener('click', clearResults);
+        document.getElementById('clearResults2').addEventListener('click', clearResults);
+        
+        // Simple interest calculation
+        document.getElementById('calculateSimple').addEventListener('click', function() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value);
+            let time = parseFloat(document.getElementById('time').value);
+            const timeUnit = document.getElementById('timeUnit').value;
+            
+            // Convert time to years based on selected unit
+            if (timeUnit === 'months') {
+                time = time / 12;
+            } else if (timeUnit === 'days') {
+                time = time / 365;
+            }
+            
+            if (isNaN(principal) || isNaN(rate) || isNaN(time) || principal <= 0 || rate <= 0 || time <= 0) {
+                alert('Please enter valid positive numbers for all fields.');
+                return;
+            }
+            
+            const interest = (principal * rate * time) / 100;
+            const total = principal + interest;
+            
+            // Display results with currency
+            document.getElementById('resultPrincipal').textContent = formatCurrency(principal);
+            document.getElementById('resultRate').textContent = rate.toFixed(2) + '%';
+            document.getElementById('resultTime').textContent = time.toFixed(2) + ' years';
+            document.getElementById('resultInterest').textContent = formatCurrency(interest);
+            document.getElementById('resultTotal').textContent = formatCurrency(total);
+            
+            document.getElementById('result').style.display = 'block';
+        });
+        
+        // Compound interest calculation
+        document.getElementById('calculateCompound').addEventListener('click', function() {
+            const principal = parseFloat(document.getElementById('cPrincipal').value);
+            const rate = parseFloat(document.getElementById('cRate').value);
+            const time = parseFloat(document.getElementById('cTime').value);
+            const compounding = parseInt(document.getElementById('compounding').value);
+            
+            if (isNaN(principal) || isNaN(rate) || isNaN(time) || principal <= 0 || rate <= 0 || time <= 0) {
+                alert('Please enter valid positive numbers for all fields.');
+                return;
+            }
+            
+            // Compound interest formula: A = P(1 + r/n)^(nt)
+            const amount = principal * Math.pow(1 + (rate / 100) / compounding, compounding * time);
+            const interest = amount - principal;
+            
+            // Display results with currency
+            document.getElementById('resultPrincipal').textContent = formatCurrency(principal);
+            document.getElementById('resultRate').textContent = rate.toFixed(2) + '%';
+            document.getElementById('resultTime').textContent = time.toFixed(2) + ' years';
+            document.getElementById('resultInterest').textContent = formatCurrency(interest);
+            document.getElementById('resultTotal').textContent = formatCurrency(amount);
+            
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
