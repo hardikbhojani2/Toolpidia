@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Payment Calculator | Estimate Your Home Loan</title>
+    <meta name="description" content="Calculate your estimated mortgage payments with our intuitive calculator. Adjust loan amount, interest rate, and term for accurate home financing insights.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --danger-color: #dc3545;
+            --danger-hover: #a71d2a;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .site-nav {
+            margin-bottom: 20px;
+        }
+
+        .site-nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .site-nav a:hover {
+            color: var(--primary-hover);
+        }
+
+        h1 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .calculator-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+        }
+
+        @media (min-width: 992px) {
+            .calculator-wrapper {
+                flex-direction: row;
+            }
+
+            .calculator-inputs {
+                flex: 1;
+                padding-right: 20px;
+            }
+
+            .calculator-results {
+                flex: 1;
+            }
+        }
+
+        .calculator-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            width: 100%;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        .slider-container {
+            margin-top: 15px;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .slider-wrapper input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+
+        .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .value-display {
+            min-width: 100px;
+            font-weight: 600;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .calculate-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .calculate-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .export-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .clear-btn {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: var(--danger-hover);
+            transform: translateY(-2px);
+        }
+
+        .result-container {
+            padding: 25px;
+            background: #f1f8ff;
+            border-radius: var(--border-radius);
+            text-align: center;
+            height: 100%;
+        }
+
+        .result-title {
+            font-size: 1.2rem;
+            color: #495057;
+            margin-bottom: 15px;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            text-align: left;
+        }
+
+        @media (min-width: 576px) {
+            .result-details {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .result-item {
+            font-size: 0.95rem;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--border-radius);
+        }
+
+        .result-item strong {
+            display: block;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .error {
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+            text-align: center;
+        }
+
+        button:focus {
+            outline: 3px solid rgba(0, 123, 255, 0.5);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav container">
+        <a href="/multi-tool-home">Back to Tools</a>
+    </nav>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-calculator"></i> Mortgage Calculator</h1>
+        </div>
+    </header>
+    <main class="container">
+        <div class="calculator-wrapper">
+            <div class="calculator-inputs">
+                <div class="calculator-card">
+                    <div class="calculator-grid">
+                        <div class="input-group">
+                            <label for="currency">Currency</label>
+                            <select id="currency" onchange="updateValues()">
+                                <option value="$">USD ($)</option>
+                                <option value="₹">INR (₹)</option>
+                                <option value="€">EUR (€)</option>
+                                <option value="£">GBP (£)</option>
+                                <option value="A$">AUD (A$)</option>
+                                <option value="C$">CAD (C$)</option>
+                                <option value="¥">JPY (¥)</option>
+                                <option value="AED">AED (د.إ)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="homePrice">Home Price</label>
+                            <input type="number" id="homePrice" min="1000" max="10000000" step="1000" value="400000" oninput="debouncedUpdateValues()">
+                            <div class="slider-container">
+                                <div class="slider-wrapper">
+                                    <input type="range" id="homePriceSlider" min="1000" max="1000000" step="1000" value="400000" oninput="updateHomePrice(this.value)">
+                                    <span id="homePriceValue" class="value-display">$400,000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="downPayment">Down Payment</label>
+                            <input type="number" id="downPayment" min="0" max="500000" step="500" value="80000" oninput="debouncedUpdateValues()">
+                            <div class="slider-container">
+                                <div class="slider-wrapper">
+                                    <input type="range" id="downPaymentSlider" min="0" max="500000" step="500" value="80000" oninput="updateDownPayment(this.value)">
+                                    <span id="downPaymentValue" class="value-display">$80,000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="loanAmount">Loan Amount</label>
+                            <input type="text" id="loanAmount" readonly>
+                            <p id="loanPercentage" class="value-display">20%</p>
+                        </div>
+                        <div class="input-group">
+                            <label for="interestRate">Interest Rate (%)</label>
+                            <input type="number" id="interestRate" min="0.1" max="15" step="0.1" value="5.5" oninput="debouncedUpdateValues()">
+                            <div class="slider-container">
+                                <div class="slider-wrapper">
+                                    <input type="range" id="interestRateSlider" min="0.1" max="15" step="0.1" value="5.5" oninput="updateInterestRate(this.value)">
+                                    <span id="interestRateValue" class="value-display">5.5%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="loanTerm">Loan Term (Years)</label>
+                            <input type="number" id="loanTerm" min="1" max="30" step="1" value="30" oninput="debouncedUpdateValues()">
+                            <div class="slider-container">
+                                <div class="slider-wrapper">
+                                    <input type="range" id="loanTermSlider" min="1" max="30" step="1" value="30" oninput="updateLoanTerm(this.value)">
+                                    <span id="loanTermValue" class="value-display">30 Years</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="paymentFrequency">Payment Frequency</label>
+                            <select id="paymentFrequency" onchange="updateValues()">
+                                <option value="monthly">Monthly</option>
+                                <option value="biweekly">Bi-Weekly</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="propertyTax">Annual Property Tax</label>
+                            <input type="number" id="propertyTax" min="0" value="2000" oninput="debouncedUpdateValues()">
+                        </div>
+                        <div class="input-group">
+                            <label for="homeInsurance">Annual Home Insurance</label>
+                            <input type="number" id="homeInsurance" min="0" value="1000" oninput="debouncedUpdateValues()">
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="calculate-btn" onclick="calculateMortgage()" aria-label="Calculate mortgage">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                        <button class="export-btn" onclick="exportResults()" aria-label="Export results as PDF">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <button class="clear-btn" onclick="clearFields()" aria-label="Clear all fields">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    <p id="error-message" class="error" aria-live="polite"></p>
+                </div>
+            </div>
+            <div class="calculator-results">
+                <div class="calculator-card result-container" id="result-container" style="display: none;">
+                    <p class="result-title">Estimated Payment</p>
+                    <p id="result" class="result-value"></p>
+                    <div class="result-details">
+                        <div class="result-item">
+                            <strong>Principal & Interest</strong>
+                            <span id="principal-interest"></span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Property Tax</strong>
+                            <span id="tax-amount"></span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Home Insurance</strong>
+                            <span id="insurance-amount"></span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Total Interest Paid</strong>
+                            <span id="total-interest"></span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Total Loan Cost</strong>
+                            <span id="total-loan-cost"></span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Payoff Date</strong>
+                            <span id="payoff-date"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        // Debounce function to limit rapid updates
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // Format currency with locale-specific handling
+        function formatCurrency(amount, currency) {
+            const currencyMap = {
+                '$': 'USD', '₹': 'INR', '€': 'EUR', '£': 'GBP',
+                'A$': 'AUD', 'C$': 'CAD', '¥': 'JPY', 'AED': 'AED'
+            };
+            const localeMap = {
+                'INR': 'en-IN', 'JPY': 'ja-JP', 'AED': 'ar-AE'
+            };
+            const locale = localeMap[currencyMap[currency]] || 'en-US';
+            return new Intl.NumberFormat(locale, {
+                style: 'currency',
+                currency: currencyMap[currency] || 'USD',
+                currencyDisplay: 'symbol'
+            }).format(amount).replace(/^[^\d]*/, currency);
+        }
+
+        // Validate inputs
+        function validateInputs() {
+            const inputs = [
+                { id: "homePrice", min: 1000, message: "Home price must be at least 1000" },
+                { id: "downPayment", min: 0, message: "Down payment cannot be negative" },
+                { id: "interestRate", min: 0.1, message: "Interest rate must be at least 0.1%" },
+                { id: "loanTerm", min: 1, message: "Loan term must be at least 1 year" },
+                { id: "propertyTax", min: 0, message: "Property tax cannot be negative" },
+                { id: "homeInsurance", min: 0, message: "Home insurance cannot be negative" }
+            ];
+            const errorElement = document.getElementById("error-message");
+            for (const input of inputs) {
+                const value = parseFloat(document.getElementById(input.id).value);
+                if (isNaN(value) || value < input.min) {
+                    errorElement.textContent = input.message;
+                    errorElement.style.display = "block";
+                    return false;
+                }
+            }
+            const homePrice = parseFloat(document.getElementById("homePrice").value);
+            const downPayment = parseFloat(document.getElementById("downPayment").value);
+            if (downPayment > homePrice) {
+                errorElement.textContent = "Down payment cannot exceed home price";
+                errorElement.style.display = "block";
+                return false;
+            }
+            errorElement.style.display = "none";
+            return true;
+        }
+
+        // Update all values
+        function updateValues() {
+            if (!validateInputs()) return;
+            const currency = document.getElementById("currency").value;
+            const homePrice = parseFloat(document.getElementById("homePrice").value) || 400000;
+            const downPayment = parseFloat(document.getElementById("downPayment").value) || 80000;
+            const interestRate = parseFloat(document.getElementById("interestRate").value) || 5.5;
+            const loanTerm = parseInt(document.getElementById("loanTerm").value) || 30;
+
+            document.getElementById("homePriceSlider").value = homePrice;
+            document.getElementById("downPaymentSlider").value = downPayment;
+            document.getElementById("interestRateSlider").value = interestRate;
+            document.getElementById("loanTermSlider").value = loanTerm;
+
+            document.getElementById("homePriceValue").textContent = formatCurrency(homePrice, currency);
+            document.getElementById("downPaymentValue").textContent = formatCurrency(downPayment, currency);
+            document.getElementById("interestRateValue").textContent = `${interestRate}%`;
+            document.getElementById("loanTermValue").textContent = `${loanTerm} Years`;
+
+            const loanAmount = homePrice - downPayment;
+            const downPaymentPercent = homePrice ? (downPayment / homePrice) * 100 : 0;
+            document.getElementById("loanAmount").value = formatCurrency(loanAmount, currency);
+            document.getElementById("loanPercentage").textContent = `${downPaymentPercent.toFixed(1)}%`;
+
+            saveState();
+        }
+
+        // Debounced updateValues
+        const debouncedUpdateValues = debounce(updateValues, 100);
+
+        // Slider update functions
+        function updateHomePrice(value) {
+            document.getElementById("homePrice").value = value;
+            debouncedUpdateValues();
+        }
+
+        function updateDownPayment(value) {
+            document.getElementById("downPayment").value = value;
+            debouncedUpdateValues();
+        }
+
+        function updateInterestRate(value) {
+            document.getElementById("interestRate").value = value;
+            debouncedUpdateValues();
+        }
+
+        function updateLoanTerm(value) {
+            document.getElementById("loanTerm").value = value;
+            debouncedUpdateValues();
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            const inputs = {
+                currency: document.getElementById("currency").value,
+                homePrice: document.getElementById("homePrice").value,
+                downPayment: document.getElementById("downPayment").value,
+                interestRate: document.getElementById("interestRate").value,
+                loanTerm: document.getElementById("loanTerm").value,
+                propertyTax: document.getElementById("propertyTax").value,
+                homeInsurance: document.getElementById("homeInsurance").value,
+                paymentFrequency: document.getElementById("paymentFrequency").value
+            };
+            localStorage.setItem("mortgageCalculatorState", JSON.stringify(inputs));
+        }
+
+        // Load state from localStorage
+        function loadState() {
+            const state = JSON.parse(localStorage.getItem("mortgageCalculatorState"));
+            if (state) {
+                document.getElementById("currency").value = state.currency || "$";
+                document.getElementById("homePrice").value = state.homePrice || "400000";
+                document.getElementById("downPayment").value = state.downPayment || "80000";
+                document.getElementById("interestRate").value = state.interestRate || "5.5";
+                document.getElementById("loanTerm").value = state.loanTerm || "30";
+                document.getElementById("propertyTax").value = state.propertyTax || "2000";
+                document.getElementById("homeInsurance").value = state.homeInsurance || "1000";
+                document.getElementById("paymentFrequency").value = state.paymentFrequency || "monthly";
+                updateValues();
+            }
+        }
+
+        // Calculate mortgage payment
+        function calculateMortgage() {
+            if (!validateInputs()) return;
+
+            const currency = document.getElementById("currency").value;
+            const homePrice = parseFloat(document.getElementById("homePrice").value);
+            const downPayment = parseFloat(document.getElementById("downPayment").value);
+            const loanAmount = homePrice - downPayment;
+            const annualRate = parseFloat(document.getElementById("interestRate").value) / 100;
+            const loanTermYears = parseInt(document.getElementById("loanTerm").value);
+            const paymentFrequency = document.getElementById("paymentFrequency").value;
+            const propertyTax = parseFloat(document.getElementById("propertyTax").value) || 0;
+            const homeInsurance = parseFloat(document.getElementById("homeInsurance").value) || 0;
+
+            let periodsPerYear, paymentPeriods, interestRatePerPeriod;
+            if (paymentFrequency === "monthly") {
+                periodsPerYear = 12;
+            } else if (paymentFrequency === "biweekly") {
+                periodsPerYear = 26;
+            } else {
+                periodsPerYear = 52;
+            }
+            paymentPeriods = loanTermYears * periodsPerYear;
+            interestRatePerPeriod = annualRate / periodsPerYear;
+
+            const payment = (loanAmount * interestRatePerPeriod) / (1 - Math.pow(1 + interestRatePerPeriod, -paymentPeriods));
+            const monthlyPayment = payment * (periodsPerYear / 12);
+            const monthlyPropertyTax = propertyTax / 12;
+            const monthlyHomeInsurance = homeInsurance / 12;
+            const totalMonthlyPayment = monthlyPayment + monthlyPropertyTax + monthlyHomeInsurance;
+
+            const totalInterest = (payment * paymentPeriods) - loanAmount;
+            const totalLoanCost = loanAmount + totalInterest;
+
+            const today = new Date();
+            const payoffDate = new Date(today.setMonth(today.getMonth() + (loanTermYears * 12)));
+            const payoffDateStr = payoffDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            document.getElementById("result").textContent = formatCurrency(totalMonthlyPayment, currency);
+            document.getElementById("principal-interest").textContent = formatCurrency(monthlyPayment, currency);
+            document.getElementById("tax-amount").textContent = formatCurrency(monthlyPropertyTax, currency);
+            document.getElementById("insurance-amount").textContent = formatCurrency(monthlyHomeInsurance, currency);
+            document.getElementById("total-interest").textContent = formatCurrency(totalInterest, currency);
+            document.getElementById("total-loan-cost").textContent = formatCurrency(totalLoanCost, currency);
+            document.getElementById("payoff-date").textContent = payoffDateStr;
+
+            document.getElementById("result-container").style.display = "block";
+            if (window.innerWidth < 992) {
+                document.getElementById("result-container").scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Export results as PDF
+        function exportResults() {
+            if (document.getElementById("result-container").style.display === "none") {
+                document.getElementById("error-message").textContent = "Please calculate results first";
+                document.getElementById("error-message").style.display = "block";
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(16);
+            doc.text("Mortgage Calculation Results", 10, 10);
+            doc.setFontSize(12);
+            doc.text(`Estimated Payment: ${document.getElementById("result").textContent}`, 10, 20);
+            doc.text(`Principal & Interest: ${document.getElementById("principal-interest").textContent}`, 10, 30);
+            doc.text(`Property Tax: ${document.getElementById("tax-amount").textContent}`, 10, 40);
+            doc.text(`Home Insurance: ${document.getElementById("insurance-amount").textContent}`, 10, 50);
+            doc.text(`Total Interest Paid: ${document.getElementById("total-interest").textContent}`, 10, 60);
+            doc.text(`Total Loan Cost: ${document.getElementById("total-loan-cost").textContent}`, 10, 70);
+            doc.text(`Payoff Date: ${document.getElementById("payoff-date").textContent}`, 10, 80);
+            doc.save("mortgage-results.pdf");
+        }
+
+        // Clear all fields
+        function clearFields() {
+            document.getElementById("currency").value = "$";
+            document.getElementById("homePrice").value = "400000";
+            document.getElementById("downPayment").value = "80000";
+            document.getElementById("interestRate").value = "5.5";
+            document.getElementById("loanTerm").value = "30";
+            document.getElementById("propertyTax").value = "2000";
+            document.getElementById("homeInsurance").value = "1000";
+            document.getElementById("paymentFrequency").value = "monthly";
+            updateValues();
+            document.getElementById("result-container").style.display = "none";
+            document.getElementById("error-message").style.display = "none";
+            localStorage.removeItem("mortgageCalculatorState");
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            loadState();
+            updateValues();
+
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value === '') this.value = this.min || 0;
+                    debouncedUpdateValues();
+                });
+            });
+        };
+    </script>
+</body>
+</html>
