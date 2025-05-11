@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toolpidia - Your Ultimate Calculator Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --secondary-blue: #3b82f6;
+            --light-blue: #93c5fd;
+            --dark-blue: #1e40af;
+            --gradient-start: #1e3a8a;
+            --gradient-end: #3b82f6;
+            --text-dark: #1f2937;
+            --text-light: #f9fafb;
+            --bg-light: #f8fafc;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition);
+            padding: 0.5rem 0;
+        }
+
+        nav a:hover {
+            color: var(--primary-blue);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-blue);
+            transition: var(--transition);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .contact-email {
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeIn 1s ease 0.2s forwards;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary-blue);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            animation: fadeIn 1s ease 0.4s forwards, pulse 2s infinite;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            animation: none;
+        }
+
+        .tool-icons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .tool-icon {
+            background-color: rgba(255, 255, 255, 0.1);
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            transition: var(--transition);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .tool-icon:nth-child(1) { animation-delay: 0.6s; }
+        .tool-icon:nth-child(2) { animation-delay: 0.7s; }
+        .tool-icon:nth-child(3) { animation-delay: 0.8s; }
+        .tool-icon:nth-child(4) { animation-delay: 0.9s; }
+
+        .tool-icon:hover {
+            transform: translateY(-5px) scale(1.1);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 3rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            transform: translateY(-50px);
+        }
+
+        .search-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-icon {
+            padding: 0 1rem;
+            color: #9ca3af;
+            transition: var(--transition);
+        }
+
+        .search-bar:focus-within .search-icon {
+            color: var(--primary-blue);
+        }
+
+        /* Tool Categories */
+        .tools-section {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .category {
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .category.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .category h2 {
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .category h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--light-blue);
+            border-radius: 3px;
+        }
+
+        .category p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tool-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .tool-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-card-content {
+            padding: 1.5rem;
+        }
+
+        .tool-icon-container {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+        }
+
+        .tool-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .tool-card p {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .use-tool-btn {
+            display: inline-block;
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .use-tool-btn:hover {
+            background-color: var(--dark-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text-dark);
+            color: white;
+            padding: 3rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .footer-logo i {
+            margin-right: 0.5rem;
+        }
+
+        .footer-tagline {
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-contact {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-contact a {
+            color: var(--light-blue);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-contact a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-links a {
+            color: white;
+            opacity: 0.8;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .logo {
+                margin-bottom: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .search-section {
+                padding: 2rem 1rem;
+                transform: translateY(-30px);
+            }
+
+            .tools-section {
+                padding: 1rem;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        body.dark-mode {
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+
+        body.dark-mode header {
+            background-color: #1f2937;
+        }
+
+        body.dark-mode nav a {
+            color: #f3f4f6;
+        }
+
+        body.dark-mode .search-container,
+        body.dark-mode .tool-card {
+            background-color: #1f2937;
+            color: #f3f4f6;
+        }
+
+        body.dark-mode .tool-card h3,
+        body.dark-mode .tool-card p {
+            color: #f3f4f6;
+        }
+
+        body.dark-mode .search-bar {
+            background-color: #374151;
+            border-color: #4b5563;
+        }
+
+        body.dark-mode .search-bar input {
+            background-color: #374151;
+            color: #f3f4f6;
+        }
+
+        body.dark-mode .search-icon {
+            color: #9ca3af;
+        }
+
+        body.dark-mode .tool-icon-container {
+            background-color: rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <a href="#" class="logo">
+            <i class="fas fa-calculator"></i>
+            Toolpidia
+        </a>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#tools">Tools</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="contact-email">info.toolpidia@gmail.com</div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Your Ultimate Calculator Hub</h1>
+            <p>Access free calculators for Math, Health, Finance and more — fast and free.</p>
+            <a href="#tools" class="cta-button">Explore Tools</a>
+            
+            <div class="tool-icons">
+                <div class="tool-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="tool-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="tool-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="tool-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search a tool..." id="searchInput">
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="tools-section" id="tools">
+        <!-- Financial Calculators -->
+        <div class="category" id="financial">
+            <h2>Financial Calculators</h2>
+            <p>Tools to help you manage your finances, loans, investments and more.</p>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h3>Mortgage Calculator</h3>
+                        <p>Calculate your monthly mortgage payments with ease.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <h3>Loan Calculator</h3>
+                        <p>Determine loan payments and total interest.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <h3>Auto Loan Calculator</h3>
+                        <p>Calculate your auto loan payments.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <h3>Interest Calculator</h3>
+                        <p>Calculate simple and compound interest.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <h3>Payment Calculator</h3>
+                        <p>Determine periodic payment amounts.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <h3>Retirement Calculator</h3>
+                        <p>Plan your retirement savings.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fitness & Health Calculators -->
+        <div class="category" id="health">
+            <h2>Fitness & Health Calculators</h2>
+            <p>Tools to help you track and improve your health and fitness.</p>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-weight"></i>
+                        </div>
+                        <h3>BMI Calculator</h3>
+                        <p>Calculate your Body Mass Index.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3>Calorie Calculator</h3>
+                        <p>Calculate your daily calorie needs.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <h3>Pace Calculator</h3>
+                        <p>Calculate your running pace.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-baby"></i>
+                        </div>
+                        <h3>Pregnancy Calculator</h3>
+                        <p>Track your pregnancy progress.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Math Calculators -->
+        <div class="category" id="math">
+            <h2>Math Calculators</h2>
+            <p>Powerful tools for all your mathematical needs.</p>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-square-root-alt"></i>
+                        </div>
+                        <h3>Scientific Calculator</h3>
+                        <p>Advanced calculator for complex math.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-divide"></i>
+                        </div>
+                        <h3>Fraction Calculator</h3>
+                        <p>Perform operations with fractions.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-percent"></i>
+                        </div>
+                        <h3>Percentage Calculator</h3>
+                        <p>Calculate percentages easily.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-random"></i>
+                        </div>
+                        <h3>Random Number Generator</h3>
+                        <p>Generate random numbers within a range.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Calculators -->
+        <div class="category" id="other">
+            <h2>Other Calculators</h2>
+            <p>Various tools for everyday calculations.</p>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-birthday-cake"></i>
+                        </div>
+                        <h3>Age Calculator</h3>
+                        <p>Calculate age from birth date.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <h3>Date Calculator</h3>
+                        <p>Calculate days between dates.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>Time Calculator</h3>
+                        <p>Add or subtract time values.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-card-content">
+                        <div class="tool-icon-container">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <h3>Random Password Generator</h3>
+                        <p>Generate secure passwords.</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-about">
+                <a href="#" class="footer-logo">
+                    <i class="fas fa-calculator"></i>
+                    Toolpidia
+                </a>
+                <p class="footer-tagline">Your Ultimate Calculator Hub</p>
+                <div class="footer-contact">
+                    <a href="mailto:info.toolpidia@gmail.com">info.toolpidia@gmail.com</a>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <a href="#">Home</a>
+                <a href="#tools">Tools</a>
+                <a href="#contact">Contact</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+            </div>
+            
+            <div class="footer-links">
+                <h3>Categories</h3>
+                <a href="#financial">Financial Calculators</a>
+                <a href="#health">Health Calculators</a>
+                <a href="#math">Math Calculators</a>
+                <a href="#other">Other Calculators</a>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2023 Toolpidia. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.category, .tool-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const toolCards = document.querySelectorAll('.tool-card');
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            toolCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        // Save dark mode preference
+        darkModeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+    </script>
+</body>
+</html>
