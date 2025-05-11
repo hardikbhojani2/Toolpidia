@@ -1,1 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #e0e7ff;
+            --secondary: #3f37c9;
+            --text: #2b2d42;
+            --text-light: #8d99ae;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border: #e9ecef;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --error: #ef233c;
+            --success: #2ec4b6;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2rem;
+            padding-top: 20px;
+        }
+        
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            width: 100%;
+        }
+        
+        .calculator-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+        
+        .calculator-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        h2 {
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .description {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            width: 100%;
+            gap: 10px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+            width: 100%;
+        }
+        
+        input[type="date"], input[type="number"], input[type="text"] {
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            width: 100%;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        input[type="date"]:focus, input[type="number"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            width: 100%;
+        }
+        
+        .checkbox-container input {
+            margin-right: 10px;
+            accent-color: var(--primary);
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .btn-danger {
+            background-color: var(--error);
+        }
+        
+        .btn-danger:hover {
+            background-color: #d90429;
+        }
+        
+        .btn-clear {
+            background-color: var(--text-light);
+        }
+        
+        .btn-clear:hover {
+            background-color: #6c757d;
+        }
+        
+        .operation-select {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+            min-width: 60px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            color: var(--primary);
+            font-weight: 500;
+            display: none;
+            animation: fadeIn 0.3s ease;
+            width: 100%;
+        }
+        
+        .result-content {
+            margin-bottom: 15px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .holiday-list {
+            margin: 20px 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .holiday-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .holiday-item:last-child {
+            border-bottom: none;
+        }
+        
+        .holiday-date {
+            font-weight: 500;
+        }
+        
+        .holiday-name {
+            color: var(--text-light);
+        }
+        
+        .add-holiday-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .add-holiday-form input {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            color: var(--success);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .unit-label {
+            margin-left: 8px;
+            color: var(--text-light);
+        }
+        
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .calculator-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .calculator-card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                padding-top: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .input-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .operation-select {
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .add-holiday-form {
+                flex-direction: column;
+            }
+            
+            .add-holiday-form input {
+                width: 100%;
+            }
+        }
+        
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .calculator-card {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            input[type="date"], input[type="number"], input[type="text"] {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Date Calculator</h1>
+        
+        <div class="calculator-grid">
+            <div class="calculator-card">
+                <h2>Days Between Two Dates</h2>
+                <p class="description">Find the number of years, months, weeks, and days between dates. Configure holidays below.</p>
+                
+                <div class="input-group">
+                    <label for="start-date-1">Start Date</label>
+                    <input type="date" id="start-date-1" value="2025-04-02">
+                </div>
+                
+                <div class="input-group">
+                    <label for="end-date-1">End Date</label>
+                    <input type="date" id="end-date-1" value="2025-04-02">
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="include-end-day">
+                    <label for="include-end-day">Include end day (add 1 day)</label>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="exclude-holidays" checked>
+                    <label for="exclude-holidays">Exclude holidays from calculation</label>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculateDaysBetween()">Calculate</button>
+                    <button class="btn btn-secondary" onclick="openHolidaySettings()">Holiday Settings</button>
+                </div>
+                
+                <div id="result-1" class="result">
+                    <div class="result-content" id="result-content-1"></div>
+                    <button class="btn btn-clear" onclick="clearResult(1)">Clear Result</button>
+                </div>
+            </div>
+            
+            <div class="calculator-card">
+                <h2>Add to or Subtract from a Date</h2>
+                <p class="description">Calculate a new date by adding or subtracting time periods from a start date.</p>
+                
+                <div class="input-group">
+                    <label for="start-date-2">Start Date</label>
+                    <input type="date" id="start-date-2" value="2025-04-02">
+                </div>
+                
+                <div class="input-row">
+                    <select id="years-operation" class="operation-select">
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                    </select>
+                    <input type="number" id="years" value="0" min="0">
+                    <span class="unit-label">years</span>
+                </div>
+                
+                <div class="input-row">
+                    <select id="months-operation" class="operation-select">
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                    </select>
+                    <input type="number" id="months" value="0" min="0">
+                    <span class="unit-label">months</span>
+                </div>
+                
+                <div class="input-row">
+                    <select id="weeks-operation" class="operation-select">
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                    </select>
+                    <input type="number" id="weeks" value="0" min="0">
+                    <span class="unit-label">weeks</span>
+                </div>
+                
+                <div class="input-row">
+                    <select id="days-operation" class="operation-select">
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                    </select>
+                    <input type="number" id="days" value="0" min="0">
+                    <span class="unit-label">days</span>
+                </div>
+                
+                <div class="input-row">
+                    <select id="hours-operation" class="operation-select">
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                    </select>
+                    <input type="number" id="hours" value="0" min="0">
+                    <span class="unit-label">hours</span>
+                </div>
 
+                <div class="input-row">
+                    <select id="minutes-operation" class="operation-select">
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                    </select>
+                    <input type="number" id="minutes" value="0" min="0">
+                    <span class="unit-label">minutes</span>
+                </div>
+
+                <div class="input-row">
+                    <select id="seconds-operation" class="operation-select">
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                    </select>
+                    <input type="number" id="seconds" value="0" min="0">
+                    <span class="unit-label">seconds</span>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="business-days">
+                    <label for="business-days">Calculate in business days (excludes weekends and holidays)</label>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn" onclick="calculateDateOperation()">Calculate</button>
+                </div>
+                
+                <div id="result-2" class="result">
+                    <div class="result-content" id="result-content-2"></div>
+                    <button class="btn btn-clear" onclick="clearResult(2)">Clear Result</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Holiday Settings Modal -->
+    <div id="holiday-settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Holiday Settings</h3>
+                <button class="close-modal" onclick="closeHolidaySettings()">×</button>
+            </div>
+            
+            <p>Add custom holidays to exclude from business day calculations:</p>
+            
+            <div class="add-holiday-form">
+                <input type="date" id="new-holiday-date" placeholder="Date">
+                <input type="text" id="new-holiday-name" placeholder="Holiday name">
+                <button class="btn" onclick="addHoliday()">Add</button>
+            </div>
+            <div id="holiday-error" class="error-message"></div>
+            <div id="holiday-success" class="success-message"></div>
+            
+            <div class="holiday-list" id="holiday-list">
+                <!-- Holidays will be added here dynamically -->
+            </div>
+            
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn btn-danger" onclick="clearAllHolidays()">Clear All Holidays</button>
+                <button class="btn btn-secondary" onclick="closeHolidaySettings()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store holidays in localStorage
+        let holidays = JSON.parse(localStorage.getItem('holidays')) || [];
+        
+        // Initialize with some common holidays if empty
+        if (holidays.length === 0) {
+            const currentYear = new Date().getFullYear();
+            holidays = [
+                { date: `${currentYear}-01-01`, name: "New Year's Day" },
+                { date: `${currentYear}-12-25`, name: "Christmas Day" }
+            ];
+            localStorage.setItem('holidays', JSON.stringify(holidays));
+        }
+        
+        // Render holidays list
+        function renderHolidays() {
+            const holidayList = document.getElementById('holiday-list');
+            holidayList.innerHTML = '';
+            
+            if (holidays.length === 0) {
+                holidayList.innerHTML = '<div class="holiday-item">No holidays added yet</div>';
+                return;
+            }
+            
+            holidays.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            holidays.forEach((holiday, index) => {
+                const holidayItem = document.createElement('div');
+                holidayItem.className = 'holiday-item';
+                
+                const dateObj = new Date(holiday.date);
+                const formattedDate = dateObj.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    weekday: 'short'
+                });
+                
+                holidayItem.innerHTML = `
+                    <div>
+                        <span class="holiday-date">${formattedDate}</span>
+                        <span class="holiday-name">${holiday.name}</span>
+                    </div>
+                    <button class="btn btn-danger" onclick="removeHoliday(${index})">Remove</button>
+                `;
+                
+                holidayList.appendChild(holidayItem);
+            });
+        }
+        
+        // Add a new holiday
+        function addHoliday() {
+            const dateInput = document.getElementById('new-holiday-date');
+            const nameInput = document.getElementById('new-holiday-name');
+            const errorElement = document.getElementById('holiday-error');
+            const successElement = document.getElementById('holiday-success');
+            
+            errorElement.style.display = 'none';
+            successElement.style.display = 'none';
+            
+            if (!dateInput.value || !nameInput.value) {
+                errorElement.textContent = 'Please enter both date and name';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            // Check if holiday already exists
+            const exists = holidays.some(h => h.date === dateInput.value);
+            if (exists) {
+                errorElement.textContent = 'Holiday for this date already exists';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            holidays.push({
+                date: dateInput.value,
+                name: nameInput.value
+            });
+            
+            localStorage.setItem('holidays', JSON.stringify(holidays));
+            renderHolidays();
+            
+            dateInput.value = '';
+            nameInput.value = '';
+            
+            successElement.textContent = 'Holiday added successfully';
+            successElement.style.display = 'block';
+            setTimeout(() => successElement.style.display = 'none', 3000);
+        }
+        
+        // Remove a holiday
+        function removeHoliday(index) {
+            holidays.splice(index, 1);
+            localStorage.setItem('holidays', JSON.stringify(holidays));
+            renderHolidays();
+        }
+        
+        // Clear all holidays
+        function clearAllHolidays() {
+            if (confirm('Are you sure you want to remove all holidays?')) {
+                holidays = [];
+                localStorage.setItem('holidays', JSON.stringify(holidays));
+                renderHolidays();
+            }
+        }
+        
+        // Check if a date is a holiday
+        function isHoliday(date) {
+            const dateStr = date.toISOString().split('T')[0];
+            return holidays.some(h => h.date === dateStr);
+        }
+        
+        // Check if a date is a weekend
+        function isWeekend(date) {
+            const day = date.getDay();
+            return day === 0 || day === 6; // Sunday or Saturday
+        }
+        
+        // Calculate business days between two dates
+        function calculateBusinessDays(startDate, endDate) {
+            let count = 0;
+            const current = new Date(startDate);
+            
+            while (current <= endDate) {
+                if (!isWeekend(current) && !isHoliday(current)) {
+                    count++;
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            
+            return count;
+        }
+        
+        // Open holiday settings modal
+        function openHolidaySettings() {
+            renderHolidays();
+            document.getElementById('holiday-settings-modal').style.display = 'flex';
+        }
+        
+        // Close holiday settings modal
+        function closeHolidaySettings() {
+            document.getElementById('holiday-settings-modal').style.display = 'none';
+        }
+        
+        // Clear result
+        function clearResult(resultNum) {
+            const resultElement = document.getElementById(`result-${resultNum}`);
+            resultElement.style.display = 'none';
+            document.getElementById(`result-content-${resultNum}`).innerHTML = '';
+        }
+        
+        // Calculate days between dates
+        function calculateDaysBetween() {
+            const startDate = new Date(document.getElementById('start-date-1').value);
+            const endDate = new Date(document.getElementById('end-date-1').value);
+            const includeEndDay = document.getElementById('include-end-day').checked;
+            const excludeHolidays = document.getElementById('exclude-holidays').checked;
+            
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                alert("Please enter valid dates");
+                return;
+            }
+            
+            if (startDate > endDate) {
+                alert("Start date must be before end date");
+                return;
+            }
+            
+            let diffInTime = endDate.getTime() - startDate.getTime();
+            if (includeEndDay) {
+                diffInTime += 24 * 60 * 60 * 1000; // Add one day in milliseconds
+            }
+            
+            const diffInDays = Math.floor(diffInTime / (1000 * 60 * 60 * 24));
+            
+            // Calculate years, months, weeks, and remaining days
+            const years = Math.floor(diffInDays / 365);
+            const remainingDaysAfterYears = diffInDays % 365;
+            const months = Math.floor(remainingDaysAfterYears / 30);
+            const remainingDaysAfterMonths = remainingDaysAfterYears % 30;
+            const weeks = Math.floor(remainingDaysAfterMonths / 7);
+            const days = remainingDaysAfterMonths % 7;
+            
+            let businessDays = 0;
+            if (excludeHolidays) {
+                businessDays = calculateBusinessDays(startDate, endDate);
+            }
+            
+            const resultElement = document.getElementById('result-1');
+            const resultContent = document.getElementById('result-content-1');
+            resultElement.style.display = 'block';
+            
+            const resultHTML = `
+                <p><strong>Date Difference:</strong></p>
+                <p>${years} years, ${months} months, ${weeks} weeks, ${days} days</p>
+                <p>Total: ${diffInDays} days</p>
+                ${excludeHolidays ? `<p>Business days (excludes weekends${holidays.length > 0 ? ' and holidays' : ''}): ${businessDays} days</p>` : ''}
+            `;
+            
+            resultContent.innerHTML = resultHTML;
+        }
+        
+        // Calculate date operations
+        function calculateDateOperation() {
+            const startDate = new Date(document.getElementById('start-date-2').value);
+            const years = parseInt(document.getElementById('years').value);
+            const months = parseInt(document.getElementById('months').value);
+            const weeks = parseInt(document.getElementById('weeks').value);
+            const days = parseInt(document.getElementById('days').value);
+            const hours = parseInt(document.getElementById('hours').value);
+            const minutes = parseInt(document.getElementById('minutes').value);
+            const seconds = parseInt(document.getElementById('seconds').value);
+            const yearsOp = document.getElementById('years-operation').value;
+            const monthsOp = document.getElementById('months-operation').value;
+            const weeksOp = document.getElementById('weeks-operation').value;
+            const daysOp = document.getElementById('days-operation').value;
+            const hoursOp = document.getElementById('hours-operation').value;
+            const minutesOp = document.getElementById('minutes-operation').value;
+            const secondsOp = document.getElementById('seconds-operation').value;
+            const businessDaysOnly = document.getElementById('business-days').checked;
+            
+            if (isNaN(startDate.getTime())) {
+                alert("Please enter a valid start date");
+                return;
+            }
+            
+            let resultDate = new Date(startDate);
+            
+            // Apply years
+            if (years > 0) {
+                if (yearsOp === '+') {
+                    resultDate.setFullYear(resultDate.getFullYear() + years);
+                } else {
+                    resultDate.setFullYear(resultDate.getFullYear() - years);
+                }
+            }
+            
+            // Apply months
+            if (months > 0) {
+                if (monthsOp === '+') {
+                    resultDate.setMonth(resultDate.getMonth() + months);
+                } else {
+                    resultDate.setMonth(resultDate.getMonth() - months);
+                }
+            }
+            
+            // Apply weeks and days
+            let totalDays = (weeks * 7) + days;
+            
+            if (businessDaysOnly && totalDays > 0) {
+                let daysAdded = 0;
+                const direction = daysOp === '+' ? 1 : -1;
+                
+                while (daysAdded < Math.abs(totalDays)) {
+                    resultDate.setDate(resultDate.getDate() + direction);
+                    
+                    if (!isWeekend(resultDate) && !isHoliday(resultDate)) {
+                        daysAdded++;
+                    }
+                }
+            } else if (totalDays > 0) {
+                if (daysOp === '+') {
+                    resultDate.setDate(resultDate.getDate() + totalDays);
+                } else {
+                    resultDate.setDate(resultDate.getDate() - totalDays);
+                }
+            }
+            
+            // Apply hours
+            if (hours > 0) {
+                if (hoursOp === '+') {
+                    resultDate.setHours(resultDate.getHours() + hours);
+                } else {
+                    resultDate.setHours(resultDate.getHours() - hours);
+                }
+            }
+
+            // Apply minutes
+            if (minutes > 0) {
+                if (minutesOp === '+') {
+                    resultDate.setMinutes(resultDate.getMinutes() + minutes);
+                } else {
+                    resultDate.setMinutes(resultDate.getMinutes() - minutes);
+                }
+            }
+
+            // Apply seconds
+            if (seconds > 0) {
+                if (secondsOp === '+') {
+                    resultDate.setSeconds(resultDate.getSeconds() + seconds);
+                } else {
+                    resultDate.setSeconds(resultDate.getSeconds() - seconds);
+                }
+            }
+            
+            const resultElement = document.getElementById('result-2');
+            const resultContent = document.getElementById('result-content-2');
+            resultElement.style.display = 'block';
+            
+            const formattedDate = resultDate.toLocaleString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric'
+            });
+            
+            resultContent.innerHTML = `
+                <p><strong>Result Date:</strong> ${formattedDate}</p>
+                <p><strong>ISO Format:</strong> ${resultDate.toISOString()}</p>
+                ${businessDaysOnly ? '<p><em>Calculated in business days (excluding weekends and holidays)</em></p>' : ''}
+            `;
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates to today
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            document.getElementById('start-date-1').value = todayStr;
+            document.getElementById('end-date-1').value = todayStr;
+            document.getElementById('start-date-2').value = todayStr;
+        });
+    </script>
+</body>
+</html>
