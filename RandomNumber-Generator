@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+        .description {
+            max-width: 800px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+            color: #333;
+            text-align: center;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        .container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
+            flex: 1;
+        }
+        .result-container {
+            background-color: white;
+            padding: 2rem;
+            margin: 0 auto 2rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 0;
+        }
+        .result {
+            font-size: clamp(2rem, 8vw, 3rem);
+            font-weight: bold;
+            margin: 1rem 0;
+            color: #2c3e50;
+            word-break: break-all;
+            padding: 0 1rem;
+        }
+        .controls {
+            background-color: white;
+            padding: 2rem;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+        input {
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: clamp(1rem, 3vw, 1.1rem);
+            width: 100%;
+        }
+        input:focus {
+            border-color: #2c3e50;
+            outline: none;
+        }
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+        }
+        button {
+            padding: 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: clamp(1rem, 3vw, 1.1rem);
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+        #generate-btn {
+            background-color: #27ae60;
+            color: white;
+        }
+        #generate-btn:hover {
+            background-color: #2ecc71;
+        }
+        #clear-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        #clear-btn:hover {
+            background-color: #c0392b;
+        }
+        @media (min-width: 768px) {
+            .result-container {
+                padding: 3rem;
+                margin-bottom: 3rem;
+            }
+            .controls {
+                padding: 3rem;
+            }
+            .input-group {
+                flex-direction: row;
+                align-items: center;
+            }
+            label {
+                width: 150px;
+                margin-bottom: 0;
+                margin-right: 1rem;
+            }
+            .button-group {
+                justify-content: center;
+            }
+            button {
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Random Number Generator</h1>
+    </header>
+    
+    <div class="description">
+        This version of the generator creates a random integer. It can deal with very large integers up to a few thousand digits.
+    </div>
+    
+    <div class="container">
+        <div class="result-container">
+            <h2>Result</h2>
+            <div class="result" id="result">52</div>
+        </div>
+        
+        <div class="controls">
+            <div class="input-group">
+                <label for="lower-limit">Lower Limit:</label>
+                <input type="text" id="lower-limit" value="0">
+            </div>
+            
+            <div class="input-group">
+                <label for="upper-limit">Upper Limit:</label>
+                <input type="text" id="upper-limit" value="100">
+            </div>
+            
+            <div class="button-group">
+                <button id="generate-btn">Generate</button>
+                <button id="clear-btn">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            const lowerLimit = document.getElementById('lower-limit').value;
+            const upperLimit = document.getElementById('upper-limit').value;
+            
+            // Validate inputs
+            if (!isValidInteger(lowerLimit) || !isValidInteger(upperLimit)) {
+                alert('Please enter valid integers for both limits');
+                return;
+            }
+            
+            const lower = BigInt(lowerLimit);
+            const upper = BigInt(upperLimit);
+            
+            if (lower > upper) {
+                alert('Lower limit must be less than or equal to upper limit');
+                return;
+            }
+            
+            // Generate random number between lower and upper (inclusive)
+            const range = upper - lower + BigInt(1);
+            
+            // For very large ranges, we need to generate random numbers in chunks
+            let randomOffset = BigInt(0);
+            if (range <= BigInt(Number.MAX_SAFE_INTEGER)) {
+                randomOffset = BigInt(Math.floor(Number(range) * Math.random()));
+            } else {
+                // For extremely large numbers, use multiple random values
+                const maxChunk = BigInt(Number.MAX_SAFE_INTEGER);
+                let remainingRange = range;
+                while (remainingRange > BigInt(0)) {
+                    const chunkSize = remainingRange > maxChunk ? maxChunk : remainingRange;
+                    const chunkValue = BigInt(Math.floor(Number(chunkSize) * Math.random()));
+                    randomOffset += chunkValue;
+                    remainingRange -= chunkSize;
+                }
+                randomOffset = randomOffset % range;
+            }
+            
+            const randomNumber = lower + randomOffset;
+            
+            document.getElementById('result').textContent = randomNumber.toString();
+        });
+        
+        document.getElementById('clear-btn').addEventListener('click', function() {
+            document.getElementById('lower-limit').value = '0';
+            document.getElementById('upper-limit').value = '100';
+            document.getElementById('result').textContent = '0';
+        });
+        
+        function isValidInteger(str) {
+            return /^-?\d+$/.test(str);
+        }
+    </script>
+</body>
+</html>
