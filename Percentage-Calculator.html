@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentage Calculator</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+        
+        .calculator-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .info-card {
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .calculator {
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .tab:hover:not(.active) {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            width: 100%;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+        
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(52, 152, 219, 0.1);
+            border-radius: 6px;
+            display: none;
+            border-left: 4px solid var(--primary-color);
+            width: 100%;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        .formula {
+            font-family: 'Courier New', monospace;
+            background-color: #f5f5f5;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 5px 0;
+            font-size: 14px;
+            word-break: break-word;
+        }
+        
+        @media (min-width: 768px) {
+            .calculator-wrapper {
+                flex-direction: row;
+                gap: 20px;
+            }
+            
+            .info-card {
+                width: 35%;
+                margin-bottom: 0;
+            }
+            
+            .calculator {
+                width: 65%;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+                overflow-x: visible;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .info-card {
+                width: 30%;
+            }
+            
+            .calculator {
+                width: 70%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Percentage Calculator</h1>
+        
+        <div class="calculator-wrapper">
+            <div class="calculator">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab(1)">X is what % of Y</div>
+                    <div class="tab" onclick="switchTab(2)">What is X% of Y</div>
+                    <div class="tab" onclick="switchTab(3)">X is Y% of what</div>
+                    <div class="tab" onclick="switchTab(4)">Add/Subtract %</div>
+                </div>
+                
+                <!-- Tab 1: X is what % of Y -->
+                <div id="tab1" class="tab-content active">
+                    <div class="form-group">
+                        <label for="x1">X value:</label>
+                        <input type="number" id="x1" placeholder="Enter X value" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="y1">Y value:</label>
+                        <input type="number" id="y1" placeholder="Enter Y value" class="input-field">
+                    </div>
+                    <button onclick="calculatePercentage()">Calculate Percentage</button>
+                    <div id="result1" class="result">
+                        <h3>Result</h3>
+                        <div id="resultContent1"></div>
+                    </div>
+                </div>
+                
+                <!-- Tab 2: What is X% of Y -->
+                <div id="tab2" class="tab-content">
+                    <div class="form-group">
+                        <label for="percentage2">Percentage (X%):</label>
+                        <input type="number" id="percentage2" placeholder="Enter percentage" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="y2">Y value:</label>
+                        <input type="number" id="y2" placeholder="Enter Y value" class="input-field">
+                    </div>
+                    <button onclick="calculateValue()">Calculate Value</button>
+                    <div id="result2" class="result">
+                        <h3>Result</h3>
+                        <div id="resultContent2"></div>
+                    </div>
+                </div>
+                
+                <!-- Tab 3: X is Y% of what -->
+                <div id="tab3" class="tab-content">
+                    <div class="form-group">
+                        <label for="x3">X value:</label>
+                        <input type="number" id="x3" placeholder="Enter X value" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="percentage3">Percentage (Y%):</label>
+                        <input type="number" id="percentage3" placeholder="Enter percentage" class="input-field">
+                    </div>
+                    <button onclick="calculateWhole()">Calculate Whole</button>
+                    <div id="result3" class="result">
+                        <h3>Result</h3>
+                        <div id="resultContent3"></div>
+                    </div>
+                </div>
+                
+                <!-- Tab 4: Add/Subtract Percentage -->
+                <div id="tab4" class="tab-content">
+                    <div class="form-group">
+                        <label for="number4">Number:</label>
+                        <input type="number" id="number4" placeholder="Enter number" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="percentage4">Percentage:</label>
+                        <input type="number" id="percentage4" placeholder="Enter percentage" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Operation:</label>
+                        <select id="operation4" class="input-field">
+                            <option value="add">Add Percentage</option>
+                            <option value="subtract">Subtract Percentage</option>
+                        </select>
+                    </div>
+                    <button onclick="calculateAddSubtract()">Calculate</button>
+                    <div id="result4" class="result">
+                        <h3>Result</h3>
+                        <div id="resultContent4"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h2>About Percentage Calculator</h2>
+                <p>This calculator helps you solve percentage problems quickly and accurately on any device.</p>
+                
+                <h3>What Is Percentage?</h3>
+                <p>A percentage is a number or ratio expressed as a fraction of 100. It is often denoted using the percent sign "%".</p>
+                
+                <h3>Formulas Used</h3>
+                <ul style="margin-bottom: 15px; list-style-position: inside;">
+                    <li><strong>X is what % of Y:</strong> <span class="formula">(X ÷ Y) × 100</span></li>
+                    <li><strong>What is X% of Y:</strong> <span class="formula">(X ÷ 100) × Y</span></li>
+                    <li><strong>X is Y% of what:</strong> <span class="formula">(X × 100) ÷ Y</span></li>
+                    <li><strong>Add/Subtract %:</strong> <span class="formula">Number × (1 ± (Percentage ÷ 100))</span></li>
+                </ul>
+                
+                <h3>Features</h3>
+                <ul style="margin-bottom: 15px; list-style-position: inside;">
+                    <li>Responsive design for all devices</li>
+                    <li>Tabbed interface for easy navigation</li>
+                    <li>Formulas displayed with results</li>
+                    <li>Detailed calculation explanations</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Switch between tabs
+        function switchTab(tabNumber) {
+            // Hide all tabs and remove active class
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab and add active class
+            document.getElementById('tab' + tabNumber).classList.add('active');
+            document.querySelectorAll('.tab')[tabNumber-1].classList.add('active');
+        }
+        
+        // Calculate what percentage X is of Y
+        function calculatePercentage() {
+            const x = parseFloat(document.getElementById('x1').value);
+            const y = parseFloat(document.getElementById('y1').value);
+            
+            if (isNaN(x) || isNaN(y)) {
+                showError('Please enter valid numbers for both X and Y values');
+                return;
+            }
+            
+            if (y === 0) {
+                showError('Y cannot be zero (division by zero is not allowed)');
+                return;
+            }
+            
+            const percentage = (x / y) * 100;
+            const resultElement = document.getElementById('resultContent1');
+            resultElement.innerHTML = `
+                <p><strong>${x}</strong> is <strong>${percentage.toFixed(2)}%</strong> of <strong>${y}</strong></p>
+                <p class="formula">Formula: (${x} ÷ ${y}) × 100 = ${percentage.toFixed(2)}%</p>
+            `;
+            document.getElementById('result1').classList.add('show');
+        }
+        
+        // Calculate what is X% of Y
+        function calculateValue() {
+            const percentage = parseFloat(document.getElementById('percentage2').value);
+            const y = parseFloat(document.getElementById('y2').value);
+            
+            if (isNaN(percentage) || isNaN(y)) {
+                showError('Please enter valid numbers for both percentage and Y values');
+                return;
+            }
+            
+            const value = (percentage / 100) * y;
+            const resultElement = document.getElementById('resultContent2');
+            resultElement.innerHTML = `
+                <p><strong>${percentage}%</strong> of <strong>${y}</strong> is <strong>${value.toFixed(2)}</strong></p>
+                <p class="formula">Formula: (${percentage} ÷ 100) × ${y} = ${value.toFixed(2)}</p>
+            `;
+            document.getElementById('result2').classList.add('show');
+        }
+        
+        // Calculate X is Y% of what number
+        function calculateWhole() {
+            const x = parseFloat(document.getElementById('x3').value);
+            const percentage = parseFloat(document.getElementById('percentage3').value);
+            
+            if (isNaN(x) || isNaN(percentage)) {
+                showError('Please enter valid numbers for both X and percentage values');
+                return;
+            }
+            
+            if (percentage === 0) {
+                showError('Percentage cannot be zero (division by zero is not allowed)');
+                return;
+            }
+            
+            const whole = (x * 100) / percentage;
+            const resultElement = document.getElementById('resultContent3');
+            resultElement.innerHTML = `
+                <p><strong>${x}</strong> is <strong>${percentage}%</strong> of <strong>${whole.toFixed(2)}</strong></p>
+                <p class="formula">Formula: (${x} × 100) ÷ ${percentage} = ${whole.toFixed(2)}</p>
+            `;
+            document.getElementById('result3').classList.add('show');
+        }
+        
+        // Add or subtract a percentage from a number
+        function calculateAddSubtract() {
+            const number = parseFloat(document.getElementById('number4').value);
+            const percentage = parseFloat(document.getElementById('percentage4').value);
+            const operation = document.getElementById('operation4').value;
+            
+            if (isNaN(number) || isNaN(percentage)) {
+                showError('Please enter valid numbers for both the base number and percentage');
+                return;
+            }
+            
+            let result, operationText, formula;
+            if (operation === 'add') {
+                result = number * (1 + (percentage / 100));
+                operationText = 'added to';
+                formula = `${number} × (1 + (${percentage} ÷ 100)) = ${result.toFixed(2)}`;
+            } else {
+                result = number * (1 - (percentage / 100));
+                operationText = 'subtracted from';
+                formula = `${number} × (1 - (${percentage} ÷ 100)) = ${result.toFixed(2)}`;
+            }
+            
+            const resultElement = document.getElementById('resultContent4');
+            resultElement.innerHTML = `
+                <p><strong>${percentage}%</strong> ${operationText} <strong>${number}</strong> gives <strong>${result.toFixed(2)}</strong></p>
+                <p class="formula">Formula: ${formula}</p>
+            `;
+            document.getElementById('result4').classList.add('show');
+        }
+        
+        // Show error message
+        function showError(message) {
+            alert(message);
+        }
+        
+        // Add event listeners for Enter key
+        document.querySelectorAll('.input-field').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const activeTab = document.querySelector('.tab-content.active').id;
+                    switch(activeTab) {
+                        case 'tab1': calculatePercentage(); break;
+                        case 'tab2': calculateValue(); break;
+                        case 'tab3': calculateWhole(); break;
+                        case 'tab4': calculateAddSubtract(); break;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
