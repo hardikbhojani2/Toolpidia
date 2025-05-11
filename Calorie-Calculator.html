@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculate your daily calorie needs">
+    <title>Daily Calorie Calculator</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --accent: #f72585;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border: #dee2e6;
+            --radius: 12px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tagline {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .unit-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            background: var(--light);
+            border-radius: 50px;
+            padding: 0.5rem;
+            width: fit-content;
+            margin: -1rem auto 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .unit-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            border-radius: 50px;
+            transition: var(--transition);
+        }
+        
+        .unit-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--light);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+        }
+        
+        .radio-input {
+            margin-right: 0.5rem;
+            accent-color: var(--primary);
+        }
+        
+        .input-with-unit {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .input-with-unit .form-control {
+            flex: 1;
+        }
+        
+        .input-unit {
+            color: var(--gray);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .settings-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            margin: 1.5rem 0;
+            padding: 0.75rem;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+        }
+        
+        .settings-toggle:hover {
+            color: var(--secondary);
+        }
+        
+        .settings-panel {
+            display: none;
+            padding: 1.5rem;
+            background-color: var(--light);
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .results-card {
+            display: none;
+            margin-top: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results-header {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            padding: 1.5rem;
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+        }
+        
+        .results-body {
+            background: white;
+            padding: 2rem;
+            border-bottom-left-radius: var(--radius);
+            border-bottom-right-radius: var(--radius);
+        }
+        
+        .result-item {
+            margin-bottom: 1.5rem;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .activity-info {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--light);
+            border-radius: var(--radius);
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            text-align: center;
+        }
+        
+        .activity-list {
+            list-style: none;
+        }
+        
+        .activity-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .activity-list li:before {
+            content: "•";
+            color: var(--primary);
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -0.3rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Error Styles */
+        .error-message {
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .error-border {
+            border-color: var(--accent) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 1.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Daily Calorie Calculator</h1>
+            <p class="tagline">Calculate your personalized daily calorie needs based on your metrics and goals</p>
+        </header>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Enter Your Information</h2>
+            </div>
+            <div class="card-body">
+                <div class="unit-toggle">
+                    <button type="button" class="unit-btn active" data-unit="metric">Metric Units</button>
+                    <button type="button" class="unit-btn" data-unit="us">Imperial Units</button>
+                </div>
+                
+                <form id="calorie-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" id="age" class="form-control" min="15" max="80" placeholder="e.g. 28" required>
+                            <div id="age-error" class="error-message">Please enter a valid age (15-80)</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <span class="form-label">Gender</span>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="male" name="gender" value="male" class="radio-input" checked>
+                                    <label for="male">Male</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="female" name="gender" value="female" class="radio-input">
+                                    <label for="female">Female</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group" id="metric-height-group">
+                            <label for="height-cm" class="form-label">Height</label>
+                            <div class="input-with-unit">
+                                <input type="number" id="height-cm" class="form-control" placeholder="e.g. 175" min="100" max="250" required>
+                                <span class="input-unit">cm</span>
+                            </div>
+                            <div id="height-cm-error" class="error-message">Please enter height (100-250cm)</div>
+                        </div>
+                        
+                        <div class="form-group" id="us-height-group" style="display: none;">
+                            <label class="form-label">Height</label>
+                            <div class="input-with-unit">
+                                <input type="number" id="height-ft" class="form-control" placeholder="Feet" min="3" max="8">
+                                <span class="input-unit">ft</span>
+                                <input type="number" id="height-in" class="form-control" placeholder="Inches" min="0" max="11">
+                                <span class="input-unit">in</span>
+                            </div>
+                            <div id="height-us-error" class="error-message">Please enter valid height</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="weight" class="form-label">Weight</label>
+                            <div class="input-with-unit">
+                                <input type="number" id="weight" class="form-control" placeholder="e.g. 70" min="30" max="300" step="0.1" required>
+                                <span id="weight-unit" class="input-unit">kg</span>
+                            </div>
+                            <div id="weight-error" class="error-message">Please enter weight (30-300kg)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="activity" class="form-label">Activity Level</label>
+                        <select id="activity" class="form-control">
+                            <option value="1.2">Sedentary (little or no exercise)</option>
+                            <option value="1.375">Lightly active (light exercise 1-3 days/week)</option>
+                            <option value="1.55">Moderately active (moderate exercise 3-5 days/week)</option>
+                            <option value="1.725">Very active (hard exercise 6-7 days/week)</option>
+                            <option value="1.9">Extra active (very hard exercise & physical job)</option>
+                        </select>
+                    </div>
+                    
+                    <button type="button" class="settings-toggle" id="settings-toggle">
+                        <span id="toggle-icon">+</span> Advanced Settings
+                    </button>
+                    
+                    <div class="settings-panel" id="settings-panel">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="goal" class="form-label">Goal</label>
+                                <select id="goal" class="form-control">
+                                    <option value="maintain">Maintain weight</option>
+                                    <option value="lose">Lose weight</option>
+                                    <option value="gain">Gain weight</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="rate" class="form-label">Weekly Goal</label>
+                                <select id="rate" class="form-control">
+                                    <option value="0.25">0.25 kg/week</option>
+                                    <option value="0.5">0.5 kg/week</option>
+                                    <option value="0.75">0.75 kg/week</option>
+                                    <option value="1">1 kg/week</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" id="calculate-btn" class="btn btn-primary">Calculate Calories</button>
+                        <button type="reset" id="clear-btn" class="btn btn-outline">Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="results-card" id="results">
+            <div class="results-header">
+                <h2>Your Daily Calorie Needs</h2>
+            </div>
+            <div class="results-body">
+                <div class="result-item">
+                    <div class="result-label">Maintenance Calories</div>
+                    <div class="result-value" id="maintenance-calories">-</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-label">Your Goal Calories</div>
+                    <div class="result-value" id="goal-calories">-</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-label">Recommendation</div>
+                    <div id="recommendation">Complete the form to see your results</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="activity-info">
+            <h3 class="activity-title">Activity Level Guide</h3>
+            <ul class="activity-list">
+                <li><strong>Sedentary:</strong> Little or no exercise (office job with minimal movement)</li>
+                <li><strong>Lightly active:</strong> Light exercise 1-3 days/week (walking, light cardio)</li>
+                <li><strong>Moderately active:</strong> Moderate exercise 3-5 days/week (jogging, cycling, swimming)</li>
+                <li><strong>Very active:</strong> Hard exercise 6-7 days/week (intense workouts, sports training)</li>
+                <li><strong>Extra active:</strong> Very hard exercise & physical job (athletes, construction workers)</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const form = document.getElementById('calorie-form');
+            const settingsToggle = document.getElementById('settings-toggle');
+            const settingsPanel = document.getElementById('settings-panel');
+            const toggleIcon = document.getElementById('toggle-icon');
+            const resultsCard = document.getElementById('results');
+            const unitButtons = document.querySelectorAll('.unit-btn');
+            
+            // Current unit system
+            let currentUnit = 'metric';
+            
+            // Toggle settings panel
+            settingsToggle.addEventListener('click', function() {
+                const isExpanded = settingsPanel.style.display === 'block';
+                settingsPanel.style.display = isExpanded ? 'none' : 'block';
+                toggleIcon.textContent = isExpanded ? '+' : '-';
+                this.setAttribute('aria-expanded', String(!isExpanded));
+            });
+            
+            // Form reset handler
+            document.getElementById('clear-btn').addEventListener('click', function() {
+                resultsCard.style.display = 'none';
+                clearErrors();
+            });
+            
+            // Clear all error messages and styles
+            function clearErrors() {
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('.form-control').forEach(el => {
+                    el.classList.remove('error-border');
+                });
+            }
+            
+            // Show error for a specific field
+            function showError(fieldId, errorId, message) {
+                const field = document.getElementById(fieldId);
+                const error = document.getElementById(errorId);
+                
+                field.classList.add('error-border');
+                error.textContent = message;
+                error.style.display = 'block';
+                field.focus();
+            }
+            
+            // Validate a number field
+            function validateNumberField(fieldId, errorId, min, max) {
+                const field = document.getElementById(fieldId);
+                const value = parseFloat(field.value);
+                
+                if (isNaN(value) || value < min || value > max) {
+                    showError(fieldId, errorId, `Please enter a value between ${min} and ${max}`);
+                    return false;
+                }
+                
+                field.classList.remove('error-border');
+                document.getElementById(errorId).style.display = 'none';
+                return true;
+            }
+            
+            // Validate US height fields
+            function validateUsHeight() {
+                const feet = parseFloat(document.getElementById('height-ft').value);
+                const inches = parseFloat(document.getElementById('height-in').value);
+                
+                if (isNaN(feet)) {
+                    showError('height-ft', 'height-us-error', 'Please enter feet');
+                    return false;
+                }
+                
+                if (isNaN(inches)) {
+                    showError('height-in', 'height-us-error', 'Please enter inches');
+                    return false;
+                }
+                
+                if (feet < 3 || feet > 8) {
+                    showError('height-ft', 'height-us-error', 'Please enter feet between 3 and 8');
+                    return false;
+                }
+                
+                if (inches < 0 || inches > 11) {
+                    showError('height-in', 'height-us-error', 'Please enter inches between 0 and 11');
+                    return false;
+                }
+                
+                document.getElementById('height-us-error').style.display = 'none';
+                document.getElementById('height-ft').classList.remove('error-border');
+                document.getElementById('height-in').classList.remove('error-border');
+                return true;
+            }
+            
+            // Unit conversion functions
+            const feetInchesToCm = (feet, inches) => (feet * 12 + inches) * 2.54;
+            const cmToFeetInches = cm => {
+                const totalInches = cm / 2.54;
+                return {
+                    feet: Math.floor(totalInches / 12),
+                    inches: Math.round(totalInches % 12)
+                };
+            };
+            const kgToLbs = kg => kg * 2.20462;
+            const lbsToKg = lbs => lbs / 2.20462;
+            
+            // Unit system change handler
+            unitButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const newUnit = this.dataset.unit;
+                    if (newUnit === currentUnit) return;
+                    
+                    // Convert values between units
+                    if (currentUnit === 'metric') {
+                        convertMetricToUS();
+                    } else {
+                        convertUSToMetric();
+                    }
+                    
+                    // Update UI state
+                    updateUnitUI(newUnit);
+                    currentUnit = newUnit;
+                });
+            });
+            
+            function convertMetricToUS() {
+                const heightCm = document.getElementById('height-cm').value;
+                const weightKg = document.getElementById('weight').value;
+                
+                if (heightCm) {
+                    const { feet, inches } = cmToFeetInches(heightCm);
+                    document.getElementById('height-ft').value = feet;
+                    document.getElementById('height-in').value = inches;
+                }
+                
+                if (weightKg) {
+                    document.getElementById('weight').value = kgToLbs(weightKg).toFixed(1);
+                }
+                
+                updateUnitsForUS();
+            }
+            
+            function convertUSToMetric() {
+                const feet = parseFloat(document.getElementById('height-ft').value) || 0;
+                const inches = parseFloat(document.getElementById('height-in').value) || 0;
+                const heightCm = feetInchesToCm(feet, inches);
+                const weightLbs = document.getElementById('weight').value;
+                
+                if (heightCm) {
+                    document.getElementById('height-cm').value = heightCm.toFixed(1);
+                }
+                
+                if (weightLbs) {
+                    document.getElementById('weight').value = lbsToKg(weightLbs).toFixed(1);
+                }
+                
+                updateUnitsForMetric();
+            }
+            
+            function updateUnitsForUS() {
+                document.getElementById('weight-unit').textContent = 'lbs';
+                
+                const rateSelect = document.getElementById('rate');
+                rateSelect.innerHTML = `
+                    <option value="0.25">0.5 lbs/week</option>
+                    <option value="0.5">1 lbs/week</option>
+                    <option value="0.75">1.5 lbs/week</option>
+                    <option value="1">2 lbs/week</option>
+                `;
+            }
+            
+            function updateUnitsForMetric() {
+                document.getElementById('weight-unit').textContent = 'kg';
+                
+                const rateSelect = document.getElementById('rate');
+                rateSelect.innerHTML = `
+                    <option value="0.25">0.25 kg/week</option>
+                    <option value="0.5">0.5 kg/week</option>
+                    <option value="0.75">0.75 kg/week</option>
+                    <option value="1">1 kg/week</option>
+                `;
+            }
+            
+            function updateUnitUI(newUnit) {
+                // Update active button
+                unitButtons.forEach(btn => {
+                    const isActive = btn.dataset.unit === newUnit;
+                    btn.classList.toggle('active', isActive);
+                });
+                
+                // Toggle height inputs
+                document.getElementById('metric-height-group').style.display = newUnit === 'metric' ? 'block' : 'none';
+                document.getElementById('us-height-group').style.display = newUnit === 'us' ? 'block' : 'none';
+            }
+            
+            // Calculation function
+            document.getElementById('calculate-btn').addEventListener('click', function() {
+                clearErrors();
+                
+                // Validate all fields
+                let isValid = true;
+                
+                // Validate age
+                if (!validateNumberField('age', 'age-error', 15, 80)) {
+                    isValid = false;
+                }
+                
+                // Validate height and weight based on current unit
+                if (currentUnit === 'metric') {
+                    if (!validateNumberField('height-cm', 'height-cm-error', 100, 250)) {
+                        isValid = false;
+                    }
+                } else {
+                    if (!validateUsHeight()) {
+                        isValid = false;
+                    }
+                }
+                
+                if (!validateNumberField('weight', 'weight-error', 30, 300)) {
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    return;
+                }
+                
+                // Get input values
+                const age = parseFloat(document.getElementById('age').value);
+                const gender = document.querySelector('input[name="gender"]:checked').value;
+                const activity = parseFloat(document.getElementById('activity').value);
+                const goal = document.getElementById('goal').value;
+                let rate = parseFloat(document.getElementById('rate').value);
+                
+                // Get height and weight in metric units (cm and kg)
+                let height, weight;
+                
+                if (currentUnit === 'metric') {
+                    // Metric units - use values directly
+                    height = parseFloat(document.getElementById('height-cm').value);
+                    weight = parseFloat(document.getElementById('weight').value);
+                } else {
+                    // US units - convert to metric for calculations
+                    const feet = parseFloat(document.getElementById('height-ft').value) || 0;
+                    const inches = parseFloat(document.getElementById('height-in').value) || 0;
+                    height = feetInchesToCm(feet, inches);
+                    weight = lbsToKg(parseFloat(document.getElementById('weight').value));
+                }
+                
+                // Convert rate to kg if necessary (rate is always stored as kg in the calculation)
+                if (currentUnit === 'us') {
+                    rate = lbsToKg(rate);
+                }
+                
+                // Calculate BMR (Mifflin-St Jeor Equation) - always uses metric units
+                const bmr = gender === 'male' 
+                    ? 10 * weight + 6.25 * height - 5 * age + 5 
+                    : 10 * weight + 6.25 * height - 5 * age - 161;
+                
+                // Calculate TDEE (Total Daily Energy Expenditure)
+                const tdee = Math.round(bmr * activity);
+                
+                // Calculate goal calories
+                let goalCalories = tdee;
+                let goalText = '-';
+                
+                if (goal === 'lose') {
+                    goalCalories = tdee - (rate * 7700 / 7); // 1kg fat ≈ 7700 calories
+                    const displayRate = currentUnit === 'us' ? kgToLbs(rate).toFixed(1) : rate;
+                    const unit = currentUnit === 'us' ? 'lbs' : 'kg';
+                    goalText = `${Math.round(goalCalories)} calories/day (to lose ${displayRate} ${unit}/week)`;
+                } else if (goal === 'gain') {
+                    goalCalories = tdee + (rate * 7700 / 7);
+                    const displayRate = currentUnit === 'us' ? kgToLbs(rate).toFixed(1) : rate;
+                    const unit = currentUnit === 'us' ? 'lbs' : 'kg';
+                    goalText = `${Math.round(goalCalories)} calories/day (to gain ${displayRate} ${unit}/week)`;
+                }
+                
+                // Display results
+                document.getElementById('maintenance-calories').textContent = `${tdee} calories/day`;
+                document.getElementById('goal-calories').textContent = goalText;
+                
+                // Recommendations
+                let recommendation = '';
+                const calorieDifference = Math.abs(goalCalories - tdee);
+                
+                if (goal === 'lose' && calorieDifference > 1000) {
+                    recommendation = 'For sustainable weight loss, consider a smaller calorie deficit (250-500 calories).';
+                } else if (goal === 'gain' && calorieDifference > 500) {
+                    recommendation = 'For optimal muscle gain, consider a moderate surplus (250-500 calories).';
+                } else if (goal !== 'maintain') {
+                    recommendation = 'This calorie target should help you reach your goal at a healthy pace.';
+                } else {
+                    recommendation = 'Maintain your current calorie intake to stay at your current weight.';
+                }
+                
+                document.getElementById('recommendation').textContent = recommendation;
+                
+                // Show results
+                resultsCard.style.display = 'block';
+                resultsCard.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
