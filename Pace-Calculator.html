@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pace Calculator</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --border-color: #ddd;
+            --result-bg: #e8f4fc;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f5f5f5;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .intro {
+            max-width: 90%;
+            margin: 0 auto 30px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        .calculator-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .calculator {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 95%;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .inline-fields {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .inline-fields > div {
+            flex: 1;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .event-options {
+            margin: 25px 0;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+        }
+        
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: var(--result-bg);
+            border-radius: 6px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .result strong {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        .note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 6px;
+        }
+        
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 15px 0;
+                margin-bottom: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .intro {
+                font-size: 1rem;
+                margin-bottom: 20px;
+            }
+            
+            .calculator {
+                padding: 20px;
+                max-width: 100%;
+            }
+            
+            .inline-fields {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            input, select, button {
+                padding: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .calculator {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Pace Calculator</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <p class="intro">
+            Use this calculator to estimate pace, time, or distance for running, walking, and biking activities. 
+            Calculate your pace based on time and distance, or determine time/distance from your pace.
+        </p>
+        
+        <div class="calculator-container">
+            <div class="calculator">
+                <div class="form-group">
+                    <label for="calculation-type">Calculate:</label>
+                    <select id="calculation-type">
+                        <option value="pace">Pace (Time & Distance)</option>
+                        <option value="time">Time (Pace & Distance)</option>
+                        <option value="distance">Distance (Pace & Time)</option>
+                    </select>
+                </div>
+                
+                <div id="pace-inputs">
+                    <div class="form-group">
+                        <label for="time">Time (hh:mm:ss):</label>
+                        <input type="text" id="time" placeholder="00:50:25" value="00:50:25">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="distance">Distance:</label>
+                        <div class="inline-fields">
+                            <div>
+                                <input type="number" id="distance" placeholder="5" value="5">
+                            </div>
+                            <div>
+                                <select id="distance-unit">
+                                    <option value="miles">Miles</option>
+                                    <option value="kilometers">Kilometers</option>
+                                    <option value="meters">Meters</option>
+                                    <option value="yards">Yards</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="time-inputs" style="display: none;">
+                    <div class="form-group">
+                        <label for="pace">Pace (mm:ss per unit):</label>
+                        <input type="text" id="pace" placeholder="8:30">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time-distance">Distance:</label>
+                        <div class="inline-fields">
+                            <div>
+                                <input type="number" id="time-distance" placeholder="5">
+                            </div>
+                            <div>
+                                <select id="time-distance-unit">
+                                    <option value="miles">Miles</option>
+                                    <option value="kilometers">Kilometers</option>
+                                    <option value="meters">Meters</option>
+                                    <option value="yards">Yards</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="distance-inputs" style="display: none;">
+                    <div class="form-group">
+                        <label for="distance-pace">Pace (mm:ss per unit):</label>
+                        <input type="text" id="distance-pace" placeholder="8:30">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="distance-time">Time (hh:mm:ss):</label>
+                        <input type="text" id="distance-time" placeholder="00:50:25">
+                    </div>
+                </div>
+                
+                <div class="form-group event-options">
+                    <label for="event">-- Or pick an event --</label>
+                    <select id="event">
+                        <option value="">Select an event...</option>
+                        <option value="5k">5K Run</option>
+                        <option value="10k">10K Run</option>
+                        <option value="half-marathon">Half Marathon (13.1 miles)</option>
+                        <option value="marathon">Marathon (26.2 miles)</option>
+                        <option value="5miles">5 Miles</option>
+                        <option value="10miles">10 Miles</option>
+                    </select>
+                </div>
+                
+                <button id="calculate-btn">Calculate</button>
+                
+                <div id="result" class="result"></div>
+            </div>
+        </div>
+        
+        <p class="note">
+            Note: Placeholder zeros don't need to be entered in time/pace fields. For example, 
+            "5:3" can be entered instead of "00:05:03" for 5 minutes 3 seconds.
+        </p>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculationType = document.getElementById('calculation-type');
+            const paceInputs = document.getElementById('pace-inputs');
+            const timeInputs = document.getElementById('time-inputs');
+            const distanceInputs = document.getElementById('distance-inputs');
+            const eventSelect = document.getElementById('event');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resultDiv = document.getElementById('result');
+            
+            // Show/hide inputs based on calculation type
+            calculationType.addEventListener('change', function() {
+                paceInputs.style.display = 'none';
+                timeInputs.style.display = 'none';
+                distanceInputs.style.display = 'none';
+                
+                if (this.value === 'pace') {
+                    paceInputs.style.display = 'block';
+                } else if (this.value === 'time') {
+                    timeInputs.style.display = 'block';
+                } else if (this.value === 'distance') {
+                    distanceInputs.style.display = 'block';
+                }
+            });
+            
+            // Pre-fill distance when event is selected
+            eventSelect.addEventListener('change', function() {
+                if (!this.value) return;
+                
+                const events = {
+                    '5k': { distance: 5, unit: 'kilometers' },
+                    '10k': { distance: 10, unit: 'kilometers' },
+                    'half-marathon': { distance: 13.1, unit: 'miles' },
+                    'marathon': { distance: 26.2, unit: 'miles' },
+                    '5miles': { distance: 5, unit: 'miles' },
+                    '10miles': { distance: 10, unit: 'miles' }
+                };
+                
+                const selectedEvent = events[this.value];
+                document.getElementById('distance').value = selectedEvent.distance;
+                document.getElementById('distance-unit').value = selectedEvent.unit;
+                document.getElementById('time-distance').value = selectedEvent.distance;
+                document.getElementById('time-distance-unit').value = selectedEvent.unit;
+            });
+            
+            // Calculate button click handler
+            calculateBtn.addEventListener('click', function() {
+                const type = calculationType.value;
+                let result = '';
+                
+                if (type === 'pace') {
+                    const timeStr = document.getElementById('time').value;
+                    const distance = parseFloat(document.getElementById('distance').value);
+                    const unit = document.getElementById('distance-unit').value;
+                    
+                    if (!timeStr || isNaN(distance) || distance <= 0) {
+                        alert('Please enter valid time and distance');
+                        return;
+                    }
+                    
+                    const timeInSeconds = parseTimeToSeconds(timeStr);
+                    if (timeInSeconds <= 0) {
+                        alert('Please enter a valid time');
+                        return;
+                    }
+                    
+                    const paceInSeconds = timeInSeconds / distance;
+                    const paceFormatted = formatSecondsToPace(paceInSeconds);
+                    
+                    result = `Your pace is <strong>${paceFormatted} per ${unit}</strong>`;
+                } 
+                else if (type === 'time') {
+                    const paceStr = document.getElementById('pace').value;
+                    const distance = parseFloat(document.getElementById('time-distance').value);
+                    const unit = document.getElementById('time-distance-unit').value;
+                    
+                    if (!paceStr || isNaN(distance) || distance <= 0) {
+                        alert('Please enter valid pace and distance');
+                        return;
+                    }
+                    
+                    const paceInSeconds = parsePaceToSeconds(paceStr);
+                    if (paceInSeconds <= 0) {
+                        alert('Please enter a valid pace');
+                        return;
+                    }
+                    
+                    const totalSeconds = paceInSeconds * distance;
+                    const timeFormatted = formatSecondsToTime(totalSeconds);
+                    
+                    result = `Your time will be <strong>${timeFormatted}</strong> for ${distance} ${unit}`;
+                } 
+                else if (type === 'distance') {
+                    const paceStr = document.getElementById('distance-pace').value;
+                    const timeStr = document.getElementById('distance-time').value;
+                    
+                    if (!paceStr || !timeStr) {
+                        alert('Please enter valid pace and time');
+                        return;
+                    }
+                    
+                    const paceInSeconds = parsePaceToSeconds(paceStr);
+                    const timeInSeconds = parseTimeToSeconds(timeStr);
+                    
+                    if (paceInSeconds <= 0 || timeInSeconds <= 0) {
+                        alert('Please enter valid pace and time');
+                        return;
+                    }
+                    
+                    const distance = timeInSeconds / paceInSeconds;
+                    const unit = document.getElementById('time-distance-unit').value || 'unit';
+                    
+                    result = `Your distance will be <strong>${distance.toFixed(2)} ${unit}</strong>`;
+                }
+                
+                resultDiv.innerHTML = result;
+                resultDiv.style.display = 'block';
+            });
+            
+            // Helper functions
+            function parseTimeToSeconds(timeStr) {
+                // Handle formats like hh:mm:ss, mm:ss, or m:ss
+                const parts = timeStr.split(':').map(part => parseInt(part) || 0);
+                
+                let seconds = 0;
+                if (parts.length === 3) { // hh:mm:ss
+                    seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+                } else if (parts.length === 2) { // mm:ss
+                    seconds = parts[0] * 60 + parts[1];
+                } else if (parts.length === 1) { // ss
+                    seconds = parts[0];
+                }
+                
+                return seconds;
+            }
+            
+            function parsePaceToSeconds(paceStr) {
+                // Handle formats like mm:ss or m:ss
+                const parts = paceStr.split(':').map(part => parseInt(part) || 0);
+                
+                let seconds = 0;
+                if (parts.length === 2) { // mm:ss
+                    seconds = parts[0] * 60 + parts[1];
+                } else if (parts.length === 1) { // ss
+                    seconds = parts[0];
+                }
+                
+                return seconds;
+            }
+            
+            function formatSecondsToPace(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = Math.round(seconds % 60);
+                return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            }
+            
+            function formatSecondsToTime(totalSeconds) {
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = Math.round(totalSeconds % 60);
+                
+                return [
+                    hours > 0 ? `${hours}:` : '',
+                    `${minutes < 10 && hours > 0 ? '0' : ''}${minutes}:`,
+                    `${seconds < 10 ? '0' : ''}${seconds}`
+                ].join('');
+            }
+        });
+    </script>
+</body>
+</html>
