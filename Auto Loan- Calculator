@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Loan Calculator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4cc9f0;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --success-color: #4bb543;
+      --error-color: #dc3545;
+    }
+    
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--dark-color);
+    }
+    
+    .calculator-container {
+      max-width: 1290px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    
+    .calculator-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    
+    .calculator-header h2 {
+      font-weight: 700;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    
+    .calculator-header i {
+      margin-right: 10px;
+    }
+    
+    .calculator-body {
+      padding: 2rem;
+    }
+    
+    .input-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    
+    .form-label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark-color);
+      display: flex;
+      align-items: center;
+    }
+    
+    .form-label i {
+      margin-right: 8px;
+      color: var(--primary-color);
+    }
+    
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e0e0e0;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+    }
+    
+    .form-control.is-invalid {
+      border-color: var(--error-color);
+    }
+    
+    .invalid-feedback {
+      color: var(--error-color);
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    
+    .results-section {
+      background-color: #f8faff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border: 1px solid #e0e8ff;
+    }
+    
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e0e8ff;
+    }
+    
+    .result-item:last-child {
+      border-bottom: none;
+    }
+    
+    .result-label {
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+    
+    .result-value {
+      font-weight: 700;
+      color: var(--primary-color);
+      font-size: 1.1rem;
+    }
+    
+    .btn-calculate {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 1rem;
+      transition: all 0.3s ease;
+      color: white;
+    }
+    
+    .btn-calculate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .btn-action {
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-clear {
+      background-color: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      color: var(--dark-color);
+    }
+    
+    .btn-clear:hover {
+      background-color: #e9ecef;
+    }
+    
+    .btn-export {
+      background-color: var(--dark-color);
+      color: white;
+      border: none;
+    }
+    
+    .btn-export:hover {
+      background-color: #343a40;
+      color: white;
+    }
+    
+    .form-check {
+      margin: 1.5rem 0;
+    }
+    
+    .form-check-input {
+      width: 1.2em;
+      height: 1.2em;
+      margin-top: 0.1em;
+    }
+    
+    .form-check-label {
+      font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+      .calculator-container {
+        margin: 1rem;
+        border-radius: 12px;
+      }
+      
+      .calculator-body {
+        padding: 1.5rem;
+      }
+      
+      .input-section {
+        grid-template-columns: 1fr;
+      }
+      
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+      
+      .calculator-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .form-control, .form-select {
+        padding: 0.65rem 0.9rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .calculator-header h2 {
+        font-size: 1.3rem;
+      }
+      
+      .calculator-body {
+        padding: 1rem;
+      }
+      
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      
+      .results-section {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator-container">
+    <div class="calculator-header">
+      <h2><i class="fas fa-car"></i> Auto Loan Calculator</h2>
+    </div>
+
+    <div class="calculator-body">
+      <div class="input-section">
+        <!-- 1. Select Country -->
+        <div class="form-group">
+          <label for="country" class="form-label"><i class="fas fa-globe"></i> Country</label>
+          <select id="country" class="form-select" onchange="updateStates(); updateCurrency()">
+            <option value="">Select Country</option>
+            <option value="USA">United States</option>
+            <option value="Canada">Canada</option>
+            <option value="UK">United Kingdom</option>
+            <option value="India">India</option>
+          </select>
+          <div class="invalid-feedback">Please select a country.</div>
+        </div>
+
+        <!-- 2. Select State -->
+        <div class="form-group">
+          <label for="state" class="form-label"><i class="fas fa-map-marker-alt"></i> State/Region</label>
+          <select id="state" class="form-select" onchange="updateSalesTax()">
+            <option value="">Select State/Region</option>
+          </select>
+          <div class="invalid-feedback">Please select a state/region.</div>
+        </div>
+
+        <!-- 3. Auto Price -->
+        <div class="form-group">
+          <label for="autoPrice" class="form-label"><i class="fas fa-tag"></i> Vehicle Price</label>
+          <div class="input-group">
+            <span class="input-group-text currency-symbol">$</span>
+            <input type="number" id="autoPrice" class="form-control" min="0" step="0.01" value="30000" />
+          </div>
+          <div class="invalid-feedback">Please enter a valid vehicle price.</div>
+        </div>
+
+        <!-- 4. Loan Term -->
+        <div class="form-group">
+          <label for="loanTerm" class="form-label"><i class="fas fa-calendar-alt"></i> Loan Term (Months)</label>
+          <input type="number" id="loanTerm" class="form-control" min="1" step="1" value="60" />
+          <div class="invalid-feedback">Please enter a valid loan term (at least 1 month).</div>
+        </div>
+
+        <!-- 5. Interest Rate -->
+        <div class="form-group">
+          <label for="interestRate" class="form-label"><i class="fas fa-percentage"></i> Interest Rate</label>
+          <div class="input-group">
+            <input type="number" id="interestRate" class="form-control" min="0" step="0.01" value="5" />
+            <span class="input-group-text">%</span>
+          </div>
+          <div class="invalid-feedback">Please enter a valid interest rate.</div>
+        </div>
+
+        <!-- 6. Down Payment -->
+        <div class="form-group">
+          <label for="downPayment" class="form-label"><i class="fas fa-hand-holding-usd"></i> Down Payment</label>
+          <div class="input-group">
+            <span class="input-group-text currency-symbol">$</span>
+            <input type="number" id="downPayment" class="form-control" min="0" terminals step="0.01" value="5000" />
+          </div>
+          <div class="invalid-feedback">Please enter a valid down payment.</div>
+        </div>
+
+        <!-- 7. Trade-in Value -->
+        <div class="form-group">
+          <label for="tradeIn" class="form-label"><i class="fas fa-exchange-alt"></i> Trade-in Value</label>
+          <div class="input-group">
+            <span class="input-group-text currency-symbol">$</span>
+            <input type="number" id="tradeIn" class="form-control" min="0" step="0.01" value="0" />
+          </div>
+          <div class="invalid-feedback">Please enter a valid trade-in value.</div>
+        </div>
+
+        <!-- 8. Fees -->
+        <div class="form-group">
+          <label for="titleFees" class="form-label"><i class="fas fa-file-invoice-dollar"></i> Fees & Registration</label>
+          <div class="input-group">
+            <span class="input-group-text currency-symbol">$</span>
+            <input type="number" id="titleFees" class="form-control" min="0" step="0.01" value="2000" />
+          </div>
+          <div class="invalid-feedback">Please enter valid fees.</div>
+        </div>
+
+        <!-- 9. Sales Tax -->
+        <div class="form-group">
+          <label for="salesTax" class="form-label"><i class="fas fa-receipt"></i> Sales Tax</label>
+          <div class="input-group">
+            <input type="text" id="salesTax" class="form-control" value="0" readonly />
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Include Fees in Loan -->
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="includeFees" />
+        <label class="form-check-label" for="includeFees">
+          Include all fees in the loan amount
+        </label>
+      </div>
+
+      <!-- Calculate Button -->
+      <button class="btn btn-calculate" onclick="calculateLoan()">
+        <i class="fas fa-calculator"></i> Calculate Loan
+      </button>
+
+      <!-- Results Section -->
+      <div class="results-section">
+        <div class="result-item">
+          <span class="result-label">Country:</span>
+          <span class="result-value" id="selectedCountry">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">State/Region:</span>
+          <span class="result-value" id="selectedState">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Loan Amount:</span>
+          <span class="result-value"><span class="currency-symbol">$</span><span id="loanAmount">-</span></span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Monthly Payment:</span>
+          <span class="result-value"><span class="currency-symbol">$</span><span id="monthlyPayment">-</span></span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Total Interest:</span>
+          <span class="result-value"><span class="currency-symbol">$</span><span id="totalInterest">-</span></span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Total Cost:</span>
+          <span class="result-value"><span class="currency-symbol">$</span><span id="totalCost">-</span></span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-clear" onclick="clearFields()">
+          <i class="fas fa-eraser"></i> Clear
+        </button>
+        <button class="btn btn-export" onclick="exportResultsPDF()">
+          <i class="fas fa-file-pdf"></i> Export PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const currencySymbols = {
+      "USA": "$",
+      "Canada": "C$",
+      "UK": "£",
+      "India": "₹"
+    };
+
+    function updateStates() {
+      const country = document.getElementById("country").value;
+      const stateSelect = document.getElementById("state");
+      stateSelect.innerHTML = "<option value=''>Select State/Region</option>";
+      const states = {
+        "USA": { "California": 7.25, "Texas": 6.25, "New York": 8.88, "Florida": 6.00 },
+        "Canada": { "Ontario": 13, "Quebec": 14.975, "British Columbia": 12 },
+        "UK": { "England": 20, "Scotland": 20, "Wales": 20, "Northern Ireland": 20 },
+        "India": { "Maharashtra": 18, "Delhi": 18, "Karnataka": 18, "Tamil Nadu": 18 }
+      };
+      if (country in states) {
+        for (let state in states[country]) {
+          const option = document.createElement("option");
+          option.value = states[country][state];
+          option.textContent = state;
+          stateSelect.appendChild(option);
+        }
+      }
+      updateSalesTax();
+    }
+
+    function updateSalesTax() {
+      const stateSelect = document.getElementById("state");
+      const selectedState = stateSelect.options[stateSelect.selectedIndex].text;
+      document.getElementById("salesTax").value = stateSelect.value || "0";
+      document.getElementById("selectedState").innerText = selectedState || "-";
+    }
+
+    function updateCurrency() {
+      const country = document.getElementById("country").value;
+      const symbol = currencySymbols[country] || "$";
+      document.querySelectorAll(".currency-symbol").forEach(el => {
+        el.innerText = symbol;
+      });
+    }
+
+    function validateInputs() {
+      let isValid = true;
+      const inputs = [
+        { id: "country", feedback: "Please select a country." },
+        { id: "state", feedback: "Please select a state/region." },
+        { id: "autoPrice", feedback: "Please enter a valid vehicle price.", min: 0 },
+        { id: "loanTerm", feedback: "Please enter a valid loan term (at least 1 month).", min: 1 },
+        { id: "interestRate", feedback: "Please enter a valid interest rate.", min: 0 },
+        { id: "downPayment", feedback: "Please enter a valid down payment.", min: 0 },
+        { id: "tradeIn", feedback: "Please enter a valid trade-in value.", min: 0 },
+        { id: "titleFees", feedback: "Please enter valid fees.", min: 0 }
+      ];
+
+      inputs.forEach(input => {
+        const element = document.getElementById(input.id);
+        const value = element.value;
+        let invalid = false;
+
+        if (input.id === "country" || input.id === "state") {
+          if (!value) {
+            invalid = true;
+          }
+        } else {
+          const numValue = parseFloat(value);
+          if (isNaN(numValue) || numValue < input.min) {
+            invalid = true;
+          }
+        }
+
+        if (invalid) {
+          element.classList.add("is-invalid");
+          isValid = false;
+        } else {
+          element.classList.remove("is-invalid");
+        }
+      });
+
+      return isValid;
+    }
+
+    function calculateLoan() {
+      if (!validateInputs()) {
+        return;
+      }
+
+      const country = document.getElementById("country").value;
+      const autoPrice = parseFloat(document.getElementById("autoPrice").value);
+      const downPayment = parseFloat(document.getElementById("downPayment").value);
+      const tradeIn = parseFloat(document.getElementById("tradeIn").value);
+      const titleFees = parseFloat(document.getElementById("titleFees").value);
+      const salesTaxRate = parseFloat(document.getElementById("salesTax").value);
+      const loanTerm = parseInt(document.getElementById("loanTerm").value);
+      const interestRate = parseFloat(document.getElementById("interestRate").value);
+      const includeFees = document.getElementById("includeFees").checked;
+
+      // Calculate taxable amount
+      const taxableAmount = autoPrice - tradeIn;
+      const salesTax = taxableAmount * (salesTaxRate / 100);
+
+      // Calculate loan amount
+      let loanAmount = autoPrice - downPayment - tradeIn + salesTax;
+      if (includeFees) {
+        loanAmount += titleFees;
+      }
+
+      // Amortization formula: P = [r*PV] / [1 - (1 + r)^-n]
+      const monthlyRate = interestRate / 100 / 12;
+      const denominator = 1 - Math.pow(1 + monthlyRate, -loanTerm);
+      const monthlyPayment = loanAmount * monthlyRate / (denominator || 1); // Avoid division by zero
+      const totalPayments = monthlyPayment * loanTerm;
+      const totalInterest = totalPayments - loanAmount;
+      const totalCost = autoPrice + salesTax + titleFees + totalInterest - tradeIn;
+
+      // Update results
+      document.getElementById("selectedCountry").innerText = country || "-";
+      document.getElementById("loanAmount").innerText = loanAmount.toFixed(2);
+      document.getElementById("monthlyPayment").innerText = monthlyPayment.toFixed(2);
+      document.getElementById("totalInterest").innerText = totalInterest.toFixed(2);
+      document.getElementById("totalCost").innerText = totalCost.toFixed(2);
+      updateCurrency();
+    }
+
+    function clearFields() {
+      document.getElementById("country").value = "";
+      document.getElementById("state").innerHTML = "<option value=''>Select State/Region</option>";
+      document.getElementById("autoPrice").value = "30000";
+      document.getElementById("loanTerm").value = "60";
+      document.getElementById("interestRate").value = "5";
+      document.getElementById("downPayment").value = "5000";
+      document.getElementById("tradeIn").value = "0";
+      document.getElementById("titleFees").value = "2000";
+      document.getElementById("salesTax").value = "0";
+      document.getElementById("includeFees").checked = false;
+      document.getElementById("selectedCountry").innerText = "-";
+      document.getElementById("selectedState").innerText = "-";
+      document.getElementById("loanAmount").innerText = "-";
+      document.getElementById("monthlyPayment").innerText = "-";
+      document.getElementById("totalInterest").innerText = "-";
+      document.getElementById("totalCost").innerText = "-";
+      document.querySelectorAll(".form-control, .form-select").forEach(el => {
+        el.classList.remove("is-invalid");
+      });
+      updateCurrency();
+    }
+
+    function exportResultsPDF() {
+      const country = document.getElementById("selectedCountry").innerText;
+      const state = document.getElementById("selectedState").innerText;
+      const autoPrice = document.getElementById("autoPrice").value;
+      const downPayment = document.getElementById("downPayment").value;
+      const tradeIn = document.getElementById("tradeIn").value;
+      const titleFees = document.getElementById("titleFees").value;
+      const salesTax = document.getElementById("salesTax").value;
+      const loanTerm = document.getElementById("loanTerm").value;
+      const interestRate = document.getElementById("interestRate").value;
+      const includeFees = document.getElementById("includeFees").checked;
+      const loanAmount = document.getElementById("loanAmount").innerText;
+      const monthlyPayment = document.getElementById("monthlyPayment").innerText;
+      const totalInterest = document.getElementById("totalInterest").innerText;
+      const totalCost = document.getElementById("totalCost").innerText;
+      const currencySymbol = document.querySelector(".currency-symbol").innerText;
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Header
+      doc.setFontSize(16);
+      doc.setTextColor(67, 97, 238);
+      doc.text("Auto Loan Calculator Results", 105, 20, { align: "center" });
+
+      // Divider
+      doc.setDrawColor(67, 97, 238);
+      doc.setLineWidth(0.5);
+      doc.line(20, 25, 190, 25);
+
+      // Content
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(12);
+      let y = 40;
+      doc.text(`Country: ${country}`, 20, y);
+      doc.text(`State/Region: ${state}`, 20, (y += 10));
+      doc.text(`Vehicle Price: ${currencySymbol}${parseFloat(autoPrice).toFixed(2)}`, 20, (y += 10));
+      doc.text(`Down Payment: ${currencySymbol}${parseFloat(downPayment).toFixed(2)}`, 20, (y += 10));
+      doc.text(`Trade-in Value: ${currencySymbol}${parseFloat(tradeIn).toFixed(2)}`, 20, (y += 10));
+      doc.text(`Fees & Registration: ${currencySymbol}${parseFloat(titleFees).toFixed(2)}`, 20, (y += 10));
+      doc.text(`Sales Tax Rate: ${salesTax}%`, 20, (y += 10));
+      doc.text(`Loan Term: ${loanTerm} months`, 20, (y += 10));
+      doc.text(`Interest Rate: ${interestRate}%`, 20, (y += 10));
+      doc.text(`Include Fees in Loan: ${includeFees ? "Yes" : "No"}`, 20, (y += 10));
+      doc.text(`Loan Amount: ${currencySymbol}${loanAmount}`, 20, (y += 10));
+      doc.text(`Monthly Payment: ${currencySymbol}${monthlyPayment}`, 20, (y += 10));
+      doc.text(`Total Interest: ${currencySymbol}${totalInterest}`, 20, (y += 10));
+      doc.text(`Total Cost: ${currencySymbol}${totalCost}`, 20, (y += 10));
+
+      // Footer
+      doc.setFontSize(10);
+      doc.setTextColor(150, 150, 150);
+      doc.text("Generated by Auto Loan Calculator", 105, 280, { align: "center" });
+
+      doc.save("auto_loan_calculator_results.pdf");
+    }
+  </script>
+</body>
+</html>
