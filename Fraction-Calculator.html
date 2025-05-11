@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraction Calculator</title>
+    <style>
+        :root {
+            --primary-color: #007BFF;
+            --primary-hover: #0056b3;
+            --secondary-color: #ffffff;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --background-color: #f8f9fa;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        
+        .description {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        .calculator {
+            background-color: var(--secondary-color);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .fraction-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .fraction-option {
+            padding: 12px;
+            background-color: #f1f3f5;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            min-width: 80px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .fraction-option.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .fraction-option:hover {
+            background-color: var(--primary-hover);
+            color: white;
+        }
+        
+        .mixed-checkbox {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mixed-checkbox input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .operator-selector {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .operator-selector select {
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 220px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        
+        .fraction-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .fraction-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        input {
+            width: 70px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .whole-number {
+            display: none;
+            width: 50px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        button {
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            flex: 1;
+            transition: background-color 0.3s ease;
+        }
+        
+        #calculate {
+            background-color: var(--primary-color);
+        }
+        
+        #calculate:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        #clear {
+            background-color: #dc3545;
+        }
+        
+        #clear:hover {
+            background-color: #c82333;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f1ff;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            display: none;
+            word-break: break-word;
+        }
+        
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .fraction-option {
+                min-width: calc(50% - 5px);
+                font-size: 0.85rem;
+            }
+            
+            input {
+                width: 60px;
+                padding: 8px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .operator-selector select {
+                max-width: 100%;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            input {
+                width: 50px;
+            }
+            
+            .fraction-option {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fraction Calculator</h1>
+        <p class="description">Perform calculations with up to four fractions or mixed numbers.</p>
+        
+        <div class="calculator">
+            <h2>Fractions Calculator</h2>
+            <div class="mixed-checkbox">
+                <label>
+                    <input type="checkbox" id="mixedNumbers"> Mixed Numbers
+                </label>
+            </div>
+            
+            <div class="fraction-options">
+                <div class="fraction-option" data-count="1">1 Fraction</div>
+                <div class="fraction-option active" data-count="2">2 Fractions</div>
+                <div class="fraction-option" data-count="3">3 Fractions</div>
+                <div class="fraction-option" data-count="4">4 Fractions</div>
+            </div>
+            
+            <div class="operator-selector">
+                <select id="operation">
+                    <option value="+">+ Addition</option>
+                    <option value="-">- Subtraction</option>
+                    <option value="*">× Multiplication</option>
+                    <option value="/">÷ Division</option>
+                </select>
+            </div>
+            
+            <div class="fraction-inputs">
+                <!-- Fraction 1 -->
+                <div class="fraction-row fraction-1">
+                    <input type="number" class="whole-number" id="whole1" placeholder="0" min="0">
+                    <input type="number" class="numerator" id="numerator1" placeholder="1">
+                    <span>/</span>
+                    <input type="number" class="denominator" id="denominator1" placeholder="2" min="1">
+                </div>
+                
+                <!-- Fraction 2 -->
+                <div class="fraction-row fraction-2">
+                    <input type="number" class="whole-number" id="whole2" placeholder="0" min="0">
+                    <input type="number" class="numerator" id="numerator2" placeholder="3">
+                    <span>/</span>
+                    <input type="number" class="denominator" id="denominator2" placeholder="4" min="1">
+                </div>
+                
+                <!-- Fraction 3 (hidden by default) -->
+                <div class="fraction-row fraction-3" style="display: none;">
+                    <input type="number" class="whole-number" id="whole3" placeholder="0" min="0">
+                    <input type="number" class="numerator" id="numerator3" placeholder="0">
+                    <span>/</span>
+                    <input type="number" class="denominator" id="denominator3" placeholder="1" min="1">
+                </div>
+                
+                <!-- Fraction 4 (hidden by default) -->
+                <div class="fraction-row fraction-4" style="display: none;">
+                    <input type="number" class="whole-number" id="whole4" placeholder="0" min="0">
+                    <input type="number" class="numerator" id="numerator4" placeholder="0">
+                    <span>/</span>
+                    <input type="number" class="denominator" id="denominator4" placeholder="1" min="1">
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="calculate">CALCULATE</button>
+                <button id="clear">CLEAR</button>
+            </div>
+            
+            <div class="result" id="result">
+                <div class="result-title">Result:</div>
+                <div id="resultValue"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const mixedNumbersCheckbox = document.getElementById('mixedNumbers');
+            const fractionOptions = document.querySelectorAll('.fraction-option');
+            const calculateBtn = document.getElementById('calculate');
+            const clearBtn = document.getElementById('clear');
+            const resultDiv = document.getElementById('result');
+            const resultValue = document.getElementById('resultValue');
+            const operationSelect = document.getElementById('operation');
+            
+            // Toggle mixed numbers display
+            mixedNumbersCheckbox.addEventListener('change', function() {
+                const wholeNumberInputs = document.querySelectorAll('.whole-number');
+                wholeNumberInputs.forEach(input => {
+                    input.style.display = this.checked ? 'block' : 'none';
+                });
+            });
+            
+            // Handle fraction count selection
+            fractionOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    fractionOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const count = parseInt(this.dataset.count);
+                    document.querySelectorAll('.fraction-row').forEach(row => {
+                        row.style.display = 'none';
+                    });
+                    
+                    for (let i = 1; i <= count; i++) {
+                        document.querySelector(`.fraction-${i}`).style.display = 'flex';
+                    }
+                });
+            });
+            
+            // Clear button functionality
+            clearBtn.addEventListener('click', function() {
+                document.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                });
+                
+                document.querySelectorAll('.fraction-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                document.querySelector('.fraction-option[data-count="2"]').classList.add('active');
+                
+                document.querySelectorAll('.fraction-row').forEach(row => {
+                    row.style.display = 'none';
+                });
+                document.querySelector('.fraction-1').style.display = 'flex';
+                document.querySelector('.fraction-2').style.display = 'flex';
+                
+                resultDiv.style.display = 'none';
+                operationSelect.value = '+';
+                mixedNumbersCheckbox.checked = false;
+                document.querySelectorAll('.whole-number').forEach(input => {
+                    input.style.display = 'none';
+                });
+            });
+            
+            // Calculate function
+            calculateBtn.addEventListener('click', function() {
+                const activeFractions = document.querySelector('.fraction-option.active').dataset.count;
+                const operation = operationSelect.value;
+                const isMixed = mixedNumbersCheckbox.checked;
+                
+                let fractions = [];
+                let hasError = false;
+                
+                for (let i = 1; i <= activeFractions; i++) {
+                    let whole = 0;
+                    let numerator = parseInt(document.getElementById(`numerator${i}`).value) || 0;
+                    let denominator = parseInt(document.getElementById(`denominator${i}`).value) || 1;
+                    
+                    if (denominator === 0) {
+                        resultValue.textContent = `Error: Denominator in fraction ${i} cannot be zero`;
+                        resultDiv.style.display = 'block';
+                        hasError = true;
+                        break;
+                    }
+                    
+                    if (isMixed) {
+                        whole = parseInt(document.getElementById(`whole${i}`).value) || 0;
+                    }
+                    
+                    if (isMixed && whole !== 0) {
+                        numerator = whole * denominator + (whole < 0 ? -Math.abs(numerator) : Math.abs(numerator));
+                    }
+                    
+                    fractions.push({ numerator, denominator });
+                }
+                
+                if (hasError) return;
+                
+                if (operation === '/' && fractions.slice(1).some(f => f.numerator === 0)) {
+                    resultValue.textContent = "Error: Cannot divide by zero";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                
+                let result = fractions[0];
+                for (let i = 1; i < fractions.length; i++) {
+                    result = operate(result, fractions[i], operation);
+                }
+                
+                result = simplifyFraction(result);
+                displayResult(result, isMixed);
+            });
+            
+            // Fraction operations
+            function operate(f1, f2, op) {
+                let numerator, denominator;
+                
+                switch(op) {
+                    case '+':
+                        denominator = lcm(f1.denominator, f2.denominator);
+                        numerator = f1.numerator * (denominator / f1.denominator) + 
+                                   f2.numerator * (denominator / f2.denominator);
+                        break;
+                    case '-':
+                        denominator = lcm(f1.denominator, f2.denominator);
+                        numerator = f1.numerator * (denominator / f1.denominator) - 
+                                   f2.numerator * (denominator / f2.denominator);
+                        break;
+                    case '*':
+                        numerator = f1.numerator * f2.numerator;
+                        denominator = f1.denominator * f2.denominator;
+                        break;
+                    case '/':
+                        numerator = f1.numerator * f2.denominator;
+                        denominator = f1.denominator * f2.numerator;
+                        if (denominator < 0) {
+                            numerator *= -1;
+                            denominator *= -1;
+                        }
+                        break;
+                }
+                
+                return { numerator, denominator };
+            }
+            
+            // Display result
+            function displayResult(result, isMixed) {
+                if (isMixed) {
+                    const whole = Math.trunc(result.numerator / result.denominator);
+                    const remainder = Math.abs(result.numerator % result.denominator);
+                    
+                    if (whole !== 0 && remainder !== 0) {
+                        resultValue.textContent = `${whole} ${remainder}/${result.denominator}`;
+                    } else if (whole !== 0) {
+                        resultValue.textContent = `${whole}`;
+                    } else if (remainder !== 0) {
+                        resultValue.textContent = `${remainder}/${result.denominator}`;
+                    } else {
+                        resultValue.textContent = "0";
+                    }
+                } else {
+                    if (result.denominator === 1) {
+                        resultValue.textContent = `${result.numerator}`;
+                    } else {
+                        resultValue.textContent = `${result.numerator}/${result.denominator}`;
+                    }
+                }
+                
+                resultDiv.style.display = 'block';
+            }
+            
+            // Helper functions
+            function gcd(a, b) {
+                return b ? gcd(b, a % b) : Math.abs(a);
+            }
+            
+            function lcm(a, b) {
+                return (a * b) / gcd(a, b);
+            }
+            
+            function simplifyFraction(fraction) {
+                if (fraction.numerator === 0) {
+                    return { numerator: 0, denominator: 1 };
+                }
+                
+                const commonDivisor = gcd(Math.abs(fraction.numerator), Math.abs(fraction.denominator));
+                return {
+                    numerator: fraction.numerator / commonDivisor,
+                    denominator: fraction.denominator / commonDivisor
+                };
+            }
+        });
+    </script>
+</body>
+</html>
