@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Calculator</title>
+    <style>
+        :root {
+            --primary-color: #0288D1; /* Bright blue */
+            --primary-hover: #0277BD;
+            --secondary-color: #4FC3F7; /* Lighter blue */
+            --secondary-hover: #29B6F6;
+            --danger-color: #EF5350; /* Red for errors */
+            --danger-hover: #E53935;
+            --bg-color: #E1F5FE; /* Light blue background */
+            --card-bg: #FFFFFF; /* White cards */
+            --text-color: #01579B; /* Dark blue text */
+            --border-color: #B3E5FC; /* Light blue border */
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+        
+        .calculator {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        
+        h1 {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+        
+        h2 {
+            color: var(--text-color);
+            margin-top: 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 1.5em;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+        
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+        
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            min-width: 80px;
+            flex: 1;
+        }
+        
+        label {
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        input[type="number"], input[type="datetime-local"], select {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #F5FAFE;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="number"]:focus, input[type="datetime-local"]:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        input[type="number"] {
+            text-align: center;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.1s;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #FFFFFF;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: #FFFFFF;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--secondary-hover);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: #FFFFFF;
+        }
+        
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+        
+        .result {
+            font-weight: 600;
+            font-size: 1.05em;
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #E1F5FE;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            word-break: break-word;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        p {
+            line-height: 1.6;
+            color: #0277BD;
+            font-size: 0.95em;
+        }
+        
+        @media (max-width: 768px) {
+            .input-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .input-field {
+                width: 100%;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .calculator {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.3em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            h2 {
+                font-size: 1.2em;
+            }
+            
+            .section {
+                padding: 12px;
+            }
+            
+            .calculator {
+                padding: 10px;
+            }
+            
+            input[type="number"], input[type="datetime-local"], select {
+                font-size: 0.9em;
+            }
+            
+            button {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="calculator">
+            <h1>Time Calculator</h1>
+            
+            <div class="section">
+                <h2>Add or Subtract Time Values</h2>
+                <p>This calculator can be used to "add" or "subtract" two time values. Input fields can be left blank, which will be taken as 0 by default.</p>
+                
+                <div class="input-row">
+                    <div class="input-field">
+                        <label for="day1">Day</label>
+                        <input type="number" id="day1" min="0" placeholder="0">
+                    </div>
+                    <div class="input-field">
+                        <label for="hour1">Hour</label>
+                        <input type="number" id="hour1" min="0" placeholder="0">
+                    </div>
+                    <div class="input-field">
+                        <label for="minute1">Minute</label>
+                        <input type="number" id="minute1" min="0" placeholder="0">
+                    </div>
+                    <div class="input-field">
+                        <label for="second1">Second</label>
+                        <input type="number" id="second1" min="0" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-field">
+                        <label for="operation">Operation</label>
+                        <select id="operation">
+                            <option value="add">Add (+)</option>
+                            <option value="subtract">Subtract (-)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-field">
+                        <label for="day2">Day</label>
+                        <input type="number" id="day2" min="0" placeholder="0">
+                    </div>
+                    <div class="input-field">
+                        <label for="hour2">Hour</label>
+                        <input type="number" id="hour2" min="0" placeholder="0">
+                    </div>
+                    <div class="input-field">
+                        <label for="minute2">Minute</label>
+                        <input type="number" id="minute2" min="0" placeholder="0">
+                    </div>
+                    <div class="input-field">
+                        <label for="second2">Second</label>
+                        <input type="number" id="second2" min="0" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="calculateTime()">Calculate</button>
+                    <button class="btn-danger" onclick="clearTimeResults()">Clear Results</button>
+                </div>
+                
+                <div class="result" id="timeResult">
+                    Result will appear here
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Add or Subtract Time from a Date</h2>
+                <p>Use this calculator to add or subtract time (days, hours, minutes, seconds) from a starting time and date. The result will be the new time and date based on the subtracted or added period of time.</p>
+                
+                <div class="input-group">
+                    <div class="input-field" style="flex-grow: 1;">
+                        <label for="startDate">Start Time</label>
+                        <input type="datetime-local" id="startDate">
+                    </div>
+                    <button class="btn-secondary" onclick="setNow()">Now</button>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-field">
+                        <label for="dateOperation">Operation</label>
+                        <select id="dateOperation">
+                            <option value="add">Add (+)</option>
+                            <option value="subtract">Subtract (-)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-field">
+                        <label for="addDay">Day</label>
+                        <input type="number" id="addDay" min="0" placeholder="0">
+                    </div>
+                    <div class="input-field">
+                        <label for="addHour">Hour</label>
+                        <input type="number" id="addHour" min="0" placeholder="0">
+                    </div>
+                    <div class="input-field">
+                        <label for="addMinute">Minute</label>
+                        <input type="number" id="addMinute" min="0" placeholder="0">
+                    </div>
+                    <div class="input-field">
+                        <label for="addSecond">Second</label>
+                        <input type="number" id="addSecond" min="0" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="calculateDateTime()">Calculate</button>
+                    <button class="btn-danger" onclick="clearDateResults()">Clear Results</button>
+                </div>
+                
+                <div class="result" id="dateResult">
+                    Result will appear here
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateTime() {
+            const day1 = parseInt(document.getElementById('day1').value) || 0;
+            const hour1 = parseInt(document.getElementById('hour1').value) || 0;
+            const minute1 = parseInt(document.getElementById('minute1').value) || 0;
+            const second1 = parseInt(document.getElementById('second1').value) || 0;
+            
+            const day2 = parseInt(document.getElementById('day2').value) || 0;
+            const hour2 = parseInt(document.getElementById('hour2').value) || 0;
+            const minute2 = parseInt(document.getElementById('minute2').value) || 0;
+            const second2 = parseInt(document.getElementById('second2').value) || 0;
+            
+            const operation = document.getElementById('operation').value;
+            
+            let totalSeconds1 = day1 * 86400 + hour1 * 3600 + minute1 * 60 + second1;
+            let totalSeconds2 = day2 * 86400 + hour2 * 3600 + minute2 * 60 + second2;
+            
+            let resultSeconds;
+            if (operation === 'add') {
+                resultSeconds = totalSeconds1 + totalSeconds2;
+            } else {
+                resultSeconds = totalSeconds1 - totalSeconds2;
+            }
+            
+            if (resultSeconds < 0) {
+                document.getElementById('timeResult').textContent = "Error: Negative time result";
+                document.getElementById('timeResult').style.borderLeft = "4px solid var(--danger-color)";
+                document.getElementById('timeResult').style.backgroundColor = "#ffebee";
+                return;
+            }
+            
+            const days = Math.floor(resultSeconds / 86400);
+            resultSeconds %= 86400;
+            const hours = Math.floor(resultSeconds / 3600);
+            resultSeconds %= 3600;
+            const minutes = Math.floor(resultSeconds / 60);
+            const seconds = resultSeconds % 60;
+            
+            document.getElementById('timeResult').textContent = 
+                `Result: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+            document.getElementById('timeResult').style.borderLeft = "4px solid var(--primary-color)";
+            document.getElementById('timeResult').style.backgroundColor = "#E1F5FE";
+        }
+        
+        function clearTimeResults() {
+            document.getElementById('timeResult').textContent = "Result will appear here";
+            document.getElementById('timeResult').style.borderLeft = "4px solid var(--primary-color)";
+            document.getElementById('timeResult').style.backgroundColor = "#E1F5FE";
+            document.getElementById('day1').value = '';
+            document.getElementById('hour1').value = '';
+            document.getElementById('minute1').value = '';
+            document.getElementById('second1').value = '';
+            document.getElementById('day2').value = '';
+            document.getElementById('hour2').value = '';
+            document.getElementById('minute2').value = '';
+            document.getElementById('second2').value = '';
+        }
+        
+        function setNow() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            document.getElementById('startDate').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+        
+        function calculateDateTime() {
+            const startDateStr = document.getElementById('startDate').value;
+            if (!startDateStr) {
+                document.getElementById('dateResult').textContent = "Error: Please enter a start date and time";
+                document.getElementById('dateResult').style.borderLeft = "4px solid var(--danger-color)";
+                document.getElementById('dateResult').style.backgroundColor = "#ffebee";
+                return;
+            }
+            
+            const startDate = new Date(startDateStr);
+            
+            const addDay = parseInt(document.getElementById('addDay').value) || 0;
+            const addHour = parseInt(document.getElementById('addHour').value) || 0;
+            const addMinute = parseInt(document.getElementById('addMinute').value) || 0;
+            const addSecond = parseInt(document.getElementById('addSecond').value) || 0;
+            
+            const operation = document.getElementById('dateOperation').value;
+            
+            let totalMilliseconds = addSecond * 1000 + addMinute * 60000 + addHour * 3600000 + addDay * 86400000;
+            
+            let resultDate;
+            if (operation === 'add') {
+                resultDate = new Date(startDate.getTime() + totalMilliseconds);
+            } else {
+                resultDate = new Date(startDate.getTime() - totalMilliseconds);
+            }
+            
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                timeZoneName: 'short'
+            };
+            
+            document.getElementById('dateResult').textContent = 
+                "Result: " + resultDate.toLocaleString(undefined, options);
+            document.getElementById('dateResult').style.borderLeft = "4px solid var(--primary-color)";
+            document.getElementById('dateResult').style.backgroundColor = "#E1F5FE";
+        }
+        
+        function clearDateResults() {
+            document.getElementById('dateResult').textContent = "Result will appear here";
+            document.getElementById('dateResult').style.borderLeft = "4px solid var(--primary-color)";
+            document.getElementById('dateResult').style.backgroundColor = "#E1F5FE";
+            document.getElementById('startDate').value = '';
+            document.getElementById('addDay').value = '';
+            document.getElementById('addHour').value = '';
+            document.getElementById('addMinute').value = '';
+            document.getElementById('addSecond').value = '';
+            document.getElementById('dateOperation').value = 'add';
+        }
+    </script>
+</body>
+</html>
