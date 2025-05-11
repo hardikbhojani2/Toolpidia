@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Calculator</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow-color: rgba(0,0,0,0.1);
+            --container-width: 98%;
+            --input-padding: 12px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            padding: 20px 0;
+        }
+        
+        .container {
+            width: var(--container-width);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        h1 {
+            color: var(--dark-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 2.2rem;
+        }
+        
+        .description {
+            background-color: #e9f7fe;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary-color);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        
+        .calculator-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .currency-section {
+            flex: 0 0 200px;
+        }
+        
+        .calculator-section {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            background-color: var(--light-color);
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            color: #555;
+            transition: all 0.3s;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+            font-size: 1rem;
+        }
+        
+        .tab:last-child {
+            margin-right: 0;
+        }
+        
+        .tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+            background-color: white;
+            border-radius: 0 8px 8px 8px;
+            box-shadow: 0 3px 15px var(--shadow-color);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            flex: 1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 1rem;
+        }
+        
+        input[type="number"], select {
+            width: 100%;
+            padding: var(--input-padding);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input[type="number"]:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            flex: 1;
+            transition: all 0.2s;
+        }
+        
+        .calculate-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .calculate-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .clear-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .payment-amount {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+        }
+        
+        .summary {
+            margin-top: 25px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+        
+        .summary p {
+            margin: 10px 0;
+            font-size: 1.05rem;
+        }
+        
+        .chart-container {
+            display: flex;
+            margin: 30px 0;
+            height: 30px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+        
+        .principal {
+            background-color: var(--success-color);
+        }
+        
+        .interest {
+            background-color: var(--danger-color);
+        }
+        
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 1rem;
+            color: #555;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            font-size: 0.95rem;
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e9f7fe;
+        }
+        
+        .schedule-toggle {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .schedule-btn {
+            padding: 12px 20px;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .schedule-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .schedule-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .currency-selector {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px var(--shadow-color);
+            margin-bottom: 20px;
+        }
+        
+        .currency-selector label {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .currency-selector select {
+            padding: 12px;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .calculator-container {
+                flex-direction: column;
+            }
+            
+            .currency-section {
+                flex: 1;
+            }
+            
+            .input-row {
+                flex-wrap: wrap;
+            }
+            
+            .input-group {
+                flex: 1 1 45%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                padding: 0 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tab {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
+            .input-group {
+                flex: 1 1 100%;
+            }
+            
+            .payment-amount {
+                font-size: 1.5rem;
+            }
+            
+            th, td {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                border-radius: 0;
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .tab-content {
+                border-radius: 0 0 8px 8px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .schedule-toggle {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Calculator</h1>
+        <div class="description">
+            <p>The Payment Calculator can determine the monthly payment amount or loan term for a fixed interest loan. Use the "Fixed Term" tab to calculate the monthly payment of a fixed-term loan. Use the "Fixed Payments" tab to calculate the time to pay off a loan with a fixed monthly payment.</p>
+        </div>
+        
+        <div class="calculator-container">
+            <div class="currency-section">
+                <div class="currency-selector">
+                    <label for="currency">Currency:</label>
+                    <select id="currency" onchange="updateCurrency()">
+                        <option value="USD" data-symbol="$">US Dollar ($)</option>
+                        <option value="EUR" data-symbol="€">Euro (€)</option>
+                        <option value="GBP" data-symbol="£">British Pound (£)</option>
+                        <option value="JPY" data-symbol="¥">Japanese Yen (¥)</option>
+                        <option value="CAD" data-symbol="$">Canadian Dollar ($)</option>
+                        <option value="AUD" data-symbol="$">Australian Dollar ($)</option>
+                        <option value="INR" data-symbol="₹">Indian Rupee (₹)</option>
+                        <option value="CNY" data-symbol="¥">Chinese Yuan (¥)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <div class="tabs">
+                    <button class="tab active" onclick="openTab(event, 'fixed-term')">Fixed Term</button>
+                    <button class="tab" onclick="openTab(event, 'fixed-payments')">Fixed Payments</button>
+                </div>
+                
+                <div id="fixed-term" class="tab-content active">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="loan-amount">Loan Amount</label>
+                            <input type="number" id="loan-amount" value="200000" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="loan-term">Loan Term (years)</label>
+                            <input type="number" id="loan-term" value="15" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="interest-rate">Interest Rate (%)</label>
+                            <input type="number" id="interest-rate" value="5" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="calculate-btn" onclick="calculateFixedTerm()">Calculate Monthly Payment</button>
+                        <button class="clear-btn" onclick="clearFixedTermResults()">Clear Results</button>
+                    </div>
+                    
+                    <div id="fixed-term-result" class="result hidden">
+                        <div class="payment-amount">Monthly Payment: <span id="monthly-payment"></span></div>
+                        <p id="payment-description"></p>
+                        <div class="summary">
+                            <p>Total of <span id="total-payments"></span> Payments: <span id="total-amount"></span></p>
+                            <p>Total Interest: <span id="total-interest"></span></p>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="principal" id="principal-chart" style="width: 66%;"></div>
+                            <div class="interest" id="interest-chart" style="width: 34%;"></div>
+                        </div>
+                        <div class="chart-labels">
+                            <spanINS>Principal: <span id="principal-percent">66%</span></span>
+                            <span>Interest: <span id="interest-percent">34%</span></span>
+                        </div>
+                        
+                        <p><strong>Amortization schedule</strong></p>
+                        <div class="schedule-toggle">
+                            <button class="schedule-btn active" onclick="showAnnualSchedule()">Annual Schedule</button>
+                            <button class="schedule-btn" onclick="showMonthlySchedule()">Monthly Schedule</button>
+                        </div>
+                        
+                        <table id="annual-schedule">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Interest</th>
+                                    <th>Principal</th>
+                                    <th>Ending Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="annual-schedule-body">
+                            </tbody>
+                        </table>
+                        <table id="monthly-schedule" class="hidden">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Interest</th>
+                                    <th>Principal</th>
+                                    <th>Ending Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthly-schedule-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="fixed-payments" class="tab-content">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="fp-loan-amount">Loan Amount</label>
+                            <input type="number" id="fp-loan-amount" value="200000" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="monthly-payment-amount">Monthly Payment</label>
+                            <input type="number" id="monthly-payment-amount" value="1687.71" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="fp-interest-rate">Interest Rate (%)</label>
+                            <input type="number" id="fp-interest-rate" value="5" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="calculate-btn" onclick="calculateFixedPayment()">Calculate Loan Term</button>
+                        <button class="clear-btn" onclick="clearFixedPaymentResults()">Clear Results</button>
+                    </div>
+                    
+                    <div id="fixed-payment-result" class="result hidden">
+                        <div class="payment-amount">Loan Term: <span id="loan-term-result"></span></div>
+                        <p id="fp-payment-description"></p>
+                        <div class="summary">
+                            <p>Total of <span id="fp-total-payments"></span> Payments: <span id="fp-total-amount"></span></p>
+                            <p>Total Interest: <span id="fp-total-interest"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global currency settings
+        let currentCurrency = {
+            code: "USD",
+            symbol: "$"
+        };
+        
+        // Currency formatter
+        function formatCurrency(amount) {
+            // Special formatting for Japanese Yen (no decimal places)
+            if (currentCurrency.code === "JPY") {
+                return `${currentCurrency.symbol}${Math.round(amount).toLocaleString()}`;
+            }
+            
+            // Standard formatting for other currencies
+            const formattedAmount = amount.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            // Handle currencies where symbol comes after (like Euro in some countries)
+            if (currentCurrency.code === "EUR") {
+                return `${formattedAmount} ${currentCurrency.symbol}`;
+            }
+            
+            return `${currentCurrency.symbol}${formattedAmount}`;
+        }
+        
+        // Update currency symbol throughout the page
+        function updateCurrency() {
+            const currencySelect = document.getElementById("currency");
+            const selectedOption = currencySelect.options[currencySelect.selectedIndex];
+            
+            currentCurrency = {
+                code: selectedOption.value,
+                symbol: selectedOption.dataset.symbol
+            };
+            
+            // Recalculate if there are visible results
+            if (!document.getElementById("fixed-term-result").classList.contains("hidden")) {
+                calculateFixedTerm();
+            }
+            if (!document.getElementById("fixed-payment-result").classList.contains("hidden")) {
+                calculateFixedPayment();
+            }
+        }
+        
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+        
+        function calculateFixedTerm() {
+            const loanAmount = parseFloat(document.getElementById("loan-amount").value);
+            const loanTerm = parseFloat(document.getElementById("loan-term").value);
+            const interestRate = parseFloat(document.getElementById("interest-rate").value) / 100;
+            
+            if (isNaN(loanAmount) || isNaN(loanTerm) || isNaN(interestRate)) {
+                alert("Please enter valid numbers for all fields");
+                return;
+            }
+            
+            const monthlyRate = interestRate / 12;
+            const numberOfPayments = loanTerm * 12;
+            
+            // Calculate monthly payment
+            const monthlyPayment = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+                                 (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+            
+            // Calculate totals
+            const totalAmount = monthlyPayment * numberOfPayments;
+            const totalInterest = totalAmount - loanAmount;
+            
+            // Update UI with formatted currency
+            document.getElementById("monthly-payment").textContent = formatCurrency(monthlyPayment);
+            document.getElementById("payment-description").textContent = 
+                `You will need to pay ${formatCurrency(monthlyPayment)} every month for ${loanTerm} years to payoff the debt.`;
+            document.getElementById("total-payments").textContent = numberOfPayments;
+            document.getElementById("total-amount").textContent = formatCurrency(totalAmount);
+            document.getElementById("total-interest").textContent = formatCurrency(totalInterest);
+            
+            // Update pie chart
+            const principalPercent = Math.round((loanAmount / totalAmount) * 100);
+            const interestPercent = 100 - principalPercent;
+            document.getElementById("principal-chart").style.width = principalPercent + "%";
+            document.getElementById("interest-chart").style.width = interestPercent + "%";
+            document.getElementById("principal-percent").textContent = principalPercent + "%";
+            document.getElementById("interest-percent").textContent = interestPercent + "%";
+            
+            // Generate amortization schedule
+            generateAmortizationSchedule(loanAmount, monthlyRate, numberOfPayments, monthlyPayment);
+            
+            // Show results
+            document.getElementById("fixed-term-result").classList.remove("hidden");
+        }
+        
+        function clearFixedTermResults() {
+            document.getElementById("fixed-term-result").classList.add("hidden");
+            document.getElementById("loan-amount").value = "200000";
+            document.getElementById("loan-term").value = "15";
+            document.getElementById("interest-rate").value = "5";
+        }
+        
+        function generateAmortizationSchedule(loanAmount, monthlyRate, numberOfPayments, monthlyPayment) {
+            let balance = loanAmount;
+            let annualInterest = 0;
+            let annualPrincipal = 0;
+            let annualScheduleBody = "";
+            let monthlyScheduleBody = "";
+            
+            for (let month = 1; month <= numberOfPayments; month++) {
+                const interest = balance * monthlyRate;
+                const principal = monthlyPayment - interest;
+                balance -= principal;
+                
+                // For monthly schedule
+                if (month <= 12) { // Only show first year for monthly schedule
+                    monthlyScheduleBody += `<tr>
+                        <td>${month}</td>
+                        <td>${formatCurrency(interest)}</td>
+                        <td>${formatCurrency(principal)}</td>
+                        <td>${formatCurrency(Math.max(balance, 0))}</td>
+                    </tr>`;
+                }
+                
+                // Accumulate annual totals
+                annualInterest += interest;
+                annualPrincipal += principal;
+                
+                // At the end of each year or last payment
+                if (month % 12 === 0 || month === numberOfPayments) {
+                    const year = Math.ceil(month / 12);
+                    annualScheduleBody += `<tr>
+                        <td>${year}</td>
+                        <td>${formatCurrency(annualInterest)}</td>
+                        <td>${formatCurrency(annualPrincipal)}</td>
+                        <td>${formatCurrency(Math.max(balance, 0))}</td>
+                    </tr>`;
+                    
+                    // Reset annual totals
+                    annualInterest = 0;
+                    annualPrincipal = 0;
+                }
+            }
+            
+            document.getElementById("annual-schedule-body").innerHTML = annualScheduleBody;
+            document.getElementById("monthly-schedule-body").innerHTML = monthlyScheduleBody;
+        }
+        
+        function showAnnualSchedule() {
+            document.getElementById("annual-schedule").classList.remove("hidden");
+            document.getElementById("monthly-schedule").classList.add("hidden");
+            
+            // Update button states
+            document.querySelectorAll('.schedule-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        function showMonthlySchedule() {
+            document.getElementById("annual-schedule").classList.add("hidden");
+            document.getElementById("monthly-schedule").classList.remove("hidden");
+            
+            // Update button states
+            document.querySelectorAll('.schedule-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        function calculateFixedPayment() {
+            const loanAmount = parseFloat(document.getElementById("fp-loan-amount").value);
+            const monthlyPayment = parseFloat(document.getElementById("monthly-payment-amount").value);
+            const interestRate = parseFloat(document.getElementById("fp-interest-rate").value) / 100;
+            
+            if (isNaN(loanAmount) || isNaN(monthlyPayment) || isNaN(interestRate)) {
+                alert("Please enter valid numbers for all fields");
+                return;
+            }
+            
+            if (monthlyPayment <= loanAmount * (interestRate / 12)) {
+                alert("Monthly payment is too low to pay off the loan. Please increase the payment amount.");
+                return;
+            }
+            
+            const monthlyRate = interestRate / 12;
+            
+            // Calculate number of months to pay off loan
+            let numberOfMonths = Math.ceil(
+                Math.log(monthlyPayment / (monthlyPayment - loanAmount * monthlyRate)) / 
+                Math.log(1 + monthlyRate)
+            );
+            
+            // Calculate exact total amount (since we rounded up the number of months)
+            const totalAmount = monthlyPayment * numberOfMonths;
+            const totalInterest = totalAmount - loanAmount;
+            const years = Math.floor(numberOfMonths / 12);
+            const months = numberOfMonths % 12;
+            
+            // Update UI with formatted currency
+            let termDescription = `${years} years`;
+            if (months > 0) {
+                termDescription += ` and ${months} month${months > 1 ? 's' : ''}`;
+            }
+            
+            document.getElementById("loan-term-result").textContent = termDescription;
+            document.getElementById("fp-payment-description").textContent = 
+                `You will need to make ${numberOfMonths} payments of ${formatCurrency(monthlyPayment)} to payoff the debt.`;
+            document.getElementById("fp-total-payments").textContent = numberOfMonths;
+            document.getElementById("fp-total-amount").textContent = formatCurrency(totalAmount);
+            document.getElementById("fp-total-interest").textContent = formatCurrency(totalInterest);
+            
+            // Show results
+            document.getElementById("fixed-payment-result").classList.remove("hidden");
+        }
+        
+        function clearFixedPaymentResults() {
+            document.getElementById("fixed-payment-result").classList.add("hidden");
+            document.getElementById("fp-loan-amount").value = "200000";
+            document.getElementById("monthly-payment-amount").value = "1687.71";
+            document.getElementById("fp-interest-rate").value = "5";
+        }
+        
+        // Initialize calculator
+        window.onload = function() {
+            // Set up event listeners for schedule toggle buttons
+            document.querySelector('.schedule-toggle').addEventListener('click', function(e) {
+                if (e.target.classList.contains('schedule-btn')) {
+                    document.querySelectorAll('.schedule-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    e.target.classList.add('active');
+                }
+            });
+        };
+    </script>
+</body>
+</html>
