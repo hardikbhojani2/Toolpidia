@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8th CPC Salary Calculator (Tentative)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #FFFFFF; /* White background for body */
+        }
+        .calculator-container {
+            width: 100%;
+            max-width: 800px; /* Increased max-width for larger screens */
+            margin: 0 auto;
+            background-color: #FFFFFF; /* White background for container */
+            padding: 1rem;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            background-color: #007BFF; /* Bright blue header */
+            color: #FFFFFF; /* White text */
+            padding: 0.8rem;
+            margin: -1rem -1rem 1rem -1rem;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        label {
+            flex: 1;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+        select {
+            flex: 0.5;
+            padding: 0.5rem;
+            border: 1px solid #007BFF; /* Bright blue border */
+            border-radius: 3px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            width: 100%; /* Full width on smaller screens */
+            max-width: 200px; /* Limit width on larger screens */
+        }
+        button {
+            background-color: #007BFF; /* Bright blue button */
+            color: #FFFFFF; /* White text */
+            border: 1px solid #0056b3; /* Slightly darker blue border */
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: 100%; /* Full width on smaller screens */
+            max-width: 150px; /* Limit width on larger screens */
+            float: right;
+        }
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        #result {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background-color: #F8F9FA; /* Light gray background for result */
+            border: 1px solid #007BFF; /* Bright blue border */
+            border-radius: 3px;
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+        th {
+            background-color: #F8F9FA; /* Light gray for table headers */
+        }
+        .highlight {
+            background-color: #007BFF; /* Bright blue for highlighted rows */
+            color: #FFFFFF; /* White text */
+            font-weight: bold;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input {
+            margin-right: 0.3rem;
+        }
+        .action-buttons button {
+            background: none;
+            border: none;
+            color: #007BFF; /* Bright blue for action buttons */
+            cursor: pointer;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .action-buttons button:hover {
+            text-decoration: underline;
+        }
+        .annual-income {
+            margin-top: 0.8rem;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .annual-income a {
+            color: #007BFF; /* Bright blue for links */
+            text-decoration: none;
+        }
+        .annual-income a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: #dc3545; /* Red for error messages */
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .calculator-container {
+                padding: 0.5rem;
+            }
+            h2 {
+                font-size: 1.2rem;
+                padding: 0.5rem;
+                margin: -0.5rem -0.5rem 0.5rem -0.5rem;
+            }
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            label {
+                margin-bottom: 0.3rem;
+                margin-right: 0;
+                font-size: 0.85rem;
+            }
+            select {
+                flex: 1;
+                max-width: 100%;
+                font-size: 0.85rem;
+            }
+            button {
+                max-width: 100%;
+                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+            }
+            th, td {
+                font-size: 0.8rem;
+                padding: 0.4rem;
+            }
+            .action-buttons button {
+                font-size: 0.8rem;
+            }
+            /* Make table scrollable on small screens */
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h2>8th CPC Salary Calculator (Tentative)</h2>
+        <div class="form-group">
+            <label>Select your Pay Level (AGP: Faculty, GP: ALL Other Employee)</label>
+            <select id="payLevel" onchange="updateBasicPay()">
+                <option value="">Select...</option>
+                <option value="1">Level 1 (GP - 1800)</option>
+                <option value="2">Level 2 (GP - 1900)</option>
+                <option value="3">Level 3 (GP - 2000)</option>
+                <option value="4">Level 4 (GP - 2400)</option>
+                <option value="5">Level 5 (GP - 2800)</option>
+                <option value="6">Level 6 (GP - 4200)</option>
+                <option value="7">Level 7 (GP - 4600)</option>
+                <option value="8">Level 8 (GP - 4800)</option>
+                <option value="9">Level 9 (GP - 5400)</option>
+                <option value="10">Level 10 (GP - 5400)</option>
+                <option value="10a">Level AGP 10 (AGP - 6000)</option>
+                <option value="11">Level 11 (GP - 6600)</option>
+                <option value="11a">Level AGP 11 (AGP - 7000)</option>
+                <option value="12">Level 12 (GP - 7600)</option>
+                <option value="12a">Level AGP 12/NITT etc (AGP - 8000)</option>
+                <option value="12b">Level 12 UGC etc (AGP - 8000)</option>
+                <option value="13">Level 13 (GP - 8700)</option>
+                <option value="13a">Level 13A (GP - 8900)</option>
+                <option value="13aa">Level AGP 13A/2A1 (AGP - 9500)</option>
+                <option value="13b">Level AGP 13A2 (AGP - 9500)</option>
+                <option value="14">Level 14 (GP - 10000)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Select Basic Pay</label>
+            <select id="basicPay">
+                <option value="">Select...</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Fitment Factor (tentative)</label>
+            <select id="fitmentFactor">
+                <option value="1.92">1.92</option>
+                <option value="2.0">2.0</option>
+                <option value="2.1">2.1</option>
+                <option value="2.28">2.28</option>
+                <option value="2.86">2.86</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Select the type of your City for HRA</label>
+            <select id="hra">
+                <option value="0">NO HRA</option>
+                <option value="0.30">X City (30%)</option>
+                <option value="0.20">Y City (20%)</option>
+                <option value="0.10">Z City (10%)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Select the type of your City for TA</label>
+            <select id="ta">
+                <option value="0">NO TA</option>
+                <option value="1350">Higher TPTA Cities</option>
+                <option value="900">Other Cities</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Select DA Percentage</label>
+            <select id="da">
+                <option value="0">Nil</option>
+                <option value="0.03">3%</option>
+                <option value="0.05">5%</option>
+            </select>
+        </div>
+        <button onclick="calculateSalary()">Calculate</button>
+        <div id="result">
+            <h3>Salary from January 2026 (per month)</h3>
+            <table>
+                <tr><th>Your Pay Level</th><td id="resultPayLevel"></td></tr>
+                <tr><th>Basic Pay</th><td id="resultBasicPay"></td></tr>
+                <tr><th>Revised Basic Pay (with fitment factor)</th><td id="resultRevisedBasicPay"></td></tr>
+                <tr><th>DA (Dearness Allowance)</th><td id="resultDA"></td></tr>
+                <tr><th>HRA (House Rent Allowance)</th><td id="resultHRA"></td></tr>
+                <tr><th>TA (Travelling Allowance)</th><td id="resultTA"></td></tr>
+                <tr>
+                    <th>
+                        Other Allowances/Incomes (if any)
+                        <div class="action-buttons">
+                            <button onclick="addAllowance()">Add Allowance</button>
+                            <button onclick="removeAllowance()">Remove Allowance</button>
+                        </div>
+                    </th>
+                    <td id="resultOtherAllowances">0</td>
+                </tr>
+                <tr class="highlight"><th>Gross Salary</th><td id="resultGrossSalary"></td></tr>
+                <tr>
+                    <th class="checkbox-group">
+                        NPS Contribution
+                        <input type="checkbox" id="nps" checked>
+                    </th>
+                    <td id="resultNPS"></td>
+                </tr>
+                <tr>
+                    <th class="checkbox-group">
+                        CGHS Contribution
+                        <input type="checkbox" id="cghs" checked>
+                    </th>
+                    <td id="resultCGHS"></td>
+                </tr>
+                <tr>
+                    <th class="checkbox-group">
+                        Income Tax (New Regime FY:2025-26)
+                        <input type="checkbox" id="incomeTax" checked>
+                    </th>
+                    <td id="resultIncomeTax"></td>
+                </tr>
+                <tr>
+                    <th>
+                        Other Deduction (if any)
+                        <div class="action-buttons">
+                            <button onclick="addDeduction()">Add Deduction</button>
+                            <button onclick="removeDeduction()">Remove Deduction</button>
+                        </div>
+                    </th>
+                    <td id="resultOtherDeduction">0</td>
+                </tr>
+                <tr class="highlight"><th>Net Salary</th><td id="resultNetSalary"></td></tr>
+            </table>
+            <div class="annual-income">
+                <a href="#" onclick="alert('Enter your annual income to calculate tax')">Enter Annual Income (to know actual Income TAX new regime FY:2025-26)</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Basic Pay levels (keys are strings)
+        const payLevels = {
+            "1": [18000, 18500, 19000, 19500, 19700, 20300, 20600, 21500, 22100, 22800, 23500, 24200, 24600, 25000, 25600, 26400, 27200],
+            "2": [19900, 20500, 21100, 21700, 22400, 23100, 23800, 24500, 25200, 26000, 26800, 27600, 28400, 29300, 30200, 31100, 32000],
+            "3": [21700, 22400, 23100, 23800, 24500, 25200, 26000, 26800, 27600, 28400, 29300, 30200, 31100, 32000, 33000, 34000, 35000],
+            "4": [25500, 26300, 27100, 27900, 28700, 29600, 30500, 31400, 32300, 33300, 34300, 35300, 36400, 37500, 38600, 39800, 41000],
+            "5": [29200, 30100, 31000, 31900, 32900, 33900, 34900, 35900, 37000, 38100, 39200, 40400, 41600, 42800, 44100, 45400, 46800],
+            "6": [35400, 36500, 37600, 38700, 39900, 41100, 42300, 43600, 44900, 46200, 47600, 49000, 50500, 52000, 53600, 55200, 58200],
+            "7": [44900, 46200, 47600, 49000, 50500, 52000, 53600, 55200, 56900, 58600, 60400, 62200, 64100, 66000, 68000, 70000, 72100],
+            "8": [47600, 49000, 50500, 52000, 53600, 55200, 56900, 58600, 60400, 62200, 64100, 66000, 68000, 70000, 72100, 74300, 76500],
+            "9": [53100, 54700, 56300, 58000, 59700, 61500, 63300, 65200, 67200, 69200, 71300, 73400, 75600, 77900, 80200, 82600, 85100],
+            "10": [56100, 57800, 59500, 61300, 63100, 65000, 67000, 69000, 71100, 73200, 75400, 77700, 80000, 82400, 84900, 87400, 90000],
+            "10a": [61100, 62900, 64800, 66700, 68700, 70800, 72900, 75100, 77400, 79700, 82100, 84600, 87100, 89700, 92400, 95200, 98100],
+            "11": [67700, 69700, 71800, 74000, 76200, 78500, 80900, 83300, 85800, 88400, 91100, 93800, 96600, 99500, 102500, 105600, 108800],
+            "11a": [68900, 71000, 73100, 75300, 77600, 79900, 82300, 84800, 87300, 89900, 92600, 95400, 98300, 101200, 104200, 107300, 110500],
+            "12": [78800, 81200, 83600, 86100, 88700, 91400, 94100, 96900, 99800, 102800, 105900, 109100, 112400, 115800, 119300, 122900, 126600],
+            "12a": [79800, 82200, 84700, 87200, 89800, 92500, 95300, 98200, 101100, 104100, 107200, 110400, 113700, 117100, 120600, 124200, 127900],
+            "12b": [79800, 82200, 84700, 87200, 89800, 92500, 95300, 98200, 101100, 104100, 107200, 110400, 113700, 117100, 120600, 124200, 127900],
+            "13": [123100, 126800, 130600, 134500, 138500, 142700, 147000, 151400, 155900, 160600, 165400, 170400, 175500, 180800, 186200, 191800, 197600],
+            "13a": [125900, 129700, 133600, 137600, 141700, 146000, 150400, 154900, 159500, 164300, 169200, 174300, 179500, 184900, 190400, 196100, 202000],
+            "13aa": [130700, 134600, 138600, 142800, 147100, 151500, 156000, 160700, 165500, 170500, 175600, 180900, 186300, 191900, 197700, 203600, 209700],
+            "13b": [130700, 134600, 138600, 142800, 147100, 151500, 156000, 160700, 165500, 170500, 175600, 180900, 186300, 191900, 197700, 203600, 209700],
+            "14": [144200, 148500, 153000, 157600, 162300, 167200, 172200, 177400, 182700, 188200, 193800, 199600, 205600, 211800, 218200, 224700, 231400]
+        };
+
+        let otherAllowances = 0;
+        let otherDeductions = 0;
+
+        function updateBasicPay() {
+            const payLevel = document.getElementById('payLevel').value;
+            const basicPaySelect = document.getElementById('basicPay');
+            basicPaySelect.innerHTML = '<option value="">Select...</option>';
+
+            if (payLevel && payLevels[payLevel]) {
+                payLevels[payLevel].forEach(pay => {
+                    const option = document.createElement('option');
+                    option.value = pay;
+                    option.text = pay;
+                    basicPaySelect.appendChild(option);
+                });
+            }
+        }
+
+        function calculateSalary() {
+            const payLevelSelect = document.getElementById('payLevel');
+            const payLevel = payLevelSelect.options[payLevelSelect.selectedIndex].text;
+            const basicPay = parseFloat(document.getElementById('basicPay').value);
+            const fitmentFactor = parseFloat(document.getElementById('fitmentFactor').value);
+            const hraRate = parseFloat(document.getElementById('hra').value);
+            const ta = parseFloat(document.getElementById('ta').value);
+            const daRate = parseFloat(document.getElementById('da').value);
+            const npsChecked = document.getElementById('nps').checked;
+            const cghsChecked = document.getElementById('cghs').checked;
+            const incomeTaxChecked = document.getElementById('incomeTax').checked;
+
+            const resultDiv = document.getElementById('result');
+
+            if (!basicPay || !fitmentFactor) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = 'Please select all required fields.';
+                return;
+            }
+
+            // Calculate new basic pay after fitment
+            const newBasicPay = basicPay * fitmentFactor;
+
+            // Calculate DA on new basic pay
+            const daAmount = newBasicPay * daRate;
+
+            // Calculate HRA on new basic pay
+            const hraAmount = newBasicPay * hraRate;
+
+            // Calculate NPS (10% of new basic pay + DA)
+            const npsAmount = npsChecked ? (newBasicPay + daAmount) * 0.1 : 0;
+
+            // Calculate CGHS (fixed amount, simplified)
+            const cghsAmount = cghsChecked ? 250 : 0;
+
+            // Calculate Income Tax (simplified, assuming 0 for demo)
+            const incomeTaxAmount = incomeTaxChecked ? 0 : 0; // Placeholder
+
+            // Total allowances
+            const totalAllowances = daAmount + hraAmount + ta + otherAllowances;
+
+            // Gross Salary
+            const grossSalary = newBasicPay + totalAllowances;
+
+            // Total deductions
+            const totalDeductions = npsAmount + cghsAmount + incomeTaxAmount + otherDeductions;
+
+            // Net Salary
+            const netSalary = grossSalary - totalDeductions;
+
+            // Display the result
+            resultDiv.style.display = 'block';
+            document.getElementById('resultPayLevel').textContent = payLevel.split(' (')[0];
+            document.getElementById('resultBasicPay').textContent = `₹${basicPay.toFixed(0)}`;
+            document.getElementById('resultRevisedBasicPay').textContent = `₹${newBasicPay.toFixed(0)}`;
+            document.getElementById('resultDA').textContent = `₹${daAmount.toFixed(0)}`;
+            document.getElementById('resultHRA').textContent = `₹${hraAmount.toFixed(0)}`;
+            document.getElementById('resultTA').textContent = `₹${ta.toFixed(0)}`;
+            document.getElementById('resultOtherAllowances').textContent = `₹${otherAllowances.toFixed(0)}`;
+            document.getElementById('resultGrossSalary').textContent = `₹${grossSalary.toFixed(0)}`;
+            document.getElementById('resultNPS').textContent = `₹${npsAmount.toFixed(0)}`;
+            document.getElementById('resultCGHS').textContent = `₹${cghsAmount.toFixed(0)}`;
+            document.getElementById('resultIncomeTax').textContent = incomeTaxAmount === 0 ? '0 (approx)' : `₹${incomeTaxAmount.toFixed(0)}`;
+            document.getElementById('resultOtherDeduction').textContent = `₹${otherDeductions.toFixed(0)}`;
+            document.getElementById('resultNetSalary').textContent = `₹${netSalary.toFixed(0)}`;
+        }
+
+        function addAllowance() {
+            const amount = prompt("Enter allowance amount (positive number):");
+            const parsedAmount = parseFloat(amount);
+
+            // Validate input
+            if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
+                alert("Please enter a valid positive number for the allowance.");
+                return;
+            }
+
+            otherAllowances += parsedAmount;
+            document.getElementById('resultOtherAllowances').textContent = `₹${otherAllowances.toFixed(0)}`;
+            calculateSalary();
+        }
+
+        function removeAllowance() {
+            if (otherAllowances <= 0) {
+                alert("No allowances to remove.");
+                return;
+            }
+
+            const amount = prompt(`Enter allowance amount to remove (up to ₹${otherAllowances.toFixed(0)}):`);
+            const parsedAmount = parseFloat(amount);
+
+            // Validate input
+            if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
+                alert("Please enter a valid positive number to remove.");
+                return;
+            }
+
+            if (parsedAmount > otherAllowances) {
+                alert(`Cannot remove ₹${parsedAmount.toFixed(0)}. Maximum removable amount is ₹${otherAllowances.toFixed(0)}.`);
+                return;
+            }
+
+            otherAllowances -= parsedAmount;
+            document.getElementById('resultOtherAllowances').textContent = `₹${otherAllowances.toFixed(0)}`;
+            calculateSalary();
+        }
+
+        function addDeduction() {
+            const amount = prompt("Enter deduction amount (positive number):");
+            const parsedAmount = parseFloat(amount);
+
+            // Validate input
+            if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
+                alert("Please enter a valid positive number for the deduction.");
+                return;
+            }
+
+            otherDeductions += parsedAmount;
+            document.getElementById('resultOtherDeduction').textContent = `₹${otherDeductions.toFixed(0)}`;
+            calculateSalary();
+        }
+
+        function removeDeduction() {
+            if (otherDeductions <= 0) {
+                alert("No deductions to remove.");
+                return;
+            }
+
+            const amount = prompt(`Enter deduction amount to remove (up to ₹${otherDeductions.toFixed(0)}):`);
+            const parsedAmount = parseFloat(amount);
+
+            // Validate input
+            if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
+                alert("Please enter a valid positive number to remove.");
+                return;
+            }
+
+            if (parsedAmount > otherDeductions) {
+                alert(`Cannot remove ₹${parsedAmount.toFixed(0)}. Maximum removable amount is ₹${otherDeductions.toFixed(0)}.`);
+                return;
+            }
+
+            otherDeductions -= parsedAmount;
+            document.getElementById('resultOtherDeduction').textContent = `₹${otherDeductions.toFixed(0)}`;
+            calculateSalary();
+        }
+
+        // Wait for the DOM to be fully loaded before adding event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const npsElement = document.getElementById('nps');
+            const cghsElement = document.getElementById('cghs');
+            const incomeTaxElement = document.getElementById('incomeTax');
+
+            if (npsElement) {
+                npsElement.addEventListener('change', calculateSalary);
+            }
+            if (cghsElement) {
+                cghsElement.addEventListener('change', calculateSalary);
+            }
+            if (incomeTaxElement) {
+                incomeTaxElement.addEventListener('change', calculateSalary);
+            }
+        });
+    </script>
+</body>
+</html>
