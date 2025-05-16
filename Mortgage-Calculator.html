@@ -3,24 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mortgage Payment Calculator | Estimate Your Home Loan</title>
-    <meta name="description" content="Calculate your estimated mortgage payments with our intuitive calculator. Adjust loan amount, interest rate, and term for accurate home financing insights.">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>Mortgage Calculator | Estimate Your Home Loan Payments</title>
+    <meta name="description" content="Use our free Mortgage Calculator to estimate monthly home loan payments. Learn how to calculate mortgage payments, benefits, and plan your home financing with Toolpidia.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #007bff;
-            --primary-hover: #0056b3;
+            --primary-blue: #2563eb;
+            --secondary-blue: #3b82f6;
+            --light-blue: #93c5fd;
+            --dark-blue: #1e40af;
+            --gradient-start: #1e3a8a;
+            --gradient-end: #3b82f6;
+            --text-dark: #1f2937;
+            --text-light: #f9fafb;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --input-bg: #f1f3f5;
+            --border-radius: 12px;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             --danger-color: #dc3545;
             --danger-hover: #a71d2a;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
         }
- /* Header Styles */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
         header {
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: var(--card-bg);
+            box-shadow: var(--card-shadow);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -28,27 +54,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: var(--transition);
         }
 
         .logo {
-            font-size: 1.8rem;
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
             font-weight: 700;
             color: var(--primary-blue);
             text-decoration: none;
             display: flex;
             align-items: center;
+            gap: 0.5rem;
         }
 
         .logo i {
-            margin-right: 0.5rem;
             font-size: 1.5rem;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
         }
 
         nav ul {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: clamp(1rem, 3vw, 2rem);
         }
 
         nav a {
@@ -56,12 +86,18 @@
             color: var(--text-dark);
             font-weight: 500;
             position: relative;
-            transition: var(--transition);
             padding: 0.5rem 0;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
         nav a:hover {
             color: var(--primary-blue);
+        }
+
+        nav a.active {
+            color: var(--primary-blue);
+            font-weight: 600;
         }
 
         nav a::after {
@@ -75,62 +111,73 @@
             transition: var(--transition);
         }
 
-        nav a:hover::after {
+        nav a:hover::after,
+        nav a.active::after {
             width: 100%;
         }
 
-        .contact-email {
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
             color: var(--primary-blue);
-            font-weight: 500;
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            cursor: pointer;
+            background: none;
+            border: none;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-            padding: 0;
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 250px;
+            height: 100%;
+            background-color: var(--card-bg);
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            transition: right 0.3s ease;
+            z-index: 101;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu ul {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .mobile-menu a {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu a:hover,
+        .mobile-menu a.active {
+            color: var(--primary-blue);
+        }
+
+        /* Main Content Styles */
+        main {
+            flex: 1;
+            padding: 2rem 1rem;
         }
 
         .container {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-        }
-
-        .site-nav {
-            margin-bottom: 20px;
-        }
-
-        .site-nav a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .site-nav a:hover {
-            color: var(--primary-hover);
-        }
-
-        h1 {
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
         }
 
         .calculator-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 2rem;
             width: 100%;
         }
 
@@ -141,7 +188,7 @@
 
             .calculator-inputs {
                 flex: 1;
-                padding-right: 20px;
+                padding-right: 1rem;
             }
 
             .calculator-results {
@@ -150,17 +197,41 @@
         }
 
         .calculator-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 25px;
+            padding: 1.5rem;
             width: 100%;
+        }
+
+        .calculator-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--gradient-end) 100%);
+            color: var(--text-light);
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .calculator-header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.2rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .calculator-header p {
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            opacity: 0.9;
         }
 
         .calculator-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
         }
 
         @media (min-width: 768px) {
@@ -170,55 +241,64 @@
         }
 
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
             font-weight: 600;
-            color: #495057;
+            color: var(--text-dark);
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ced4da;
+            padding: 0.8rem;
+            border: 2px solid var(--input-bg);
             border-radius: var(--border-radius);
-            font-size: 16px;
+            background-color: var(--input-bg);
+            font-size: 1rem;
             transition: var(--transition);
+            font-family: inherit;
         }
 
         input:focus, select:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            border-color: var(--primary-blue);
+            background-color: var(--card-bg);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        input[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
         }
 
         .slider-container {
-            margin-top: 15px;
+            margin-top: 0.8rem;
         }
 
         .slider-wrapper {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
         }
 
         .slider-wrapper input[type="range"] {
             flex: 1;
             -webkit-appearance: none;
             height: 8px;
-            background: #e9ecef;
+            background: var(--input-bg);
             border-radius: 4px;
+            outline: none;
         }
 
         .slider-wrapper input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 20px;
             height: 20px;
-            background: var(--primary-color);
+            background: var(--primary-blue);
             border-radius: 50%;
             cursor: pointer;
             transition: var(--transition);
@@ -226,6 +306,7 @@
 
         .slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.1);
+            background: var(--secondary-blue);
         }
 
         .value-display {
@@ -233,52 +314,44 @@
             font-weight: 600;
             text-align: right;
             font-size: 0.9rem;
+            color: var(--text-dark);
         }
 
         .button-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
         button {
-            padding: 12px;
+            padding: 1rem;
             border: none;
             border-radius: var(--border-radius);
-            font-size: 16px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 0.5rem;
             transition: var(--transition);
+            box-shadow: var(--card-shadow);
         }
 
         .calculate-btn {
-            background: var(--primary-color);
-            color: white;
+            background: var(--primary-blue);
+            color: var(--text-light);
         }
 
         .calculate-btn:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-
-        .export-btn {
-            background: #28a745;
-            color: white;
-        }
-
-        .export-btn:hover {
-            background: #218838;
+            background: var(--secondary-blue);
             transform: translateY(-2px);
         }
 
         .clear-btn {
             background: var(--danger-color);
-            color: white;
+            color: var(--text-light);
         }
 
         .clear-btn:hover {
@@ -287,30 +360,37 @@
         }
 
         .result-container {
-            padding: 25px;
+            padding: 1.5rem;
             background: #f1f8ff;
             border-radius: var(--border-radius);
             text-align: center;
             height: 100%;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .result-title {
             font-size: 1.2rem;
-            color: #495057;
-            margin-bottom: 15px;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
         }
 
         .result-value {
-            font-size: 2rem;
+            font-size: clamp(1.8rem, 4vw, 2rem);
             font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
         }
 
         .result-details {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 15px;
+            gap: 1rem;
             text-align: left;
         }
 
@@ -322,413 +402,601 @@
 
         .result-item {
             font-size: 0.95rem;
-            padding: 10px;
+            padding: 1rem;
             background: rgba(255, 255, 255, 0.7);
             border-radius: var(--border-radius);
         }
 
         .result-item strong {
             display: block;
-            color: #495057;
-            margin-bottom: 5px;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
         }
 
         .error {
             color: var(--danger-color);
-            font-size: 14px;
-            margin-top: 5px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
             display: none;
             text-align: center;
         }
 
-        button:focus {
-            outline: 3px solid rgba(0, 123, 255, 0.5);
-            outline-offset: 2px;
+        /* Article Styles */
+        .article-section {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-top: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .article-section h2 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .article-section h3 {
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: var(--text-dark);
+            margin: 1.5rem 0 1rem;
+        }
+
+        .article-section p {
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .article-section a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .article-section a:hover {
+            color: var(--secondary-blue);
+            text-decoration: underline;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--text-dark);
+            color: var(--text-light);
+            padding: 2rem;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .footer-content .contact-email {
+            color: var(--light-blue);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        .footer-content .contact-email:hover {
+            color: var(--secondary-blue);
+        }
+
+        .footer-content p {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .footer-links a:hover {
+            color: var(--light-blue);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--light-blue);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .calculator-wrapper {
+                flex-direction: column;
+            }
+
+            .calculator-inputs {
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            nav ul {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .calculator-header {
+                padding: 1rem;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .article-section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .result-details {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="site-nav container">
-        <a href="index.html">Back to Tools</a>
-    </nav>
     <header>
-        <div class="container">
-            <h1><i class="fas fa-calculator"></i> Mortgage Calculator</h1>
+        <a href="#" class="logo"><i class="fas fa-calculator"></i> Toolpidia</a>
+        <button class="hamburger"><i class="fas fa-bars"></i></button>
+        <nav>
+            <ul>
+                <li><a href="#" data-section="home" class="nav-link active">Home</a></li>
+                <li><a href="#" data-section="calculators" class="nav-link">Calculators</a></li>
+                <li><a href="#" data-section="about" class="nav-link">About</a></li>
+                <li><a href="#" data-section="contact" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="mobile-menu">
+            <ul>
+                <li><a href="#" data-section="home" class="nav-link active">Home</a></li>
+                <li><a href="#" data-section="calculators" class="nav-link">Calculators</a></li>
+                <li><a href="#" data-section="about" class="nav-link">About</a></li>
+                <li><a href="#" data-section="contact" class="nav-link">Contact</a></li>
+            </ul>
         </div>
     </header>
-    <main class="container">
-        <div class="calculator-wrapper">
-            <div class="calculator-inputs">
-                <div class="calculator-card">
-                    <div class="calculator-grid">
-                        <div class="input-group">
-                            <label for="currency">Currency</label>
-                            <select id="currency" onchange="updateValues()">
-                                <option value="$">USD ($)</option>
-                                <option value="₹">INR (₹)</option>
-                                <option value="€">EUR (€)</option>
-                                <option value="£">GBP (£)</option>
-                                <option value="A$">AUD (A$)</option>
-                                <option value="C$">CAD (C$)</option>
-                                <option value="¥">JPY (¥)</option>
-                                <option value="AED">AED (د.إ)</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label for="homePrice">Home Price</label>
-                            <input type="number" id="homePrice" min="1000" max="10000000" step="1000" value="400000" oninput="debouncedUpdateValues()">
-                            <div class="slider-container">
-                                <div class="slider-wrapper">
-                                    <input type="range" id="homePriceSlider" min="1000" max="1000000" step="1000" value="400000" oninput="updateHomePrice(this.value)">
-                                    <span id="homePriceValue" class="value-display">$400,000</span>
+
+    <main>
+        <div class="container">
+            <div class="calculator-card">
+                <div class="calculator-header">
+                    <h1><i class="fas fa-calculator"></i> Mortgage Calculator</h1>
+                    <p>Estimate your monthly home loan payments</p>
+                </div>
+                <div class="calculator-wrapper">
+                    <div class="calculator-inputs">
+                        <div class="calculator-grid">
+                            <div class="input-group">
+                                <label for="currency">Currency</label>
+                                <select id="currency" aria-label="Select currency">
+                                    <option value="$">USD ($)</option>
+                                    <option value="₹">INR (₹)</option>
+                                    <option value="€">EUR (€)</option>
+                                    <option value="£">GBP (£)</option>
+                                    <option value="A$">AUD (A$)</option>
+                                    <option value="C$">CAD (C$)</option>
+                                    <option value="¥">JPY (¥)</option>
+                                    <option value="¥">CNY (¥)</option>
+                                    <option value="AED">AED (د.إ)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="homePrice">Home Price</label>
+                                <input type="number" id="homePrice" min="50000" max="10000000" step="1000" value="400000" aria-label="Home price">
+                                <div class="slider-container">
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="homePriceSlider" min="50000" max="1000000" step="1000" value="400000" aria-label="Home price slider">
+                                        <span id="homePriceValue" class="value-display">$400,000</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="downPayment">Down Payment</label>
-                            <input type="number" id="downPayment" min="0" max="500000" step="500" value="80000" oninput="debouncedUpdateValues()">
-                            <div class="slider-container">
-                                <div class="slider-wrapper">
-                                    <input type="range" id="downPaymentSlider" min="0" max="500000" step="500" value="80000" oninput="updateDownPayment(this.value)">
-                                    <span id="downPaymentValue" class="value-display">$80,000</span>
+                            <div class="input-group">
+                                <label for="downPayment">Down Payment</label>
+                                <input type="number" id="downPayment" min="0" max="500000" step="500" value="80000" aria-label="Down payment">
+                                <div class="slider-container">
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="downPaymentSlider" min="0" max="500000" step="500" value="80000" aria-label="Down payment slider">
+                                        <span id="downPaymentValue" class="value-display">$80,000</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="loanAmount">Loan Amount</label>
-                            <input type="text" id="loanAmount" readonly>
-                            <p id="loanPercentage" class="value-display">20%</p>
-                        </div>
-                        <div class="input-group">
-                            <label for="interestRate">Interest Rate (%)</label>
-                            <input type="number" id="interestRate" min="0.1" max="15" step="0.1" value="5.5" oninput="debouncedUpdateValues()">
-                            <div class="slider-container">
-                                <div class="slider-wrapper">
-                                    <input type="range" id="interestRateSlider" min="0.1" max="15" step="0.1" value="5.5" oninput="updateInterestRate(this.value)">
-                                    <span id="interestRateValue" class="value-display">5.5%</span>
+                            <div class="input-group">
+                                <label for="loanAmount">Loan Amount</label>
+                                <input type="text" id="loanAmount" readonly aria-label="Calculated loan amount">
+                                <p id="loanPercentage" class="value-display">20%</p>
+                            </div>
+                            <div class="input-group">
+                                <label for="interestRate">Interest Rate (%)</label>
+                                <input type="number" id="interestRate" min="0.1" max="15" step="0.1" value="5.5" aria-label="Interest rate">
+                                <div class="slider-container">
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="interestRateSlider" min="0.1" max="15" step="0.1" value="5.5" aria-label="Interest rate slider">
+                                        <span id="interestRateValue" class="value-display">5.5%</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="loanTerm">Loan Term (Years)</label>
-                            <input type="number" id="loanTerm" min="1" max="30" step="1" value="30" oninput="debouncedUpdateValues()">
-                            <div class="slider-container">
-                                <div class="slider-wrapper">
-                                    <input type="range" id="loanTermSlider" min="1" max="30" step="1" value="30" oninput="updateLoanTerm(this.value)">
-                                    <span id="loanTermValue" class="value-display">30 Years</span>
+                            <div class="input-group">
+                                <label for="loanTerm">Loan Term (Years)</label>
+                                <input type="number" id="loanTerm" min="1" max="30" step="1" value="30" aria-label="Loan term">
+                                <div class="slider-container">
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="loanTermSlider" min="1" max="30" step="1" value="30" aria-label="Loan term slider">
+                                        <span id="loanTermValue" class="value-display">30 Years</span>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="input-group">
+                                <label for="paymentFrequency">Payment Frequency</label>
+                                <select id="paymentFrequency" aria-label="Select payment frequency">
+                                    <option value="monthly">Monthly</option>
+                                    <option value="biweekly">Bi-Weekly</option>
+                                    <option value="weekly">Weekly</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="propertyTax">Annual Property Tax</label>
+                                <input type="number" id="propertyTax" min="0" value="2000" aria-label="Annual property tax">
+                            </div>
+                            <div class="input-group">
+                                <label for="homeInsurance">Annual Home Insurance</label>
+                                <input type="number" id="homeInsurance" min="0" value="1000" aria-label="Annual home insurance">
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <label for="paymentFrequency">Payment Frequency</label>
-                            <select id="paymentFrequency" onchange="updateValues()">
-                                <option value="monthly">Monthly</option>
-                                <option value="biweekly">Bi-Weekly</option>
-                                <option value="weekly">Weekly</option>
-                            </select>
+                        <div class="button-group">
+                            <button class="calculate-btn" id="calculate-btn" aria-label="Calculate mortgage payment">
+                                <i class="fas fa-calculator"></i> Calculate
+                            </button>
+                            <button class="clear-btn" id="clear-btn" aria-label="Clear all fields">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
                         </div>
-                        <div class="input-group">
-                            <label for="propertyTax">Annual Property Tax</label>
-                            <input type="number" id="propertyTax" min="0" value="2000" oninput="debouncedUpdateValues()">
-                        </div>
-                        <div class="input-group">
-                            <label for="homeInsurance">Annual Home Insurance</label>
-                            <input type="number" id="homeInsurance" min="0" value="1000" oninput="debouncedUpdateValues()">
+                        <p id="error-message" class="error"></p>
+                    </div>
+                    <div class="calculator-results">
+                        <div class="calculator-card result-container" id="result-container">
+                            <p class="result-title">Estimated Monthly Payment</p>
+                            <p id="result" class="result-value"></p>
+                            <div class="result-details">
+                                <div class="result-item">
+                                    <strong>Principal & Interest</strong>
+                                    <span id="principal-interest"></span>
+                                </div>
+                                <div class="result-item">
+                                    <strong>Property Tax</strong>
+                                    <span id="tax-amount"></span>
+                                </div>
+                                <div class="result-item">
+                                    <strong>Home Insurance</strong>
+                                    <span id="insurance-amount"></span>
+                                </div>
+                                <div class="result-item">
+                                    <strong>Total Interest Paid</strong>
+                                    <span id="total-interest"></span>
+                                </div>
+                                <div class="result-item">
+                                    <strong>Total Loan Cost</strong>
+                                    <span id="total-loan-cost"></span>
+                                </div>
+                                <div class="result-item">
+                                    <strong>Payoff Date</strong>
+                                    <span id="payoff-date"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="button-group">
-                        <button class="calculate-btn" onclick="calculateMortgage()" aria-label="Calculate mortgage">
-                            <i class="fas fa-calculator"></i> Calculate
-                        </button>
-                        <button class="export-btn" onclick="exportResults()" aria-label="Export results as PDF">
-                            <i class="fas fa-download"></i> Export
-                        </button>
-                        <button class="clear-btn" onclick="clearFields()" aria-label="Clear all fields">
-                            <i class="fas fa-trash"></i> Clear
-                        </button>
-                    </div>
-                    <p id="error-message" class="error" aria-live="polite"></p>
                 </div>
             </div>
-            <div class="calculator-results">
-                <div class="calculator-card result-container" id="result-container" style="display: none;">
-                    <p class="result-title">Estimated Payment</p>
-                    <p id="result" class="result-value"></p>
-                    <div class="result-details">
-                        <div class="result-item">
-                            <strong>Principal & Interest</strong>
-                            <span id="principal-interest"></span>
-                        </div>
-                        <div class="result-item">
-                            <strong>Property Tax</strong>
-                            <span id="tax-amount"></span>
-                        </div>
-                        <div class="result-item">
-                            <strong>Home Insurance</strong>
-                            <span id="insurance-amount"></span>
-                        </div>
-                        <div class="result-item">
-                            <strong>Total Interest Paid</strong>
-                            <span id="total-interest"></span>
-                        </div>
-                        <div class="result-item">
-                            <strong>Total Loan Cost</strong>
-                            <span id="total-loan-cost"></span>
-                        </div>
-                        <div class="result-item">
-                            <strong>Payoff Date</strong>
-                            <span id="payoff-date"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            <article class="article-section">
+                <h2>Master Your Home Financing with Our Mortgage Calculator</h2>
+                <p>A <strong>mortgage calculator</strong> is an essential tool for anyone planning to buy a home. It helps you estimate your monthly mortgage payments based on key factors like home price, down payment, interest rate, and loan term. At Toolpidia, our free <strong>home loan calculator</strong> simplifies the process, providing accurate results to guide your financial decisions.</p>
+
+                <h3>What Is a Mortgage Calculator?</h3>
+                <p>A mortgage calculator computes your monthly payments by factoring in the loan amount, interest rate, loan term, property taxes, and home insurance. It provides a clear breakdown of principal and interest, additional costs, and the total interest paid over the loan’s life. This tool is ideal for homebuyers, refinancers, or anyone exploring housing affordability.</p>
+
+                <h3>How Does Our Mortgage Calculator Work?</h3>
+                <p>Using Toolpidia’s mortgage calculator is quick and intuitive:</p>
+                <ol>
+                    <li>Select your <strong>currency</strong> (e.g., USD, EUR, INR).</li>
+                    <li>Enter the <strong>home price</strong> and <strong>down payment</strong> to calculate the loan amount.</li>
+                    <li>Input the <strong>interest rate</strong> and <strong>loan term</strong> (in years).</li>
+                    <li>Add <strong>annual property tax</strong> and <strong>home insurance</strong> for a complete estimate.</li>
+                    <li>Click “Calculate” to see your <strong>monthly mortgage payment</strong>, total interest, and payoff date.</li>
+                </ol>
+                <p>Our calculator validates inputs to prevent errors, such as a down payment exceeding the home price, ensuring reliable results every time.</p>
+
+                <h3>Benefits of Using a Mortgage Calculator</h3>
+                <p>Our <strong>home loan calculator</strong> offers several advantages:</p>
+                <ul>
+                    <li><strong>Clarity</strong>: Understand your monthly payments, including taxes and insurance.</li>
+                    <li><strong>Planning</strong>: Test different scenarios by adjusting loan terms or down payments.</li>
+                    <li><strong>Accuracy</strong>: Get precise estimates to compare mortgage offers.</li>
+                    <li><strong>Free Access</strong>: No sign-up or fees—just instant results.</li>
+                </ul>
+                <p>This tool empowers you to make informed decisions, whether you’re a first-time buyer or refinancing an existing loan.</p>
+
+                <h3>Common Use Cases for a Mortgage Calculator</h3>
+                <p>A mortgage calculator is versatile and supports various scenarios:</p>
+                <ul>
+                    <li><strong>Home Buying</strong>: Estimate payments to set a realistic budget.</li>
+                    <li><strong>Refinancing</strong>: Compare current and new loan terms to assess savings.</li>
+                    <li><strong>Financial Planning</strong>: Plan for future expenses by understanding long-term costs.</li>
+                    <li><strong>Investment Properties</strong>: Evaluate mortgage costs for rental or flip properties.</li>
+                </ul>
+                <p>For related tools, check out our <a href="#">Loan Calculator</a> to explore other financing options.</p>
+
+                <h3>Why Choose Toolpidia’s Mortgage Calculator?</h3>
+                <p>Toolpidia’s mortgage calculator stands out for its user-friendly design, robust validation, and comprehensive results. It’s part of our suite of free financial tools, designed to simplify complex calculations. Whether you’re planning a home purchase or exploring refinancing, our calculator helps you navigate the process with confidence. Visit our <a href="#">Calculators</a> page for more tools to support your financial goals.</p>
+
+                <p>Get started with Toolpidia’s Mortgage Calculator today to estimate your home loan payments. For questions or feedback, contact us at <a href="mailto:support@toolpidia.com">support@toolpidia.com</a>.</p>
+            </article>
         </div>
     </main>
+
+    <footer>
+        <div class="footer-content">
+            <a href="mailto:support@toolpidia.com" class="contact-email">support@toolpidia.com</a>
+            <p>© 2025 Toolpidia. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#" data-section="home" class="footer-nav-link">Home</a>
+                <a href="#" data-section="calculators" class="footer-nav-link">Calculators</a>
+                <a href="#" data-section="about" class="footer-nav-link">About</a>
+                <a href="#" data-section="contact" class="footer-nav-link">Contact</a>
+            </div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // Debounce function to limit rapid updates
-        function debounce(func, wait) {
-            let timeout;
-            return function (...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, args), wait);
-            };
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            // Header Navigation
+            const navLinks = document.querySelectorAll('.nav-link, .footer-nav-link');
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
 
-        // Format currency with locale-specific handling
-        function formatCurrency(amount, currency) {
-            const currencyMap = {
-                '$': 'USD', '₹': 'INR', '€': 'EUR', '£': 'GBP',
-                'A$': 'AUD', 'C$': 'CAD', '¥': 'JPY', 'AED': 'AED'
-            };
-            const localeMap = {
-                'INR': 'en-IN', 'JPY': 'ja-JP', 'AED': 'ar-AE'
-            };
-            const locale = localeMap[currencyMap[currency]] || 'en-US';
-            return new Intl.NumberFormat(locale, {
-                style: 'currency',
-                currency: currencyMap[currency] || 'USD',
-                currencyDisplay: 'symbol'
-            }).format(amount).replace(/^[^\d]*/, currency);
-        }
-
-        // Validate inputs
-        function validateInputs() {
-            const inputs = [
-                { id: "homePrice", min: 1000, message: "Home price must be at least 1000" },
-                { id: "downPayment", min: 0, message: "Down payment cannot be negative" },
-                { id: "interestRate", min: 0.1, message: "Interest rate must be at least 0.1%" },
-                { id: "loanTerm", min: 1, message: "Loan term must be at least 1 year" },
-                { id: "propertyTax", min: 0, message: "Property tax cannot be negative" },
-                { id: "homeInsurance", min: 0, message: "Home insurance cannot be negative" }
-            ];
-            const errorElement = document.getElementById("error-message");
-            for (const input of inputs) {
-                const value = parseFloat(document.getElementById(input.id).value);
-                if (isNaN(value) || value < input.min) {
-                    errorElement.textContent = input.message;
-                    errorElement.style.display = "block";
-                    return false;
-                }
-            }
-            const homePrice = parseFloat(document.getElementById("homePrice").value);
-            const downPayment = parseFloat(document.getElementById("downPayment").value);
-            if (downPayment > homePrice) {
-                errorElement.textContent = "Down payment cannot exceed home price";
-                errorElement.style.display = "block";
-                return false;
-            }
-            errorElement.style.display = "none";
-            return true;
-        }
-
-        // Update all values
-        function updateValues() {
-            if (!validateInputs()) return;
-            const currency = document.getElementById("currency").value;
-            const homePrice = parseFloat(document.getElementById("homePrice").value) || 400000;
-            const downPayment = parseFloat(document.getElementById("downPayment").value) || 80000;
-            const interestRate = parseFloat(document.getElementById("interestRate").value) || 5.5;
-            const loanTerm = parseInt(document.getElementById("loanTerm").value) || 30;
-
-            document.getElementById("homePriceSlider").value = homePrice;
-            document.getElementById("downPaymentSlider").value = downPayment;
-            document.getElementById("interestRateSlider").value = interestRate;
-            document.getElementById("loanTermSlider").value = loanTerm;
-
-            document.getElementById("homePriceValue").textContent = formatCurrency(homePrice, currency);
-            document.getElementById("downPaymentValue").textContent = formatCurrency(downPayment, currency);
-            document.getElementById("interestRateValue").textContent = `${interestRate}%`;
-            document.getElementById("loanTermValue").textContent = `${loanTerm} Years`;
-
-            const loanAmount = homePrice - downPayment;
-            const downPaymentPercent = homePrice ? (downPayment / homePrice) * 100 : 0;
-            document.getElementById("loanAmount").value = formatCurrency(loanAmount, currency);
-            document.getElementById("loanPercentage").textContent = `${downPaymentPercent.toFixed(1)}%`;
-
-            saveState();
-        }
-
-        // Debounced updateValues
-        const debouncedUpdateValues = debounce(updateValues, 100);
-
-        // Slider update functions
-        function updateHomePrice(value) {
-            document.getElementById("homePrice").value = value;
-            debouncedUpdateValues();
-        }
-
-        function updateDownPayment(value) {
-            document.getElementById("downPayment").value = value;
-            debouncedUpdateValues();
-        }
-
-        function updateInterestRate(value) {
-            document.getElementById("interestRate").value = value;
-            debouncedUpdateValues();
-        }
-
-        function updateLoanTerm(value) {
-            document.getElementById("loanTerm").value = value;
-            debouncedUpdateValues();
-        }
-
-        // Save state to localStorage
-        function saveState() {
-            const inputs = {
-                currency: document.getElementById("currency").value,
-                homePrice: document.getElementById("homePrice").value,
-                downPayment: document.getElementById("downPayment").value,
-                interestRate: document.getElementById("interestRate").value,
-                loanTerm: document.getElementById("loanTerm").value,
-                propertyTax: document.getElementById("propertyTax").value,
-                homeInsurance: document.getElementById("homeInsurance").value,
-                paymentFrequency: document.getElementById("paymentFrequency").value
-            };
-            localStorage.setItem("mortgageCalculatorState", JSON.stringify(inputs));
-        }
-
-        // Load state from localStorage
-        function loadState() {
-            const state = JSON.parse(localStorage.getItem("mortgageCalculatorState"));
-            if (state) {
-                document.getElementById("currency").value = state.currency || "$";
-                document.getElementById("homePrice").value = state.homePrice || "400000";
-                document.getElementById("downPayment").value = state.downPayment || "80000";
-                document.getElementById("interestRate").value = state.interestRate || "5.5";
-                document.getElementById("loanTerm").value = state.loanTerm || "30";
-                document.getElementById("propertyTax").value = state.propertyTax || "2000";
-                document.getElementById("homeInsurance").value = state.homeInsurance || "1000";
-                document.getElementById("paymentFrequency").value = state.paymentFrequency || "monthly";
-                updateValues();
-            }
-        }
-
-        // Calculate mortgage payment
-        function calculateMortgage() {
-            if (!validateInputs()) return;
-
-            const currency = document.getElementById("currency").value;
-            const homePrice = parseFloat(document.getElementById("homePrice").value);
-            const downPayment = parseFloat(document.getElementById("downPayment").value);
-            const loanAmount = homePrice - downPayment;
-            const annualRate = parseFloat(document.getElementById("interestRate").value) / 100;
-            const loanTermYears = parseInt(document.getElementById("loanTerm").value);
-            const paymentFrequency = document.getElementById("paymentFrequency").value;
-            const propertyTax = parseFloat(document.getElementById("propertyTax").value) || 0;
-            const homeInsurance = parseFloat(document.getElementById("homeInsurance").value) || 0;
-
-            let periodsPerYear, paymentPeriods, interestRatePerPeriod;
-            if (paymentFrequency === "monthly") {
-                periodsPerYear = 12;
-            } else if (paymentFrequency === "biweekly") {
-                periodsPerYear = 26;
-            } else {
-                periodsPerYear = 52;
-            }
-            paymentPeriods = loanTermYears * periodsPerYear;
-            interestRatePerPeriod = annualRate / periodsPerYear;
-
-            const payment = (loanAmount * interestRatePerPeriod) / (1 - Math.pow(1 + interestRatePerPeriod, -paymentPeriods));
-            const monthlyPayment = payment * (periodsPerYear / 12);
-            const monthlyPropertyTax = propertyTax / 12;
-            const monthlyHomeInsurance = homeInsurance / 12;
-            const totalMonthlyPayment = monthlyPayment + monthlyPropertyTax + monthlyHomeInsurance;
-
-            const totalInterest = (payment * paymentPeriods) - loanAmount;
-            const totalLoanCost = loanAmount + totalInterest;
-
-            const today = new Date();
-            const payoffDate = new Date(today.setMonth(today.getMonth() + (loanTermYears * 12)));
-            const payoffDateStr = payoffDate.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const sectionId = link.getAttribute('data-section');
+                    if (sectionId) {
+                        e.preventDefault();
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        link.classList.add('active');
+                        mobileMenu.classList.remove('active');
+                    }
+                });
             });
 
-            document.getElementById("result").textContent = formatCurrency(totalMonthlyPayment, currency);
-            document.getElementById("principal-interest").textContent = formatCurrency(monthlyPayment, currency);
-            document.getElementById("tax-amount").textContent = formatCurrency(monthlyPropertyTax, currency);
-            document.getElementById("insurance-amount").textContent = formatCurrency(monthlyHomeInsurance, currency);
-            document.getElementById("total-interest").textContent = formatCurrency(totalInterest, currency);
-            document.getElementById("total-loan-cost").textContent = formatCurrency(totalLoanCost, currency);
-            document.getElementById("payoff-date").textContent = payoffDateStr;
+            hamburger.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+            });
 
-            document.getElementById("result-container").style.display = "block";
-            if (window.innerWidth < 992) {
-                document.getElementById("result-container").scrollIntoView({ behavior: 'smooth' });
+            // Mortgage Calculator Logic
+            function formatCurrency(amount, currency) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: currency === '$' ? 'USD' : 
+                            currency === '€' ? 'EUR' : 
+                            currency === '£' ? 'GBP' : 
+                            currency === '₹' ? 'INR' : 
+                            currency === 'A$' ? 'AUD' : 
+                            currency === 'C$' ? 'CAD' : 
+                            currency === '¥' && currency === 'JPY' ? 'JPY' : 
+                            currency === '¥' && currency === 'CNY' ? 'CNY' : 
+                            currency === 'AED' ? 'AED' : 'USD',
+                    currencyDisplay: 'symbol'
+                }).format(amount).replace(/^[^\d]*/, currency);
             }
-        }
 
-        // Export results as PDF
-        function exportResults() {
-            if (document.getElementById("result-container").style.display === "none") {
-                document.getElementById("error-message").textContent = "Please calculate results first";
-                document.getElementById("error-message").style.display = "block";
-                return;
+            function updateValues() {
+                const currency = document.getElementById("currency").value;
+                const homePrice = parseFloat(document.getElementById("homePrice").value) || 400000;
+                const downPayment = parseFloat(document.getElementById("downPayment").value) || 80000;
+                const interestRate = parseFloat(document.getElementById("interestRate").value) || 5.5;
+                const loanTerm = parseInt(document.getElementById("loanTerm").value) || 30;
+
+                document.getElementById("homePriceSlider").value = homePrice;
+                document.getElementById("downPaymentSlider").value = downPayment;
+                document.getElementById("interestRateSlider").value = interestRate;
+                document.getElementById("loanTermSlider").value = loanTerm;
+
+                document.getElementById("homePriceValue").textContent = formatCurrency(homePrice, currency);
+                document.getElementById("downPaymentValue").textContent = formatCurrency(downPayment, currency);
+                document.getElementById("interestRateValue").textContent = `${interestRate}%`;
+                document.getElementById("loanTermValue").textContent = `${loanTerm} Years`;
+
+                const loanAmount = homePrice - downPayment;
+                const downPaymentPercent = (downPayment / homePrice) * 100;
+
+                document.getElementById("loanAmount").value = formatCurrency(loanAmount, currency);
+                document.getElementById("loanPercentage").textContent = `${downPaymentPercent.toFixed(1)}%`;
+
+                const errorElement = document.getElementById("error-message");
+                if (downPayment > homePrice) {
+                    errorElement.textContent = "Down payment cannot exceed home price";
+                    errorElement.style.display = "block";
+                } else {
+                    errorElement.style.display = "none";
+                }
             }
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.setFontSize(16);
-            doc.text("Mortgage Calculation Results", 10, 10);
-            doc.setFontSize(12);
-            doc.text(`Estimated Payment: ${document.getElementById("result").textContent}`, 10, 20);
-            doc.text(`Principal & Interest: ${document.getElementById("principal-interest").textContent}`, 10, 30);
-            doc.text(`Property Tax: ${document.getElementById("tax-amount").textContent}`, 10, 40);
-            doc.text(`Home Insurance: ${document.getElementById("insurance-amount").textContent}`, 10, 50);
-            doc.text(`Total Interest Paid: ${document.getElementById("total-interest").textContent}`, 10, 60);
-            doc.text(`Total Loan Cost: ${document.getElementById("total-loan-cost").textContent}`, 10, 70);
-            doc.text(`Payoff Date: ${document.getElementById("payoff-date").textContent}`, 10, 80);
-            doc.save("mortgage-results.pdf");
-        }
 
-        // Clear all fields
-        function clearFields() {
-            document.getElementById("currency").value = "$";
-            document.getElementById("homePrice").value = "400000";
-            document.getElementById("downPayment").value = "80000";
-            document.getElementById("interestRate").value = "5.5";
-            document.getElementById("loanTerm").value = "30";
-            document.getElementById("propertyTax").value = "2000";
-            document.getElementById("homeInsurance").value = "1000";
-            document.getElementById("paymentFrequency").value = "monthly";
+            function updateHomePrice(value) {
+                document.getElementById("homePrice").value = value;
+                updateValues();
+            }
+
+            function updateDownPayment(value) {
+                document.getElementById("downPayment").value = value;
+                updateValues();
+            }
+
+            function updateInterestRate(value) {
+                document.getElementById("interestRate").value = value;
+                updateValues();
+            }
+
+            function updateLoanTerm(value) {
+                document.getElementById("loanTerm").value = value;
+                updateValues();
+            }
+
+            function calculateMortgage() {
+                const currency = document.getElementById("currency").value;
+                const homePrice = parseFloat(document.getElementById("homePrice").value) || 400000;
+                const downPayment = parseFloat(document.getElementById("downPayment").value) || 80000;
+
+                if (downPayment > homePrice) {
+                    document.getElementById("error-message").textContent = "Down payment cannot exceed home price";
+                    document.getElementById("error-message").style.display = "block";
+                    return;
+                }
+
+                const loanAmount = homePrice - downPayment;
+                const annualRate = parseFloat(document.getElementById("interestRate").value) / 100 || 0.055;
+                const monthlyRate = annualRate / 12;
+                const loanTermYears = parseInt(document.getElementById("loanTerm").value) || 30;
+                const loanTermMonths = loanTermYears * 12;
+                const propertyTax = parseFloat(document.getElementById("propertyTax").value) / 12 || 2000 / 12;
+                const homeInsurance = parseFloat(document.getElementById("homeInsurance").value) / 12 || 1000 / 12;
+                const paymentFrequency = document.getElementById("paymentFrequency").value;
+
+                const monthlyPI = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -loanTermMonths));
+
+                let monthlyPayment = monthlyPI;
+                if (!isNaN(propertyTax)) monthlyPayment += propertyTax;
+                if (!isNaN(homeInsurance)) monthlyPayment += homeInsurance;
+
+                const totalInterest = (monthlyPI * loanTermMonths) - loanAmount;
+                const totalLoanCost = loanAmount + totalInterest;
+
+                const today = new Date();
+                const payoffDate = new Date(today.setMonth(today.getMonth() + loanTermMonths));
+                const payoffDateStr = payoffDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+
+                document.getElementById("result").textContent = formatCurrency(monthlyPayment, currency);
+                document.getElementById("principal-interest").textContent = formatCurrency(monthlyPI, currency);
+                document.getElementById("tax-amount").textContent = isNaN(propertyTax) ? "N/A" : formatCurrency(propertyTax, currency);
+                document.getElementById("insurance-amount").textContent = isNaN(homeInsurance) ? "N/A" : formatCurrency(homeInsurance, currency);
+                document.getElementById("total-interest").textContent = formatCurrency(totalInterest, currency);
+                document.getElementById("total-loan-cost").textContent = formatCurrency(totalLoanCost, currency);
+                document.getElementById("payoff-date").textContent = payoffDateStr;
+
+                document.getElementById("result-container").style.display = "block";
+                document.getElementById("error-message").style.display = "none";
+
+                if (window.innerWidth < 992) {
+                    document.getElementById("result-container").scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                }
+            }
+
+            function clearFields() {
+                document.getElementById("homePrice").value = "400000";
+                document.getElementById("downPayment").value = "80000";
+                document.getElementById("interestRate").value = "5.5";
+                document.getElementById("loanTerm").value = "30";
+                document.getElementById("propertyTax").value = "2000";
+                document.getElementById("homeInsurance").value = "1000";
+                document.getElementById("paymentFrequency").value = "monthly";
+                document.getElementById("currency").value = "$";
+
+                updateValues();
+                document.getElementById("result-container").style.display = "none";
+                document.getElementById("error-message").style.display = "none";
+            }
+
+            // Initialize on page load
             updateValues();
-            document.getElementById("result-container").style.display = "none";
-            document.getElementById("error-message").style.display = "none";
-            localStorage.removeItem("mortgageCalculatorState");
-        }
 
-        // Initialize on page load
-        window.onload = function() {
-            loadState();
-            updateValues();
+            // Add event listeners for calculator buttons
+            document.getElementById('calculate-btn').addEventListener('click', calculateMortgage);
+            document.getElementById('clear-btn').addEventListener('click', clearFields);
 
+            // Add event listeners for input changes
+            document.getElementById('currency').addEventListener('change', updateValues);
+            document.getElementById('homePrice').addEventListener('input', updateValues);
+            document.getElementById('downPayment').addEventListener('input', updateValues);
+            document.getElementById('interestRate').addEventListener('input', updateValues);
+            document.getElementById('loanTerm').addEventListener('input', updateValues);
+            document.getElementById('propertyTax').addEventListener('input', updateValues);
+            document.getElementById('homeInsurance').addEventListener('input', updateValues);
+            document.getElementById('homePriceSlider').addEventListener('input', () => updateHomePrice(document.getElementById('homePriceSlider').value));
+            document.getElementById('downPaymentSlider').addEventListener('input', () => updateDownPayment(document.getElementById('downPaymentSlider').value));
+            document.getElementById('interestRateSlider').addEventListener('input', () => updateInterestRate(document.getElementById('interestRateSlider').value));
+            document.getElementById('loanTermSlider').addEventListener('input', () => updateLoanTerm(document.getElementById('loanTermSlider').value));
+
+            // Add event listeners for better mobile experience
             document.querySelectorAll('input[type="number"]').forEach(input => {
                 input.addEventListener('blur', function() {
                     if (this.value === '') this.value = this.min || 0;
-                    debouncedUpdateValues();
+                    updateValues();
                 });
             });
-        };
+        });
     </script>
 </body>
 </html>
