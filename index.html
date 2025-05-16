@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toolpidia - Your Ultimate Calculator Hub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         :root {
             --primary-blue: #2563eb;
@@ -24,19 +24,21 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         body {
             background-color: var(--bg-light);
             color: var(--text-dark);
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Header Styles */
         header {
             background-color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -44,27 +46,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: var(--transition);
         }
 
         .logo {
-            font-size: 1.8rem;
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
             font-weight: 700;
             color: var(--primary-blue);
             text-decoration: none;
             display: flex;
             align-items: center;
+            gap: 0.5rem;
         }
 
         .logo i {
-            margin-right: 0.5rem;
             font-size: 1.5rem;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
         }
 
         nav ul {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: clamp(1rem, 3vw, 2rem);
         }
 
         nav a {
@@ -72,12 +78,18 @@
             color: var(--text-dark);
             font-weight: 500;
             position: relative;
-            transition: var(--transition);
             padding: 0.5rem 0;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
         nav a:hover {
             color: var(--primary-blue);
+        }
+
+        nav a.active {
+            color: var(--primary-blue);
+            font-weight: 600;
         }
 
         nav a::after {
@@ -91,20 +103,61 @@
             transition: var(--transition);
         }
 
-        nav a:hover::after {
+        nav a:hover::after,
+        nav a.active::after {
             width: 100%;
         }
 
-        .contact-email {
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
             color: var(--primary-blue);
-            font-weight: 500;
+            cursor: pointer;
+            background: none;
+            border: none;
         }
 
-        /* Hero Section */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 250px;
+            height: 100%;
+            background-color: white;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            transition: right 0.3s ease;
+            z-index: 101;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu ul {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .mobile-menu a {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu a:hover,
+        .mobile-menu a.active {
+            color: var(--primary-blue);
+        }
+
         .hero {
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            color: white;
-            padding: 5rem 2rem;
+            color: var(--text-light);
+            padding: clamp(3rem, 10vw, 5rem) 2rem;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -113,839 +166,747 @@
         .hero::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
+            inset: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg4NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSI2MCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
             opacity: 0.5;
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
         .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1.5rem;
             animation: fadeIn 1s ease;
         }
 
         .hero p {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
             margin-bottom: 2rem;
             opacity: 0.9;
             animation: fadeIn 1s ease 0.2s forwards;
         }
 
-        .cta-button {
-            display: inline-block;
-            background-color: white;
-            color: var(--primary-blue);
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: var(--transition);
-            animation: fadeIn 1s ease 0.4s forwards, pulse 2s infinite;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            animation: none;
-        }
-
-        .tool-icons {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .tool-icon {
-            background-color: rgba(255, 255, 255, 0.1);
-            width: 70px;
-            height: 70px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            color: white;
-            transition: var(--transition);
-            animation: fadeInUp 0.5s ease forwards;
-        }
-
-        .tool-icon:nth-child(1) { animation-delay: 0.6s; }
-        .tool-icon:nth-child(2) { animation-delay: 0.7s; }
-        .tool-icon:nth-child(3) { animation-delay: 0.8s; }
-        .tool-icon:nth-child(4) { animation-delay: 0.9s; }
-
-        .tool-icon:hover {
-            transform: translateY(-5px) scale(1.1);
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Search Section */
-        .search-section {
-            padding: 3rem 2rem;
-            max-width: 800px;
-            margin: 0 auto;
-            transform: translateY(-50px);
-        }
-
-        .search-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: var(--card-shadow);
-            padding: 1.5rem;
-            position: relative;
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        .search-bar:focus-within {
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .search-bar input {
+        main {
             flex: 1;
-            border: none;
-            padding: 0.8rem 1rem;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        .search-icon {
-            padding: 0 1rem;
-            color: #9ca3af;
-            transition: var(--transition);
-        }
-
-        .search-bar:focus-within .search-icon {
-            color: var(--primary-blue);
-        }
-
-        /* Tool Categories */
-        .tools-section {
             padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
         }
 
-        .category {
-            margin-bottom: 4rem;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+        main section {
+            display: none;
         }
 
-        .category.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .category h2 {
-            font-size: 1.8rem;
-            color: var(--primary-blue);
-            margin-bottom: 1rem;
-            position: relative;
-            padding-bottom: 0.5rem;
-        }
-
-        .category h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background-color: var(--light-blue);
-            border-radius: 3px;
-        }
-
-        .category p {
-            color: #6b7280;
-            margin-bottom: 1.5rem;
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .tool-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .tool-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .tool-card-content {
-            padding: 1.5rem;
-        }
-
-        .tool-icon-container {
-            width: 50px;
-            height: 50px;
-            background-color: rgba(59, 130, 246, 0.1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-            color: var(--primary-blue);
-            font-size: 1.2rem;
-        }
-
-        .tool-card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
-
-        .tool-card p {
-            color: #6b7280;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .use-tool-btn {
-            display: inline-block;
-            background-color: var(--primary-blue);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .use-tool-btn:hover {
-            background-color: var(--dark-blue);
-            transform: translateY(-2px);
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--text-dark);
-            color: white;
-            padding: 3rem 2rem;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .footer-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 1rem;
+        main section.active {
             display: block;
         }
 
-        .footer-logo i {
-            margin-right: 0.5rem;
+        main h2 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1rem;
+            color: var(--primary-blue);
+            text-align: center;
         }
 
-        .footer-tagline {
-            opacity: 0.8;
+        main p {
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            text-align: center;
+        }
+
+        .calculator-category {
+            margin: 2rem 0;
+        }
+
+        .calculator-category h3 {
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            text-align: left;
+            border-bottom: 2px solid var(--light-blue);
+            padding-bottom: 0.5rem;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .calculator-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .calculator-card h4 {
+            font-size: 1.2rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .calculator-card p {
             font-size: 0.9rem;
+            color: var(--text-dark);
             margin-bottom: 1rem;
         }
 
-        .footer-contact {
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-contact a {
-            color: var(--light-blue);
+        .calculator-card a {
+            display: inline-block;
+            background-color: var(--primary-blue);
+            color: var(--text-light);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
             text-decoration: none;
+            font-weight: 500;
             transition: var(--transition);
         }
 
-        .footer-contact a:hover {
-            color: white;
-            text-decoration: underline;
+        .calculator-card a:hover {
+            background-color: var(--secondary-blue);
+        }
+
+        footer {
+            background-color: var(--text-dark);
+            color: var(--text-light);
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .footer-content .contact-email {
+            color: var(--light-blue);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .footer-content .contact-email:hover {
+            color: var(--secondary-blue);
         }
 
         .footer-links {
+            margin: 1rem 0;
             display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            justify-content: center;
+            gap: 1.5rem;
         }
 
         .footer-links a {
-            color: white;
-            opacity: 0.8;
+            color: var(--text-light);
             text-decoration: none;
             transition: var(--transition);
-            font-size: 0.9rem;
+            cursor: pointer;
         }
 
         .footer-links a:hover {
-            opacity: 1;
-            text-decoration: underline;
+            color: var(--light-blue);
         }
 
-        .copyright {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeInUp {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                padding: 1rem;
-            }
-
-            .logo {
-                margin-bottom: 1rem;
-            }
-
-            nav ul {
-                gap: 1rem;
-                margin-bottom: 1rem;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .search-section {
-                padding: 2rem 1rem;
-                transform: translateY(-30px);
-            }
-
-            .tools-section {
-                padding: 1rem;
-            }
-
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Dark Mode Toggle */
-        .dark-mode-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--primary-blue);
-            color: white;
+        .social-links {
             display: flex;
-            align-items: center;
             justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 100;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-light);
+            font-size: 1.2rem;
             transition: var(--transition);
         }
 
-        .dark-mode-toggle:hover {
-            transform: scale(1.1);
+        .social-links a:hover {
+            color: var(--light-blue);
         }
 
-        body.dark-mode {
-            background-color: #111827;
-            color: #f3f4f6;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        body.dark-mode header {
-            background-color: #1f2937;
+        @media (max-width: 768px) {
+            header {
+                justify-content: space-between;
+            }
+
+            nav ul {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .calculator-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
         }
 
-        body.dark-mode nav a {
-            color: #f3f4f6;
-        }
+        @media (max-width: 480px) {
+            .hero {
+                padding: 2rem 1rem;
+            }
 
-        body.dark-mode .search-container,
-        body.dark-mode .tool-card {
-            background-color: #1f2937;
-            color: #f3f4f6;
-        }
+            .logo {
+                font-size: 1.5rem;
+            }
 
-        body.dark-mode .tool-card h3,
-        body.dark-mode .tool-card p {
-            color: #f3f4f6;
-        }
-
-        body.dark-mode .search-bar {
-            background-color: #374151;
-            border-color: #4b5563;
-        }
-
-        body.dark-mode .search-bar input {
-            background-color: #374151;
-            color: #f3f4f6;
-        }
-
-        body.dark-mode .search-icon {
-            color: #9ca3af;
-        }
-
-        body.dark-mode .tool-icon-container {
-            background-color: rgba(59, 130, 246, 0.2);
+            .calculator-card {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
-        <a href="#" class="logo">
-            <i class="fas fa-calculator"></i>
-            Toolpidia
-        </a>
+        <a href="#" class="logo"><i class="fas fa-calculator"></i> Toolpidia</a>
+        <button class="hamburger"><i class="fas fa-bars"></i></button>
         <nav>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="#tools">Tools</a></li>
-                <li><a href="Contact Us">Contact</a></li>
+                <li><a data-section="home" class="nav-link active">Home</a></li>
+                <li><a data-section="calculators" class="nav-link">Calculators</a></li>
+                <li><a data-section="about" class="nav-link">About</a></li>
+                <li><a data-section="contact" class="nav-link">Contact</a></li>
             </ul>
         </nav>
-        <div class="contact-email">info.toolpidia@gmail.com</div>
+        <div class="mobile-menu">
+            <ul>
+                <li><a data-section="home" class="nav-link active">Home</a></li>
+                <li><a data-section="calculators" class="nav-link">Calculators</a></li>
+                <li><a data-section="about" class="nav-link">About</a></li>
+                <li><a data-section="contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Your Ultimate Calculator Hub</h1>
-            <p>Access free calculators for Math, Health, Finance and more — fast and free.</p>
-            <a href="#tools" class="cta-button">Explore Tools</a>
-            
-            <div class="tool-icons">
-                <div class="tool-icon">
-                    <i class="fas fa-calculator"></i>
-                </div>
-                <div class="tool-icon">
-                    <i class="fas fa-heartbeat"></i>
-                </div>
-                <div class="tool-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="tool-icon">
-                    <i class="fas fa-calendar-alt"></i>
+    <main>
+        <section id="home" class="active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>Welcome to Toolpidia</h1>
+                    <p>Your one-stop hub for all calculation needs. Explore our wide range of calculators and simplify your tasks!</p>
                 </div>
             </div>
-        </div>
-    </section>
+            <h2>Our Calculators</h2>
+            <p>Discover our tools and services below, organized by category.</p>
 
-    <!-- Search Section -->
-    <section class="search-section">
-        <div class="search-container">
-            <div class="search-bar">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" placeholder="Search a tool..." id="searchInput">
-            </div>
-        </div>
-    </section>
-
-    <!-- Tools Section -->
-    <section class="tools-section" id="tools">
-        <!-- Financial Calculators -->
-        <div class="category" id="financial">
-            <h2>Financial Calculators</h2>
-            <p>Tools to help you manage your finances, loans, investments and more.</p>
-            
-            <div class="tools-grid">
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-home"></i>
-                        </div>
-                        <h3>Mortgage Calculator</h3>
-                        <p>Calculate your monthly mortgage payments with ease.</p>
-                        <a href="Mortgage-Calculator.html" class="use-tool-btn">Use Tool</a>
+            <div class="calculator-category">
+                <h3>Financial Calculators</h3>
+                <div class="calculator-grid">
+                    <div class="calculator-card">
+                        <h4>Mortgage Calculator</h4>
+                        <p>Calculate monthly mortgage payments based on loan amount, interest rate, and term.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-hand-holding-usd"></i>
-                        </div>
-                        <h3>Loan Calculator</h3>
-                        <p>Determine loan payments and total interest.</p>
-                        <a href="Loan-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Loan Calculator</h4>
+                        <p>Determine monthly payments for personal or business loans.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-car"></i>
-                        </div>
-                        <h3>Auto Loan Calculator</h3>
-                        <p>Calculate your auto loan payments.</p>
-                        <a href="Auto Loan- Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Auto Loan Calculator</h4>
+                        <p>Estimate car loan payments with interest and term details.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <h3>Interest Calculator</h3>
-                        <p>Calculate simple and compound interest.</p>
-                        <a href="Interest-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Interest Calculator</h4>
+                        <p>Compute simple or compound interest for savings or loans.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
-                        <h3>Payment Calculator</h3>
-                        <p>Determine periodic payment amounts.</p>
-                        <a href="Payment-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Payment Calculator</h4>
+                        <p>Calculate payment schedules for various loan types.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-piggy-bank"></i>
-                        </div>
-                        <h3>Retirement Calculator</h3>
-                        <p>Plan your retirement savings.</p>
-                        <a href="Retirement-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Retirement Calculator</h4>
+                        <p>Plan your retirement savings and estimate future needs.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Amortization Calculator</h4>
+                        <p>View detailed loan amortization schedules.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Investment Calculator</h4>
+                        <p>Project investment growth over time with compound interest.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Inflation Calculator</h4>
+                        <p>Understand how inflation impacts purchasing power.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Finance Calculator</h4>
+                        <p>General tool for various financial calculations.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Tax Calculator</h4>
+                        <p>Estimate tax liabilities based on income and deductions.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Compound Interest Calculator</h4>
+                        <p>Calculate growth of investments with compounding.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Salary Calculator</h4>
+                        <p>Determine net pay after taxes and deductions.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Fitness & Health Calculators -->
-        <div class="category" id="health">
-            <h2>Fitness & Health Calculators</h2>
-            <p>Tools to help you track and improve your health and fitness.</p>
-            
-            <div class="tools-grid">
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-weight"></i>
-                        </div>
-                        <h3>BMI Calculator</h3>
-                        <p>Calculate your Body Mass Index.</p>
-                        <a href="BMI-Calculator.html" class="use-tool-btn">Use Tool</a>
+            <div class="calculator-category">
+                <h3>Fitness & Health Calculators</h3>
+                <div class="calculator-grid">
+                    <div class="calculator-card">
+                        <h4>BMI Calculator</h4>
+                        <p>Calculate your Body Mass Index based on height and weight.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-utensils"></i>
-                        </div>
-                        <h3>Calorie Calculator</h3>
-                        <p>Calculate your daily calorie needs.</p>
-                        <a href="Calorie-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Calorie Calculator</h4>
+                        <p>Estimate daily calorie needs for weight goals.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-running"></i>
-                        </div>
-                        <h3>Pace Calculator</h3>
-                        <p>Calculate your running pace.</p>
-                        <a href="Pace-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Body Fat Calculator</h4>
+                        <p>Measure body fat percentage using key metrics.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-baby"></i>
-                        </div>
-                        <h3>Pregnancy Calculator</h3>
-                        <p>Track your pregnancy progress.</p>
-                        <a href="Pregnancy-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>BMR Calculator</h4>
+                        <p>Calculate Basal Metabolic Rate to understand calorie burn.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Ideal Weight Calculator</h4>
+                        <p>Find your ideal weight based on height and body type.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Pace Calculator</h4>
+                        <p>Calculate running or walking pace for fitness goals.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Pregnancy Calculator</h4>
+                        <p>Track pregnancy milestones and estimate key dates.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Pregnancy Conception Calculator</h4>
+                        <p>Estimate conception date based on due date or other factors.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Due Date Calculator</h4>
+                        <p>Predict your baby’s due date based on last menstrual period.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Math Calculators -->
-        <div class="category" id="math">
-            <h2>Math Calculators</h2>
-            <p>Powerful tools for all your mathematical needs.</p>
-            
-            <div class="tools-grid">
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-square-root-alt"></i>
-                        </div>
-                        <h3>Scientific Calculator</h3>
-                        <p>Advanced calculator for complex math.</p>
-                        <a href="Scientific-Calculator.html" class="use-tool-btn">Use Tool</a>
+            <div class="calculator-category">
+                <h3>Math Calculators</h3>
+                <div class="calculator-grid">
+                    <div class="calculator-card">
+                        <h4>Scientific Calculator</h4>
+                        <p>Perform advanced mathematical calculations.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-divide"></i>
-                        </div>
-                        <h3>Fraction Calculator</h3>
-                        <p>Perform operations with fractions.</p>
-                        <a href="Fraction-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Fraction Calculator</h4>
+                        <p>Add, subtract, multiply, or divide fractions.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-percent"></i>
-                        </div>
-                        <h3>Percentage Calculator</h3>
-                        <p>Calculate percentages easily.</p>
-                        <a href="Percentage-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Percentage Calculator</h4>
+                        <p>Calculate percentages for discounts, tips, and more.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-random"></i>
-                        </div>
-                        <h3>Random Number Generator</h3>
-                        <p>Generate random numbers within a range.</p>
-                        <a href="RandomNumber-Generator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Random Number Generator</h4>
+                        <p>Generate random numbers within a specified range.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Trigonometry Calculator</h4>
+                        <p>Solve trigonometric functions like sine, cosine, and tangent.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Standard Deviation Calculator</h4>
+                        <p>Calculate the standard deviation of a dataset.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Fraction to Decimal Calculator</h4>
+                        <p>Convert fractions to decimal numbers easily.</p>
+                        <a href="#"> City Calculator</a>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Other Calculators -->
-        <div class="category" id="other">
-            <h2>Other Calculators</h2>
-            <p>Various tools for everyday calculations.</p>
-            
-            <div class="tools-grid">
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-birthday-cake"></i>
-                        </div>
-                        <h3>Age Calculator</h3>
-                        <p>Calculate age from birth date.</p>
-                        <a href="Age-Calculator.html" class="use-tool-btn">Use Tool</a>
+            <div class="calculator-category">
+                <h3>Other Calculators</h3>
+                <div class="calculator-grid">
+                    <div class="calculator-card">
+                        <h4>Age Calculator</h4>
+                        <p>Calculate your exact age or time between dates.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-calendar-day"></i>
-                        </div>
-                        <h3>Date Calculator</h3>
-                        <p>Calculate days between dates.</p>
-                        <a href="Date-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Date Calculator</h4>
+                        <p>Compute differences between two dates.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <h3>Time Calculator</h3>
-                        <p>Add or subtract time values.</p>
-                        <a href="Time-Calculator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Time Calculator</h4>
+                        <p>Add or subtract time durations.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-card-content">
-                        <div class="tool-icon-container">
-                            <i class="fas fa-key"></i>
-                        </div>
-                        <h3>Random Password Generator</h3>
-                        <p>Generate secure passwords.</p>
-                        <a href="RandomPassword-Generator.html" class="use-tool-btn">Use Tool</a>
+                    <div class="calculator-card">
+                        <h4>Hours Calculator</h4>
+                        <p>Calculate total hours worked or time spent.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>GPA Calculator</h4>
+                        <p>Calculate your Grade Point Average for academic tracking.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Grade Calculator</h4>
+                        <p>Determine grades needed to achieve a target score.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Random Password Generator</h4>
+                        <p>Generate secure, random passwords for your accounts.</p>
+                        <a href="#">Use Calculator</a>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer -->
-    <footer id="contact">
+        <section id="calculators">
+            <h2>Calculators</h2>
+            <p>Explore our wide range of calculators for all your needs.</p>
+
+            <div class="calculator-category">
+                <h3>Financial Calculators</h3>
+                <div class="calculator-grid">
+                    <div class="calculator-card">
+                        <h4>Mortgage Calculator</h4>
+                        <p>Calculate monthly mortgage payments based on loan amount, interest rate, and term.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Loan Calculator</h4>
+                        <p>Determine monthly payments for personal or business loans.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Auto Loan Calculator</h4>
+                        <p>Estimate car loan payments with interest and term details.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Interest Calculator</h4>
+                        <p>Compute simple or compound interest for savings or loans.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Payment Calculator</h4>
+                        <p>Calculate payment schedules for various loan types.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Retirement Calculator</h4>
+                        <p>Plan your retirement savings and estimate future needs.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Amortization Calculator</h4>
+                        <p>View detailed loan amortization schedules.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Investment Calculator</h4>
+                        <p>Project investment growth over time with compound interest.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Inflation Calculator</h4>
+                        <p>Understand how inflation impacts purchasing power.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Finance Calculator</h4>
+                        <p>General tool for various financial calculations.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Tax Calculator</h4>
+                        <p>Estimate tax liabilities based on income and deductions.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Compound Interest Calculator</h4>
+                        <p>Calculate growth of investments with compounding.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Salary Calculator</h4>
+                        <p>Determine net pay after taxes and deductions.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-category">
+                <h3>Fitness & Health Calculators</h3>
+                <div class="calculator-grid">
+                    <div class="calculator-card">
+                        <h4>BMI Calculator</h4>
+                        <p>Calculate your Body Mass Index based on height and weight.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Calorie Calculator</h4>
+                        <p>Estimate daily calorie needs for weight goals.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Body Fat Calculator</h4>
+                        <p>Measure body fat percentage using key metrics.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>BMR Calculator</h4>
+                        <p>Calculate Basal Metabolic Rate to understand calorie burn.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Ideal Weight Calculator</h4>
+                        <p>Find your ideal weight based on height and body type.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Pace Calculator</h4>
+                        <p>Calculate running or walking pace for fitness goals.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Pregnancy Calculator</h4>
+                        <p>Track pregnancy milestones and estimate key dates.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Pregnancy Conception Calculator</h4>
+                        <p>Estimate conception date based on due date or other factors.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Due Date Calculator</h4>
+                        <p>Predict your baby’s due date based on last menstrual period.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-category">
+                <h3>Math Calculators</h3>
+                <div class="calculator-grid">
+                    <div class="calculator-card">
+                        <h4>Scientific Calculator</h4>
+                        <p>Perform advanced mathematical calculations.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Fraction Calculator</h4>
+                        <p>Add, subtract, multiply, or divide fractions.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Percentage Calculator</h4>
+                        <p>Calculate percentages for discounts, tips, and more.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Random Number Generator</h4>
+                        <p>Generate random numbers within a specified range.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Trigonometry Calculator</h4>
+                        <p>Solve trigonometric functions like sine, cosine, and tangent.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Standard Deviation Calculator</h4>
+                        <p>Calculate the standard deviation of a dataset.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Fraction to Decimal Calculator</h4>
+                        <p>Convert fractions to decimal numbers easily.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-category">
+                <h3>Other Calculators</h3>
+                <div class="calculator-grid">
+                    <div class="calculator-card">
+                        <h4>Age Calculator</h4>
+                        <p>Calculate your exact age or time between dates.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Date Calculator</h4>
+                        <p>Compute differences between two dates.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Time Calculator</h4>
+                        <p>Add or subtract time durations.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Hours Calculator</h4>
+                        <p>Calculate total hours worked or time spent.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>GPA Calculator</h4>
+                        <p>Calculate your Grade Point Average for academic tracking.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Grade Calculator</h4>
+                        <p>Determine grades needed to achieve a target score.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                    <div class="calculator-card">
+                        <h4>Random Password Generator</h4>
+                        <p>Generate secure, random passwords for your accounts.</p>
+                        <a href="#">Use Calculator</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>About Us</h2>
+            <p>Learn more about Toolpidia and our mission to simplify calculations.</p>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>Reach out to us at <a href="mailto:support@toolpidia.com">support@toolpidia.com</a>.</p>
+        </section>
+    </main>
+
+    <footer>
         <div class="footer-content">
-            <div class="footer-about">
-                <a href="#" class="footer-logo">
-                    <i class="fas fa-calculator"></i>
-                    Toolpidia
-                </a>
-                <p class="footer-tagline">Your Ultimate Calculator Hub</p>
-                <div class="footer-contact">
-                    <a href="mailto:info.toolpidia@gmail.com">info.toolpidia@gmail.com</a>
-                </div>
-            </div>
-            
+            <a href="mailto:support@toolpidia.com" class="contact-email">support@toolpidia.com</a>
+            <p>© 2025 Toolpidia. All rights reserved.</p>
             <div class="footer-links">
-                <h3>Quick Links</h3>
-                <a href="#">Home</a>
-                <a href="#tools">Tools</a>
-                <a href="Contact Ust">Contact</a>
-                <a href="Privacy-Policy.html">Privacy Policy</a>
-                <a href="Terms-of-Use.html">Terms of Use</a>
+                <a data-section="home" class="footer-nav-link">Home</a>
+                <a data-section="calculators" class="footer-nav-link">Calculators</a>
+                <a data-section="about" class="footer-nav-link">About</a>
+                <a data-section="contact" class="footer-nav-link">Contact</a>
             </div>
-            
-            <div class="footer-links">
-                <h3>Categories</h3>
-                <a href="#financial">Financial Calculators</a>
-                <a href="#health">Health Calculators</a>
-                <a href="#math">Math Calculators</a>
-                <a href="#other">Other Calculators</a>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
             </div>
-        </div>
-        
-        <div class="copyright">
-            &copy; 2023 Toolpidia. All rights reserved.
         </div>
     </footer>
 
-    <!-- Dark Mode Toggle -->
-    <div class="dark-mode-toggle" id="darkModeToggle">
-        <i class="fas fa-moon"></i>
-    </div>
-
     <script>
-        // Intersection Observer for scroll animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link, .footer-nav-link');
+            const sections = document.querySelectorAll('main section');
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            function showSection(sectionId) {
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
                 }
-            });
-        }, {
-            threshold: 0.1
-        });
 
-        document.querySelectorAll('.category, .tool-card').forEach(el => {
-            observer.observe(el);
-        });
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('data-section') === sectionId) {
+                        link.classList.add('active');
+                    }
+                });
 
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const toolCards = document.querySelectorAll('.tool-card');
+                const sectionTitle = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+                document.title = sectionId === 'home' ? 'Toolpidia - Your Ultimate Calculator Hub' : `${sectionTitle} - Toolpidia`;
 
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            toolCards.forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                const description = card.querySelector('p').textContent.toLowerCase();
-                
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-
-        // Dark mode toggle
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                mobileMenu.classList.remove('active');
             }
-        });
 
-        // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'enabled') {
-            body.classList.add('dark-mode');
-            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        }
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const sectionId = link.getAttribute('data-section');
+                    if (sectionId) { // Check if data-section exists
+                        e.preventDefault();
+                        showSection(sectionId);
+                    }
+                });
+            });
 
-        // Save dark mode preference
-        darkModeToggle.addEventListener('click', () => {
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('darkMode', 'enabled');
-            } else {
-                localStorage.setItem('darkMode', 'disabled');
-            }
+            hamburger.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+            });
+
+            showSection('home');
         });
     </script>
 </body>
