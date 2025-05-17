@@ -3,222 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interest Calculator</title>
+    <title>Interest Calculator - Toolpidia</title>
+    <meta name="description" content="Use our free Interest Calculator to compute simple and compound interest easily. Calculate your savings or loan interest with multiple currencies.">
+    <meta name="keywords" content="interest calculator, simple interest calculator, compound interest calculator, financial calculator, savings calculator">
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Arial', sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding: 30px;
-            background-color: #e6f0ff;
-            color: #1a2a44;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: #f0f4f8;
+            color: #333;
         }
-        
-        .container {
-            max-width: 700px;
-            width: 100%;
+
+        /* Header Styles */
+        header {
+            background: #007bff;
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 6px 24px rgba(0, 82, 204, 0.15);
-            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #f0f4f8;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Calculator Styles */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
         h1 {
             text-align: center;
-            color: #0052cc;
+            color: #007bff;
             margin-bottom: 30px;
             font-size: 2rem;
-            font-weight: 700;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #1a2a44;
-            font-size: 1.1rem;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
         }
-        
+
         input[type="number"], select {
             width: 100%;
             padding: 12px;
-            border: 1px solid #80b3ff;
-            border-radius: 8px;
-            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             font-size: 1rem;
-            background-color: #f7faff;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #f9f9f9;
         }
-        
-        input[type="number"]:focus, select:focus {
-            outline: none;
-            border-color: #0052cc;
-            box-shadow: 0 0 8px rgba(0, 82, 204, 0.2);
-        }
-        
+
         button {
-            background-color: #0052cc;
-            color: #ffffff;
+            background-color: #007bff;
+            color: white;
             border: none;
-            padding: 14px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1rem;
             width: 100%;
-            transition: background-color 0.3s ease, transform 0.1s ease;
+            transition: background-color 0.3s;
         }
-        
+
         button:hover {
-            background-color: #003d99;
-            transform: translateY(-2px);
+            background-color: #0056b3;
         }
-        
+
         #result {
-            margin-top: 25px;
-            padding: 20px;
-            background-color: #e6f0ff;
-            border-radius: 8px;
-            border-left: 4px solid #0052cc;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e6f3ff;
+            border-radius: 5px;
             display: none;
         }
-        
+
         .result-item {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-size: 1rem;
-            display: flex;
-            justify-content: space-between;
         }
-        
+
         .result-value {
-            font-weight: 700;
-            color: #0052cc;
+            font-weight: bold;
+            color: #007bff;
         }
-        
+
         .calculator-type {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        
+
         .calculator-type button {
-            padding: 12px;
-            background-color: #f7faff;
-            color: #1a2a44;
-            border: 2px solid #80b3ff;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            flex: 1;
+            background-color: #f0f4f8;
+            color: #333;
+            font-weight: bold;
         }
-        
+
         .calculator-type button.active {
-            background-color: #0052cc;
-            color: #ffffff;
-            border-color: #0052cc;
+            background-color: #007bff;
+            color: white;
         }
-        
+
         .currency-symbol {
-            font-weight: 400;
-            color: #4a6a99;
+            font-weight: normal;
+            color: #666;
         }
-        
+
         .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            display: flex;
+            gap: 10px;
         }
-        
+
+        .button-group button {
+            flex: 1;
+        }
+
         #clearResults, #clearResults2 {
-            background-color: #ff4d4d;
+            background-color: #dc3545;
         }
-        
+
         #clearResults:hover, #clearResults2:hover {
-            background-color: #cc0000;
+            background-color: #b02a37;
         }
-        
-        /* Mobile Responsiveness */
-        @media (max-width: 480px) {
-            body {
-                padding: 15px;
-                background-color: #ffffff;
-            }
-            
-            .container {
+
+        /* Article Styles */
+        .article-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-container h2 {
+            color: #007bff;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .article-container h3 {
+            color: #333;
+            margin: 15px 0 10px;
+            font-size: 1.4rem;
+        }
+
+        .article-container p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .article-container ul {
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+
+        .article-container ul li {
+            margin-bottom: 10px;
+        }
+
+        .article-container a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .article-container a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .social-icons {
+            margin: 15px 0;
+        }
+
+        .social-icons a {
+            color: white;
+            margin: 0 10px;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #f0f4f8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container, .article-container {
+                margin: 15px;
                 padding: 20px;
-                border-radius: 12px;
-                box-shadow: 0 4px 16px rgba(0, 82, 204, 0.1);
             }
-            
+
             h1 {
-                font-size: 1.6rem;
-                margin-bottom: 20px;
+                font-size: 1.5rem;
             }
-            
-            label {
-                font-size: 1rem;
+
+            .article-container h2 {
+                font-size: 1.5rem;
             }
-            
-            input[type="number"], select {
-                padding: 10px;
-                font-size: 0.95rem;
-                border-radius: 6px;
+
+            .article-container h3 {
+                font-size: 1.2rem;
             }
-            
-            button {
-                padding: 12px;
-                font-size: 1rem;
-            }
-            
-            .calculator-type {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .calculator-type button {
-                padding: 10px;
-                font-size: 0.95rem;
-            }
-            
-            .button-group {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .form-group div[style*="display: flex"] {
+
+            nav ul {
+                display: none;
                 flex-direction: column;
-                gap: 10px;
-            }
-            
-            #timeUnit {
+                position: absolute;
+                top: 60px;
+                left: 0;
                 width: 100%;
-                margin-right: 0;
+                background: #007bff;
+                padding: 20px;
             }
-            
-            #result {
-                padding: 15px;
-                margin-top: 20px;
+
+            nav ul.active {
+                display: flex;
             }
-            
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .calculator-type {
+                flex-direction: column;
+            }
+
+            .calculator-type button {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            input[type="number"], select {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
+            button {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
             .result-item {
                 font-size: 0.9rem;
-                flex-direction: column;
-                gap: 5px;
+            }
+
+            .article-container p, .article-container ul li {
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">Toolpidia</div>
+            <nav>
+                <ul id="nav-menu">
+                    <li><a href="https://hardikbhojani2.github.io/Toolpidia/">Home</a></li>
+                    <li><a href="#">Tools</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator -->
     <div class="container">
         <h1>Interest Calculator</h1>
         
@@ -263,8 +403,8 @@
             
             <div class="form-group">
                 <label for="time">Time Period</label>
-                <div style="display: flex;">
-                    <input type="number" id="time" placeholder="Enter time" min="0" step="0.01" style="flex: 1; margin-right: 10px;">
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="time" placeholder="Enter time" min="0" step="0.01" style="flex: 1;">
                     <select id="timeUnit" style="width: 100px;">
                         <option value="years">Years</option>
                         <option value="months">Months</option>
@@ -322,7 +462,79 @@
         </div>
     </div>
 
+    <!-- Article -->
+    <div class="article-container">
+        <h2>Understanding Interest Calculators: Simple and Compound Interest Made Easy</h2>
+        <p>An <strong>interest calculator</strong> is a powerful tool for anyone looking to understand how their savings or loans grow over time. Whether you're planning investments, evaluating loan options, or simply curious about your financial future, our free interest calculator simplifies the process. With support for multiple currencies and both simple and compound interest calculations, it’s designed to meet your financial needs.</p>
+
+        <h3>What is an Interest Calculator?</h3>
+        <p>An interest calculator helps you determine the interest earned or paid on a principal amount based on specific parameters like interest rate and time period. It’s ideal for:</p>
+        <ul>
+            <li>Calculating returns on savings accounts or fixed deposits.</li>
+            <li>Estimating interest costs on loans or mortgages.</li>
+            <li>Comparing simple vs. compound interest to make informed financial decisions.</li>
+        </ul>
+        <p>Our calculator supports a wide range of currencies, making it versatile for users worldwide.</p>
+
+        <h3>Simple Interest: The Basics</h3>
+        <p>Simple interest is calculated only on the initial principal amount. It’s straightforward and commonly used for short-term loans or basic savings accounts. The formula is:</p>
+        <p><strong>Simple Interest = (Principal × Rate × Time) / 100</strong></p>
+        <p>For example, if you invest $1,000 at a 5% annual interest rate for 3 years, the interest earned is $150, and the total amount becomes $1,150. Use our <strong>simple interest calculator</strong> above to try it yourself!</p>
+
+        <h3>Compound Interest: Growth Over Time</h3>
+        <p>Compound interest is calculated on the principal plus any accumulated interest, leading to exponential growth. It’s common in long-term investments like mutual funds or savings accounts with compounding. The formula is:</p>
+        <p><strong>Amount = Principal × (1 + Rate/Compounding Frequency)^(Compounding Frequency × Time)</strong></p>
+        <p><strong>Compound Interest = Amount - Principal</strong></p>
+        <p>For instance, $1,000 invested at 5% annually, compounded yearly for 3 years, grows to approximately $1,157.63, with $157.63 in interest. Learn more about <a href="https://www.investopedia.com/terms/c/compoundinterest.asp" target="_blank" rel="noopener">compound interest</a> on Investopedia. Our <strong>compound interest calculator</strong> lets you adjust compounding frequency (e.g., monthly, quarterly) for precise results.</p>
+
+        <h3>Why Use Our Interest Calculator?</h3>
+        <p>Here’s why our tool stands out:</p>
+        <ul>
+            <li><strong>User-Friendly:</strong> Intuitive interface for quick calculations.</li>
+            <li><strong>Versatile:</strong> Supports simple and compound interest with multiple time units and currencies.</li>
+            <li><strong>Accurate:</strong> Provides precise results to help you plan effectively.</li>
+            <li><strong>Free:</strong> No cost to use, anytime, anywhere. Check out our <a href="/tools/loan-calculator">Loan Calculator</a> for more financial tools!</li>
+        </ul>
+
+        <h3>How to Use the Interest Calculator</h3>
+        <p>Follow these steps:</p>
+        <ol>
+            <li>Select your preferred currency.</li>
+            <li>Choose between simple or compound interest.</li>
+            <li>Enter the principal amount, interest rate, and time period.</li>
+            <li>For compound interest, select the compounding frequency.</li>
+            <li>Click "Calculate" to view detailed results, including total interest and amount.</li>
+        </ol>
+        <p>Try it now to plan your financial future with confidence!</p>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div class="social-icons">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <p>© 2025 Toolpidia. All Rights Reserved.</p>
+        </div>
+    </footer>
+
     <script>
+        // Header Menu Toggle for Mobile
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('#nav-menu');
+
+        menuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
         // Get currency elements
         const currencySelect = document.getElementById('currency');
         const principalCurrency = document.getElementById('principalCurrency');
