@@ -3,83 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Calculator</title>
+    <meta name="description" content="Use Toolpidia's Payment Calculator to calculate monthly payments or loan terms for fixed interest loans. Learn how to manage your finances with our easy-to-use tool.">
+    <meta name="keywords" content="payment calculator, loan calculator, monthly payment, loan term, financial planning, Toolpidia">
+    <meta name="author" content="Toolpidia">
+    <title>Payment Calculator - Toolpidia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2980b9;
-            --success-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
+            --primary-color: #2196F3;
+            --secondary-color: #1976D2;
+            --success-color: #4CAF50;
+            --danger-color: #F44336;
+            --warning-color: #FF9800;
+            --light-color: #F5F7FA;
+            --dark-color: #1A237E;
             --text-color: #333;
-            --border-color: #ddd;
+            --border-color: #E0E0E0;
             --shadow-color: rgba(0,0,0,0.1);
             --container-width: 98%;
             --input-padding: 12px;
         }
-        
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: var(--text-color);
-            background-color: #f8f9fa;
-            padding: 20px 0;
+            background-color: var(--light-color);
+            padding: 0;
         }
-        
+
         .container {
             width: var(--container-width);
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 15px;
         }
-        
+
+        /* Header Styles */
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        /* Main Content Styles */
         h1 {
             color: var(--dark-color);
             text-align: center;
-            margin-bottom: 25px;
-            font-weight: 600;
-            font-size: 2.2rem;
+            margin: 2rem 0;
+            font-weight: 700;
+            font-size: 2.5rem;
         }
-        
+
         .description {
-            background-color: #e9f7fe;
-            padding: 20px;
+            background-color: #E3F2FD;
+            padding: 1.5rem;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
             border-left: 5px solid var(--primary-color);
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             line-height: 1.7;
         }
-        
+
         .calculator-container {
             display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
+            gap: 20px;
+            margin-bottom: 2rem;
         }
-        
+
         .currency-section {
-            flex: 0 0 200px;
+            flex: 0 0 220px;
         }
-        
+
         .calculator-section {
             flex: 1;
             min-width: 0;
         }
-        
+
         .tabs {
             display: flex;
+            border-bottom: 2px solid var(--border-color);
             margin-bottom: 0;
-            border-bottom: 1px solid var(--border-color);
         }
-        
+
         .tab {
             padding: 15px 25px;
             background-color: var(--light-color);
@@ -87,53 +137,51 @@
             cursor: pointer;
             flex: 1;
             text-align: center;
-            font-weight: bold;
-            color: #555;
+            font-weight: 600;
+            color: var(--text-color);
             transition: all 0.3s;
             border-radius: 8px 8px 0 0;
             margin-right: 5px;
             font-size: 1rem;
         }
-        
-        .tab:last-child {
-            margin-right: 0;
-        }
-        
+
         .tab.active {
             background-color: var(--primary-color);
             color: white;
         }
-        
+
         .tab-content {
             display: none;
-            padding: 30px;
+            padding: 2rem;
             background-color: white;
             border-radius: 0 8px 8px 8px;
-            box-shadow: 0 3px 15px var(--shadow-color);
+            box-shadow: 0 4px 20px var(--shadow-color);
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         .input-row {
             display: flex;
             gap: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
-        
+
         .input-group {
             flex: 1;
+            min-width: 200px;
         }
-        
+
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: var(--dark-color);
             font-size: 1rem;
         }
-        
+
         input[type="number"], select {
             width: 100%;
             padding: var(--input-padding);
@@ -142,19 +190,19 @@
             font-size: 1rem;
             transition: all 0.3s;
         }
-        
+
         input[type="number"]:focus, select:focus {
             border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
         }
-        
+
         .button-group {
             display: flex;
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 1.5rem;
         }
-        
+
         button {
             padding: 15px;
             border: none;
@@ -165,72 +213,72 @@
             flex: 1;
             transition: all 0.2s;
         }
-        
+
         .calculate-btn {
             background-color: var(--primary-color);
             color: white;
         }
-        
+
         .calculate-btn:hover {
             background-color: var(--secondary-color);
             transform: translateY(-2px);
         }
-        
+
         .clear-btn {
             background-color: var(--danger-color);
             color: white;
         }
-        
+
         .clear-btn:hover {
-            background-color: #c0392b;
+            background-color: #D32F2F;
             transform: translateY(-2px);
         }
-        
+
         .result {
-            margin-top: 30px;
-            padding: 25px;
-            background-color: #f8f9fa;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--light-color);
             border-radius: 8px;
             border-left: 5px solid var(--primary-color);
         }
-        
+
         .payment-amount {
             font-size: 1.8rem;
-            font-weight: bold;
+            font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
         }
-        
+
         .summary {
-            margin-top: 25px;
+            margin-top: 1.5rem;
             background-color: white;
-            padding: 20px;
+            padding: 1.5rem;
             border-radius: 8px;
             box-shadow: 0 2px 8px var(--shadow-color);
         }
-        
+
         .summary p {
             margin: 10px 0;
             font-size: 1.05rem;
         }
-        
+
         .chart-container {
             display: flex;
-            margin: 30px 0;
+            margin: 2rem 0;
             height: 30px;
             border-radius: 6px;
             overflow: hidden;
             box-shadow: 0 2px 8px var(--shadow-color);
         }
-        
+
         .principal {
             background-color: var(--success-color);
         }
-        
+
         .interest {
             background-color: var(--danger-color);
         }
-        
+
         .chart-labels {
             display: flex;
             justify-content: space-between;
@@ -238,42 +286,42 @@
             font-size: 1rem;
             color: #555;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 30px;
+            margin-top: 2rem;
             box-shadow: 0 2px 8px var(--shadow-color);
             font-size: 0.95rem;
         }
-        
+
         th, td {
             border: 1px solid var(--border-color);
-            padding: 15px;
+            padding: 12px;
             text-align: left;
         }
-        
+
         th {
             background-color: var(--primary-color);
             color: white;
             font-weight: 600;
             font-size: 1rem;
         }
-        
+
         tr:nth-child(even) {
-            background-color: #f8f9fa;
+            background-color: #F5F7FA;
         }
-        
+
         tr:hover {
-            background-color: #e9f7fe;
+            background-color: #E3F2FD;
         }
-        
+
         .schedule-toggle {
             display: flex;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
-        
+
         .schedule-btn {
             padding: 12px 20px;
             background-color: var(--light-color);
@@ -284,109 +332,222 @@
             font-weight: 600;
             transition: all 0.2s;
         }
-        
+
         .schedule-btn.active {
             background-color: var(--primary-color);
             color: white;
         }
-        
+
         .schedule-btn:hover {
             transform: translateY(-2px);
         }
-        
+
         .hidden {
             display: none;
         }
-        
+
         .currency-selector {
             background-color: white;
-            padding: 25px;
+            padding: 1.5rem;
             border-radius: 8px;
             box-shadow: 0 3px 15px var(--shadow-color);
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
-        
+
         .currency-selector label {
             font-size: 1.1rem;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             display: block;
         }
-        
+
         .currency-selector select {
             padding: 12px;
             font-size: 1rem;
         }
-        
+
+        /* Article Styles */
+        .article-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            margin-bottom: 2rem;
+        }
+
+        .article-section h2 {
+            color: var(--dark-color);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .article-section h3 {
+            color: var(--dark-color);
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .article-section p {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .article-section a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .article-section a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        footer .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        footer a:hover {
+            opacity: 0.8;
+        }
+
+        footer .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        footer .social-links a {
+            font-size: 1.2rem;
+        }
+
+        footer .copyright {
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .calculator-container {
                 flex-direction: column;
             }
-            
+
             .currency-section {
                 flex: 1;
             }
-            
-            .input-row {
-                flex-wrap: wrap;
-            }
-            
+
             .input-group {
                 flex: 1 1 45%;
             }
         }
-        
+
         @media (max-width: 768px) {
-            .container {
+            header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav {
+                display: none;
                 width: 100%;
-                padding: 0 10px;
             }
-            
+
+            nav.active {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .hamburger {
+                display: block;
+                position: absolute;
+                right: 20px;
+                top: 20px;
+            }
+
             h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
-            
+
             .tab {
                 padding: 12px 15px;
                 font-size: 0.9rem;
             }
-            
+
             .tab-content {
-                padding: 20px;
+                padding: 1.5rem;
             }
-            
+
             .input-group {
                 flex: 1 1 100%;
             }
-            
+
             .payment-amount {
                 font-size: 1.5rem;
             }
-            
+
             th, td {
                 padding: 10px;
                 font-size: 0.85rem;
             }
+
+            footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            footer .footer-links {
+                justify-content: center;
+            }
+
+            footer .social-links {
+                justify-content: center;
+            }
         }
-        
+
         @media (max-width: 480px) {
             .tabs {
                 flex-direction: column;
             }
-            
+
             .tab {
                 border-radius: 0;
                 margin-right: 0;
                 margin-bottom: 5px;
             }
-            
+
             .tab-content {
                 border-radius: 0 0 8px 8px;
             }
-            
+
             .button-group {
                 flex-direction: column;
             }
-            
+
             .schedule-toggle {
                 flex-direction: column;
             }
@@ -394,12 +555,29 @@
     </style>
 </head>
 <body>
+    <header>
+        <div class="container">
+            <div class="logo">Toolpidia</div>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Tools</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
     <div class="container">
         <h1>Payment Calculator</h1>
         <div class="description">
-            <p>The Payment Calculator can determine the monthly payment amount or loan term for a fixed interest loan. Use the "Fixed Term" tab to calculate the monthly payment of a fixed-term loan. Use the "Fixed Payments" tab to calculate the time to pay off a loan with a fixed monthly payment.</p>
+            <p>The Payment Calculator helps you determine the monthly payment or loan term for a fixed interest loan. Use the "Fixed Term" tab to calculate monthly payments for a fixed-term loan, or the "Fixed Payments" tab to find the time needed to pay off a loan with fixed monthly payments.</p>
         </div>
-        
+
         <div class="calculator-container">
             <div class="currency-section">
                 <div class="currency-selector">
@@ -416,13 +594,13 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="calculator-section">
                 <div class="tabs">
                     <button class="tab active" onclick="openTab(event, 'fixed-term')">Fixed Term</button>
                     <button class="tab" onclick="openTab(event, 'fixed-payments')">Fixed Payments</button>
                 </div>
-                
+
                 <div id="fixed-term" class="tab-content active">
                     <div class="input-row">
                         <div class="input-group">
@@ -438,12 +616,12 @@
                             <input type="number" id="interest-rate" value="5" min="0" step="0.01">
                         </div>
                     </div>
-                    
+
                     <div class="button-group">
                         <button class="calculate-btn" onclick="calculateFixedTerm()">Calculate Monthly Payment</button>
                         <button class="clear-btn" onclick="clearFixedTermResults()">Clear Results</button>
                     </div>
-                    
+
                     <div id="fixed-term-result" class="result hidden">
                         <div class="payment-amount">Monthly Payment: <span id="monthly-payment"></span></div>
                         <p id="payment-description"></p>
@@ -451,22 +629,22 @@
                             <p>Total of <span id="total-payments"></span> Payments: <span id="total-amount"></span></p>
                             <p>Total Interest: <span id="total-interest"></span></p>
                         </div>
-                        
+
                         <div class="chart-container">
                             <div class="principal" id="principal-chart" style="width: 66%;"></div>
                             <div class="interest" id="interest-chart" style="width: 34%;"></div>
                         </div>
                         <div class="chart-labels">
-                            <spanINS>Principal: <span id="principal-percent">66%</span></span>
+                            <span>Principal: <span id="principal-percent">66%</span></span>
                             <span>Interest: <span id="interest-percent">34%</span></span>
                         </div>
-                        
-                        <p><strong>Amortization schedule</strong></p>
+
+                        <p><strong>Amortization Schedule</strong></p>
                         <div class="schedule-toggle">
                             <button class="schedule-btn active" onclick="showAnnualSchedule()">Annual Schedule</button>
                             <button class="schedule-btn" onclick="showMonthlySchedule()">Monthly Schedule</button>
                         </div>
-                        
+
                         <table id="annual-schedule">
                             <thead>
                                 <tr>
@@ -476,8 +654,7 @@
                                     <th>Ending Balance</th>
                                 </tr>
                             </thead>
-                            <tbody id="annual-schedule-body">
-                            </tbody>
+                            <tbody id="annual-schedule-body"></tbody>
                         </table>
                         <table id="monthly-schedule" class="hidden">
                             <thead>
@@ -488,12 +665,11 @@
                                     <th>Ending Balance</th>
                                 </tr>
                             </thead>
-                            <tbody id="monthly-schedule-body">
-                            </tbody>
+                            <tbody id="monthly-schedule-body"></tbody>
                         </table>
                     </div>
                 </div>
-                
+
                 <div id="fixed-payments" class="tab-content">
                     <div class="input-row">
                         <div class="input-group">
@@ -509,12 +685,12 @@
                             <input type="number" id="fp-interest-rate" value="5" min="0" step="0.01">
                         </div>
                     </div>
-                    
+
                     <div class="button-group">
                         <button class="calculate-btn" onclick="calculateFixedPayment()">Calculate Loan Term</button>
                         <button class="clear-btn" onclick="clearFixedPaymentResults()">Clear Results</button>
                     </div>
-                    
+
                     <div id="fixed-payment-result" class="result hidden">
                         <div class="payment-amount">Loan Term: <span id="loan-term-result"></span></div>
                         <p id="fp-payment-description"></p>
@@ -526,47 +702,89 @@
                 </div>
             </div>
         </div>
+
+        <!-- Article Section for SEO -->
+        <div class="article-section">
+            <h2>Understanding Payment Calculators: A Guide to Financial Planning</h2>
+            <p>A payment calculator is an essential tool for anyone looking to manage their finances effectively, especially when dealing with loans. Whether you're planning to take out a mortgage, a car loan, or a personal loan, understanding your monthly payments or the time required to pay off a loan can help you make informed decisions. At Toolpidia, our Payment Calculator simplifies this process by providing accurate calculations in just a few clicks.</p>
+
+            <h3>What is a Payment Calculator?</h3>
+            <p>A payment calculator is an online tool designed to help you determine either the monthly payment for a fixed-term loan or the time required to pay off a loan with a fixed monthly payment. It takes into account key factors such as the loan amount, interest rate, and loan term to provide you with a clear financial picture. This tool is particularly useful for budgeting and ensuring that your loan payments fit within your monthly expenses.</p>
+
+            <h3>Benefits of Using a Payment Calculator</h3>
+            <p>Using a payment calculator offers several advantages. First, it helps you plan your budget by giving you a clear idea of your monthly obligations. Second, it allows you to compare different loan scenarios by adjusting the loan amount, term, or interest rate. Finally, it can save you from financial stress by helping you avoid loans that might be too burdensome. To explore more financial tools, check out our <a href="/tools">Tools page</a> for additional resources to enhance your financial planning.</p>
+
+            <h3>How to Use Toolpidia's Payment Calculator</h3>
+            <p>Using our Payment Calculator is straightforward. Start by selecting your preferred currency from the dropdown menu. Then, choose between the "Fixed Term" tab to calculate your monthly payment or the "Fixed Payments" tab to determine the loan term. Enter the required details, such as the loan amount, interest rate, and term (or monthly payment), and click "Calculate." The tool will instantly display your results, including a detailed amortization schedule for fixed-term loans. For more in-depth information on loan calculations, you can refer to this helpful guide on <a href="https://www.investopedia.com/terms/a/amortization.asp" target="_blank" rel="noopener noreferrer">Investopedia</a>.</p>
+
+            <p>With Toolpidia's Payment Calculator, managing your loans has never been easier. Start calculating today and take control of your financial future!</p>
+        </div>
     </div>
-    
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <div class="copyright">
+                <p>© 2025 Toolpidia. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const nav = document.querySelector('nav');
+
+        hamburger.addEventListener('click', () => {
+            nav.classList.toggle('active');
+            hamburger.querySelector('i').classList.toggle('fa-bars');
+            hamburger.querySelector('i').classList.toggle('fa-times');
+        });
+
         // Global currency settings
         let currentCurrency = {
             code: "USD",
             symbol: "$"
         };
-        
+
         // Currency formatter
         function formatCurrency(amount) {
-            // Special formatting for Japanese Yen (no decimal places)
             if (currentCurrency.code === "JPY") {
                 return `${currentCurrency.symbol}${Math.round(amount).toLocaleString()}`;
             }
-            
-            // Standard formatting for other currencies
+
             const formattedAmount = amount.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
-            
-            // Handle currencies where symbol comes after (like Euro in some countries)
+
             if (currentCurrency.code === "EUR") {
                 return `${formattedAmount} ${currentCurrency.symbol}`;
             }
-            
+
             return `${currentCurrency.symbol}${formattedAmount}`;
         }
-        
-        // Update currency symbol throughout the page
+
+        // Update currency symbol
         function updateCurrency() {
             const currencySelect = document.getElementById("currency");
             const selectedOption = currencySelect.options[currencySelect.selectedIndex];
-            
+
             currentCurrency = {
                 code: selectedOption.value,
                 symbol: selectedOption.dataset.symbol
             };
-            
-            // Recalculate if there are visible results
+
             if (!document.getElementById("fixed-term-result").classList.contains("hidden")) {
                 calculateFixedTerm();
             }
@@ -574,204 +792,169 @@
                 calculateFixedPayment();
             }
         }
-        
+
         function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].classList.remove("active");
-            }
-            
-            tablinks = document.getElementsByClassName("tab");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
-            }
-            
+            document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
+            document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
         }
-        
+
         function calculateFixedTerm() {
             const loanAmount = parseFloat(document.getElementById("loan-amount").value);
             const loanTerm = parseFloat(document.getElementById("loan-term").value);
             const interestRate = parseFloat(document.getElementById("interest-rate").value) / 100;
-            
+
             if (isNaN(loanAmount) || isNaN(loanTerm) || isNaN(interestRate)) {
                 alert("Please enter valid numbers for all fields");
                 return;
             }
-            
+
             const monthlyRate = interestRate / 12;
             const numberOfPayments = loanTerm * 12;
-            
-            // Calculate monthly payment
-            const monthlyPayment = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+
+            const monthlyPayment = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
                                  (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-            
-            // Calculate totals
+
             const totalAmount = monthlyPayment * numberOfPayments;
             const totalInterest = totalAmount - loanAmount;
-            
-            // Update UI with formatted currency
+
             document.getElementById("monthly-payment").textContent = formatCurrency(monthlyPayment);
-            document.getElementById("payment-description").textContent = 
+            document.getElementById("payment-description").textContent =
                 `You will need to pay ${formatCurrency(monthlyPayment)} every month for ${loanTerm} years to payoff the debt.`;
             document.getElementById("total-payments").textContent = numberOfPayments;
             document.getElementById("total-amount").textContent = formatCurrency(totalAmount);
             document.getElementById("total-interest").textContent = formatCurrency(totalInterest);
-            
-            // Update pie chart
+
             const principalPercent = Math.round((loanAmount / totalAmount) * 100);
             const interestPercent = 100 - principalPercent;
             document.getElementById("principal-chart").style.width = principalPercent + "%";
             document.getElementById("interest-chart").style.width = interestPercent + "%";
             document.getElementById("principal-percent").textContent = principalPercent + "%";
             document.getElementById("interest-percent").textContent = interestPercent + "%";
-            
-            // Generate amortization schedule
+
             generateAmortizationSchedule(loanAmount, monthlyRate, numberOfPayments, monthlyPayment);
-            
-            // Show results
+
             document.getElementById("fixed-term-result").classList.remove("hidden");
         }
-        
+
         function clearFixedTermResults() {
             document.getElementById("fixed-term-result").classList.add("hidden");
             document.getElementById("loan-amount").value = "200000";
             document.getElementById("loan-term").value = "15";
             document.getElementById("interest-rate").value = "5";
         }
-        
+
         function generateAmortizationSchedule(loanAmount, monthlyRate, numberOfPayments, monthlyPayment) {
             let balance = loanAmount;
             let annualInterest = 0;
             let annualPrincipal = 0;
             let annualScheduleBody = "";
             let monthlyScheduleBody = "";
-            
+
             for (let month = 1; month <= numberOfPayments; month++) {
                 const interest = balance * monthlyRate;
                 const principal = monthlyPayment - interest;
                 balance -= principal;
-                
-                // For monthly schedule
-                if (month <= 12) { // Only show first year for monthly schedule
+
+                if (month <= 12) {
                     monthlyScheduleBody += `<tr>
                         <td>${month}</td>
                         <td>${formatCurrency(interest)}</td>
                         <td>${formatCurrency(principal)}</td>
-                        <td>${formatCurrency(Math.max(balance, 0))}</td>
+                        <td>${formatCurrency(Math.max(0, balance))}</td>
                     </tr>`;
                 }
-                
-                // Accumulate annual totals
+
                 annualInterest += interest;
                 annualPrincipal += principal;
-                
-                // At the end of each year or last payment
+
                 if (month % 12 === 0 || month === numberOfPayments) {
                     const year = Math.ceil(month / 12);
                     annualScheduleBody += `<tr>
                         <td>${year}</td>
                         <td>${formatCurrency(annualInterest)}</td>
                         <td>${formatCurrency(annualPrincipal)}</td>
-                        <td>${formatCurrency(Math.max(balance, 0))}</td>
+                        <td>${formatCurrency(Math.max(0, balance))}</td>
                     </tr>`;
-                    
-                    // Reset annual totals
                     annualInterest = 0;
                     annualPrincipal = 0;
                 }
             }
-            
+
             document.getElementById("annual-schedule-body").innerHTML = annualScheduleBody;
             document.getElementById("monthly-schedule-body").innerHTML = monthlyScheduleBody;
         }
-        
+
         function showAnnualSchedule() {
             document.getElementById("annual-schedule").classList.remove("hidden");
             document.getElementById("monthly-schedule").classList.add("hidden");
-            
-            // Update button states
-            document.querySelectorAll('.schedule-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.schedule-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
         }
-        
+
         function showMonthlySchedule() {
             document.getElementById("annual-schedule").classList.add("hidden");
             document.getElementById("monthly-schedule").classList.remove("hidden");
-            
-            // Update button states
-            document.querySelectorAll('.schedule-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.schedule-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
         }
-        
+
         function calculateFixedPayment() {
             const loanAmount = parseFloat(document.getElementById("fp-loan-amount").value);
             const monthlyPayment = parseFloat(document.getElementById("monthly-payment-amount").value);
             const interestRate = parseFloat(document.getElementById("fp-interest-rate").value) / 100;
-            
+
             if (isNaN(loanAmount) || isNaN(monthlyPayment) || isNaN(interestRate)) {
                 alert("Please enter valid numbers for all fields");
                 return;
             }
-            
+
             if (monthlyPayment <= loanAmount * (interestRate / 12)) {
                 alert("Monthly payment is too low to pay off the loan. Please increase the payment amount.");
                 return;
             }
-            
+
             const monthlyRate = interestRate / 12;
-            
-            // Calculate number of months to pay off loan
+
             let numberOfMonths = Math.ceil(
-                Math.log(monthlyPayment / (monthlyPayment - loanAmount * monthlyRate)) / 
+                Math.log(monthlyPayment / (monthlyPayment - loanAmount * monthlyRate)) /
                 Math.log(1 + monthlyRate)
             );
-            
-            // Calculate exact total amount (since we rounded up the number of months)
+
             const totalAmount = monthlyPayment * numberOfMonths;
             const totalInterest = totalAmount - loanAmount;
             const years = Math.floor(numberOfMonths / 12);
             const months = numberOfMonths % 12;
-            
-            // Update UI with formatted currency
+
             let termDescription = `${years} years`;
             if (months > 0) {
                 termDescription += ` and ${months} month${months > 1 ? 's' : ''}`;
             }
-            
+
             document.getElementById("loan-term-result").textContent = termDescription;
-            document.getElementById("fp-payment-description").textContent = 
+            document.getElementById("fp-payment-description").textContent =
                 `You will need to make ${numberOfMonths} payments of ${formatCurrency(monthlyPayment)} to payoff the debt.`;
             document.getElementById("fp-total-payments").textContent = numberOfMonths;
             document.getElementById("fp-total-amount").textContent = formatCurrency(totalAmount);
             document.getElementById("fp-total-interest").textContent = formatCurrency(totalInterest);
-            
-            // Show results
+
             document.getElementById("fixed-payment-result").classList.remove("hidden");
         }
-        
+
         function clearFixedPaymentResults() {
             document.getElementById("fixed-payment-result").classList.add("hidden");
             document.getElementById("fp-loan-amount").value = "200000";
             document.getElementById("monthly-payment-amount").value = "1687.71";
             document.getElementById("fp-interest-rate").value = "5";
         }
-        
+
         // Initialize calculator
         window.onload = function() {
-            // Set up event listeners for schedule toggle buttons
             document.querySelector('.schedule-toggle').addEventListener('click', function(e) {
                 if (e.target.classList.contains('schedule-btn')) {
-                    document.querySelectorAll('.schedule-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
+                    document.querySelectorAll('.schedule-btn').forEach(btn => btn.classList.remove('active'));
                     e.target.classList.add('active');
                 }
             });
