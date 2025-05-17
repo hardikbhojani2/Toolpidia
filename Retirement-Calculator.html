@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retirement Calculator</title>
+    <meta name="description" content="Use our Retirement Calculator to plan your financial future. Estimate savings, withdrawals, and more with this mobile-responsive tool.">
+    <title>Retirement Calculator - Toolpidia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #3498db;
@@ -13,146 +15,185 @@
             --bg-light: #f9f9f9;
             --shadow: 0 2px 5px rgba(0,0,0,0.1);
             --radius: 8px;
+            --white: #ffffff;
+            --header-bg: #3498db;
         }
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: 'Poppins', Arial, sans-serif;
             background: #f5f7fa;
             color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--header-bg);
+            color: var(--white);
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        header nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: opacity 0.3s;
+        }
+
+        header nav a:hover {
+            opacity: 0.8;
         }
 
         .container {
-            width: 100%;
-            max-width: 800px;
-            background: white;
-            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: var(--white);
+            padding: 1.5rem;
             box-shadow: var(--shadow);
+            border-radius: var(--radius);
+            flex: 1;
         }
 
         h1, h2, h3 {
             color: #2c3e50;
             text-align: center;
-            margin: 10px 0;
+            margin: 0.5rem 0;
         }
+
+        h1 { font-size: 1.8rem; }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.2rem; }
 
         .calculator-section {
             background: var(--bg-light);
-            padding: 15px;
+            padding: 1rem;
             border-radius: var(--radius);
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
             box-shadow: var(--shadow);
-            width: 100%;
         }
 
         .input-group {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-            width: 100%;
-            padding: 0 10px;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0 0.5rem;
         }
 
         .input-group label {
-            font-weight: bold;
+            font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .input-group input, .input-group select {
-            padding: 8px;
+            padding: 0.5rem;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 16px;
+            font-size: 1rem;
             width: 100%;
         }
 
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 0.5rem;
             justify-content: center;
-            margin: 15px 0;
+            margin: 1rem 0;
             flex-wrap: wrap;
-            padding: 0 10px;
+            padding: 0 0.5rem;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 0.6rem 1.2rem;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            color: white;
+            color: var(--white);
             background: var(--primary);
             transition: background 0.3s;
             flex: 1 1 120px;
             max-width: 200px;
+            font-size: 0.9rem;
         }
 
         button:hover { background: #2980b9; }
         button.clear { background: var(--danger); }
         button.clear:hover { background: #c0392b; }
+        button.info { background: var(--success); }
+        button.info:hover { background: #27ae60; }
 
         .result {
-            margin-top: 15px;
-            padding: 15px;
+            margin-top: 1rem;
+            padding: 1rem;
             background: #e8f4fc;
             border-left: 4px solid var(--primary);
             border-radius: 4px;
             display: none;
-            width: 100%;
         }
 
         .tabs {
             display: flex;
-            gap: 5px;
+            gap: 0.3rem;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
             flex-wrap: wrap;
-            width: 100%;
-            padding: 0 10px;
+            padding: 0 0.5rem;
         }
 
         .tab {
-            padding: 8px 16px;
+            padding: 0.5rem 1rem;
             background: #eee;
             cursor: pointer;
             border-radius: 5px 5px 0 0;
             transition: background 0.3s;
             flex: 1 1 auto;
             text-align: center;
+            font-size: 0.9rem;
         }
 
         .tab:hover { background: #ddd; }
-        .tab.active { background: var(--bg-light); font-weight: bold; }
+        .tab.active { background: var(--bg-light); font-weight: 600; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         .currency-selector {
             text-align: center;
-            margin: 0 auto 15px;
-            padding: 10px;
+            margin: 0 auto 1rem;
+            padding: 0.6rem;
             background: #e8f4fc;
             border-radius: 4px;
-            width: 100%;
         }
 
         .instructions {
             background: #f8f9fa;
             border-left: 4px solid var(--primary);
-            padding: 15px;
-            margin: 15px 0;
-            width: 100%;
+            padding: 1rem;
+            margin: 1rem 0;
         }
 
         .modal {
@@ -167,9 +208,9 @@
         }
 
         .modal-content {
-            background: white;
-            margin: 5% auto;
-            padding: 15px;
+            background: var(--white);
+            margin: 10% auto;
+            padding: 1rem;
             border-radius: var(--radius);
             width: 95%;
             max-width: 600px;
@@ -178,55 +219,90 @@
 
         .close {
             position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 24px;
+            top: 0.5rem;
+            right: 1rem;
+            font-size: 1.5rem;
             cursor: pointer;
         }
 
         .result-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            width: 100%;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
         }
 
+        footer {
+            background: var(--header-bg);
+            color: var(--white);
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: auto;
+        }
+
+        footer p { margin: 0.5rem 0; }
+        footer a { color: var(--white); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        .blog-section {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius);
+        }
+
+        .blog-section h2 { font-size: 1.5rem; }
+        .blog-section h3 { font-size: 1.2rem; }
+        .blog-section p { margin: 0.5rem 0; }
+        .blog-section a { color: var(--primary); text-decoration: none; }
+        .blog-section a:hover { text-decoration: underline; }
+
+        /* Media Queries */
         @media (max-width: 768px) {
-            .container { padding: 15px; }
-            .calculator-section { padding: 10px; }
-            .input-group {
-                grid-template-columns: 1fr;
-                padding: 0 5px;
-            }
+            .container { width: 95%; padding: 1rem; }
+            .input-group { grid-template-columns: 1fr; }
             .button-group { flex-direction: column; align-items: stretch; }
             button { max-width: none; }
-            .tabs { 
-                justify-content: flex-start;
-                overflow-x: auto;
-                padding: 0 5px;
-            }
+            .tabs { justify-content: flex-start; overflow-x: auto; }
             .tab { flex: 0 1 auto; }
-            .modal-content { width: 98%; margin: 2% auto; }
+            .modal-content { width: 98%; margin: 5% auto; }
+            header h1 { font-size: 1.5rem; }
+            header nav a { font-size: 0.9rem; }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.3rem; }
+            h3 { font-size: 1.1rem; }
         }
 
         @media (max-width: 480px) {
-            .container { padding: 10px; }
-            .calculator-section { padding: 8px; }
+            .container { padding: 0.8rem; }
+            .calculator-section { padding: 0.6rem; }
             .input-group { padding: 0; }
-            .button-group { padding: 0 5px; }
-            button { padding: 8px 16px; font-size: 14px; }
-            h1 { font-size: 24px; }
-            h2 { font-size: 20px; }
-            h3 { font-size: 18px; }
+            button { padding: 0.5rem 1rem; font-size: 0.8rem; }
             .tabs { padding: 0; }
-            .tab { padding: 6px 12px; font-size: 14px; }
+            .tab { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+            header h1 { font-size: 1.2rem; }
+            header nav a { font-size: 0.8rem; }
+            h1 { font-size: 1.3rem; }
+            h2 { font-size: 1.1rem; }
+            h3 { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Toolpidia</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tools.html">Tools</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <div class="container">
         <h1>Retirement Calculator</h1>
-        <p style="text-align: center;">Plan your financial future</p>
+        <p style="text-align: center;">Plan your financial future with ease</p>
 
         <div class="currency-selector">
             <label for="currency">Currency: </label>
@@ -252,6 +328,7 @@
             <div class="button-group">
                 <button data-action="calculate" data-target="need">Calculate</button>
                 <button class="clear" data-action="clear" data-target="result-need">Clear</button>
+                <button class="info" data-action="modal" data-target="need-modal">Guide</button>
             </div>
 
             <div class="form-container">
@@ -281,6 +358,7 @@
             <div class="button-group">
                 <button data-action="calculate" data-target="save">Calculate</button>
                 <button class="clear" data-action="clear" data-target="result-save">Clear</button>
+                <button class="info" data-action="modal" data-target="save-modal">Guide</button>
             </div>
 
             <div class="form-container">
@@ -299,6 +377,7 @@
             <div class="button-group">
                 <button data-action="calculate" data-target="withdraw">Calculate</button>
                 <button class="clear" data-action="clear" data-target="result-withdraw">Clear</button>
+                <button class="info" data-action="modal" data-target="withdraw-modal">Guide</button>
             </div>
 
             <div class="form-container">
@@ -320,6 +399,7 @@
             <div class="button-group">
                 <button data-action="calculate" data-target="long">Calculate</button>
                 <button class="clear" data-action="clear" data-target="result-long">Clear</button>
+                <button class="info" data-action="modal" data-target="long-modal">Guide</button>
             </div>
 
             <div class="form-container">
@@ -330,26 +410,49 @@
             <div id="result-long" class="result"></div>
         </div>
 
+        <div class="button-group">
+            <button data-action="calculate-all">Calculate All</button>
+            <button class="clear" data-action="clear-all">Clear All</button>
+            <button class="info" data-action="scroll" data-target=".instructions">Full Guide</button>
+        </div>
+
         <section class="instructions">
             <h3>Planning Guide</h3>
             <p style="text-align: center;">Steps: Select currency, choose tab, enter data, calculate, review results.</p>
-            <p>This calculator helps you plan for retirement by estimating:</p>
+        </section>
+
+        <section class="blog-section">
+            <h2>Understanding Retirement Calculators: Your Path to Financial Freedom</h2>
+            <p>A retirement calculator is an essential tool for anyone looking to secure their financial future. By inputting key details such as your current age, retirement age, income, and savings, you can estimate how much you need to save, how long your savings will last, and the best withdrawal strategies.</p>
+            <h3>Why Use a Retirement Calculator?</h3>
+            <p>Retirement planning can be complex, but a calculator simplifies the process by providing clear projections. It accounts for factors like inflation, investment returns, and life expectancy to give you a realistic view of your financial needs. Tools like our <a href="tools.html">Savings Calculator</a> can complement this by helping you track other savings goals.</p>
+            <h3>Tips for Effective Retirement Planning</h3>
             <ul>
-                <li><strong>Retirement Needs:</strong> Total savings required based on income needs and life expectancy.</li>
-                <li><strong>Savings Plan:</strong> Annual savings needed to reach a target amount.</li>
-                <li><strong>Withdrawal Strategy:</strong> Sustainable withdrawal amounts during retirement.</li>
-                <li><strong>Savings Duration:</strong> How long your savings will last with regular withdrawals.</li>
+                <li><strong>Start Early:</strong> The earlier you save, the more time your investments have to grow.</li>
+                <li><strong>Account for Inflation:</strong> Ensure your savings keep pace with rising costs.</li>
+                <li><strong>Diversify Investments:</strong> Spread your investments to mitigate risks.</li>
             </ul>
+            <p>For more insights, check out this <a href="https://www.investopedia.com/retirement-calculator-5081472" target="_blank" rel="noopener">Investopedia guide on retirement calculators</a> to deepen your understanding.</p>
+            <h3>Conclusion</h3>
+            <p>Using a retirement calculator is a proactive step toward financial independence. Explore our tool above to start planning today, and ensure your retirement years are comfortable and stress-free.</p>
         </section>
     </div>
+
+    <!-- Modals -->
+    <div id="need-modal" class="modal"><div class="modal-content"><span class="close">×</span><h2>Retirement Needs Guide</h2><p>Estimates total savings needed based on your income, expenses, and retirement goals.</p></div></div>
+    <div id="save-modal" class="modal"><div class="modal-content"><span class="close">×</span><h2>Savings Plan Guide</h2><p>Calculates how much you need to save annually to reach your retirement goal.</p></div></div>
+    <div id="withdraw-modal" class="modal"><div class="modal-content"><span class="close">×</span><h2>Withdrawal Strategy Guide</h2><p>Estimates sustainable withdrawal amounts during retirement.</p></div></div>
+    <div id="long-modal" class="modal"><div class="modal-content"><span class="close">×</span><h2>Savings Duration Guide</h2><p>Estimates how long your savings will last based on withdrawals and returns.</p></div></div>
+
+    <footer>
+        <p>&copy; 2025 Toolpidia. All rights reserved.</p>
+        <p><a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a></p>
+    </footer>
 
     <script>
         class RetirementCalculator {
             constructor() {
-                this.currency = { 
-                    symbol: '$', 
-                    format: n => `${this.currency.symbol}${Math.round(n).toLocaleString()}`
-                };
+                this.currency = { symbol: '$', format: n => `${this.currency.symbol}${Math.round(n).toLocaleString()}` };
                 this.initEventListeners();
             }
 
@@ -384,13 +487,23 @@
                         const target = btn.dataset.target;
                         if (action === 'calculate') this.calculate(target);
                         else if (action === 'clear') this.clear(target);
+                        else if (action === 'modal') this.showModal(target);
+                        else if (action === 'calculate-all') this.calculateAll();
+                        else if (action === 'clear-all') this.clearAll();
+                        else if (action === 'scroll') this.scrollTo(target);
                     });
+                });
+                document.querySelectorAll('.close').forEach(close => {
+                    close.addEventListener('click', () => close.closest('.modal').style.display = 'none');
+                });
+                window.addEventListener('click', e => {
+                    if (e.target.classList.contains('modal')) e.target.style.display = 'none';
                 });
             }
 
             setupInputs() {
                 document.querySelectorAll('input[type="number"]').forEach(input => {
-                    input.addEventListener('input', () => {
+                    input.addEventListener('change', () => {
                         const val = parseFloat(input.value);
                         if (input.min && val < parseFloat(input.min)) input.value = input.min;
                         if (input.max && val > parseFloat(input.max)) input.value = input.max;
@@ -400,8 +513,7 @@
 
             updateCurrencyDisplay() {
                 document.querySelectorAll('.currency-display').forEach(el => {
-                    const text = el.textContent.replace(/^[\$€£¥₹]/, '');
-                    el.textContent = this.currency.symbol + text;
+                    el.textContent = this.currency.symbol + el.textContent.replace(/^[\$€£¥₹]/, '');
                 });
             }
 
@@ -423,135 +535,87 @@
             }
 
             calculateNeed() {
-                const inputs = this.getInputs([
-                    'current-age', 'retirement-age', 'life-expectancy', 'current-income',
+                const inputs = this.getInputs(['current-age', 'retirement-age', 'life-expectancy', 'current-income',
                     'income-increase', 'income-needed', 'investment-return', 'inflation-rate',
-                    'other-income', 'current-savings', 'future-savings'
-                ], {
+                    'other-income', 'current-savings', 'future-savings'], {
                     'current-age': 30, 'retirement-age': 65, 'life-expectancy': 85, 'current-income': 60000,
                     'income-increase': 3, 'income-needed': 80, 'investment-return': 6, 'inflation-rate': 2,
                     'other-income': 1000, 'current-savings': 50000, 'future-savings': 10
                 });
 
-                if (inputs['current-age'] >= inputs['retirement-age']) {
-                    return this.showError('result-need', 'Retirement age must be after current age');
-                }
-                if (inputs['retirement-age'] >= inputs['life-expectancy']) {
-                    return this.showError('result-need', 'Life expectancy must be after retirement age');
-                }
+                if (inputs['current-age'] >= inputs['retirement-age']) return this.showError('result-need', 'Retirement age must be after current age');
+                if (inputs['retirement-age'] >= inputs['life-expectancy']) return this.showError('result-need', 'Life expectancy must be after retirement age');
 
                 const yearsToRetirement = inputs['retirement-age'] - inputs['current-age'];
                 const retirementYears = inputs['life-expectancy'] - inputs['retirement-age'];
-
-                const futureIncome = inputs['current-income'] * Math.pow(1 + inputs['income-increase'] / 100, yearsToRetirement);
-                const incomeNeeded = futureIncome * (inputs['income-needed'] / 100) * 
-                                  Math.pow(1 + inputs['inflation-rate'] / 100, yearsToRetirement);
-
-                const annualNeed = incomeNeeded - (inputs['other-income'] * 12);
-                const totalNeeded = annualNeed * retirementYears;
-
-                const futureSavings = inputs['current-savings'] * 
-                                    Math.pow(1 + inputs['investment-return'] / 100, yearsToRetirement);
-
-                const annualSavings = inputs['future-savings'] / 100 * futureIncome;
-                const savingsFV = annualSavings * 
-                                ((Math.pow(1 + inputs['investment-return'] / 100, yearsToRetirement) - 1) / 
-                                 (inputs['investment-return'] / 100));
-                
-                const shortfall = totalNeeded - futureSavings - savingsFV;
-                const additionalAnnualSavings = shortfall > 0 ? 
-                    shortfall * (inputs['investment-return'] / 100) / 
-                    (Math.pow(1 + inputs['investment-return'] / 100, yearsToRetirement) - 1) : 0;
+                const incomeNeeded = inputs['current-income'] * (inputs['income-needed'] / 100) * 
+                                   Math.pow(1 + inputs['inflation-rate'] / 100, yearsToRetirement);
+                const totalNeeded = (incomeNeeded - inputs['other-income'] * 12) * retirementYears;
+                const futureSavings = inputs['current-savings'] * Math.pow(1 + inputs['investment-return'] / 100, yearsToRetirement);
+                const annualSavings = (totalNeeded - futureSavings) / yearsToRetirement;
 
                 this.showResult('result-need', `
                     <h3>Results</h3>
                     <div class="result-grid">
                         <div>
                             <p><strong>Years to retirement:</strong> ${yearsToRetirement}</p>
-                            <p><strong>Income needed/year:</strong> ${this.currency.format(incomeNeeded)}</p>
-                            <p><strong>Total savings needed:</strong> ${this.currency.format(totalNeeded)}</p>
+                            <p><strong>Income needed:</strong> ${this.currency.format(incomeNeeded)}</p>
                         </div>
                         <div>
-                            <p><strong>Current savings at retirement:</strong> ${this.currency.format(futureSavings)}</p>
-                            <p><strong>Annual savings needed:</strong> ${this.currency.format(annualSavings + additionalAnnualSavings)}</p>
-                            <p><strong>Shortfall:</strong> ${this.currency.format(Math.max(0, shortfall))}</p>
+                            <p><strong>Total needed:</strong> ${this.currency.format(totalNeeded)}</p>
+                            <p><strong>Annual savings:</strong> ${this.currency.format(Math.max(0, annualSavings))}</p>
                         </div>
                     </div>
                 `);
             }
 
             calculateSave() {
-                const inputs = this.getInputs([
-                    'save-age-now', 'save-retirement-age', 'amount-needed', 'save-now', 'save-return'
-                ], {
-                    'save-age-now': 30, 'save-retirement-age': 65, 'amount-needed': 1000000, 
-                    'save-now': 50000, 'save-return': 6
+                const inputs = this.getInputs(['save-age-now', 'save-retirement-age', 'amount-needed', 'save-now', 'save-return'], {
+                    'save-age-now': 30, 'save-retirement-age': 65, 'amount-needed': 1000000, 'save-now': 50000, 'save-return': 6
                 });
 
-                if (inputs['save-age-now'] >= inputs['save-retirement-age']) {
-                    return this.showError('result-save', 'Retirement age must be after current age');
-                }
+                if (inputs['save-age-now'] >= inputs['save-retirement-age']) return this.showError('result-save', 'Retirement age must be after current age');
 
                 const yearsToRetirement = inputs['save-retirement-age'] - inputs['save-age-now'];
-                
-                const futureValue = inputs['save-now'] * 
-                                  Math.pow(1 + inputs['save-return'] / 100, yearsToRetirement);
-                
+                const futureValue = inputs['save-now'] * Math.pow(1 + inputs['save-return'] / 100, yearsToRetirement);
                 const remainingAmount = inputs['amount-needed'] - futureValue;
                 const annualSavings = remainingAmount > 0 ? 
-                    remainingAmount * (inputs['save-return'] / 100) / 
-                    (Math.pow(1 + inputs['save-return'] / 100, yearsToRetirement) - 1) : 0;
+                    remainingAmount * (inputs['save-return'] / 100) / (Math.pow(1 + inputs['save-return'] / 100, yearsToRetirement) - 1) : 0;
 
                 this.showResult('result-save', `
                     <h3>Results</h3>
                     <div class="result-grid">
                         <div>
                             <p><strong>Years to retirement:</strong> ${yearsToRetirement}</p>
-                            <p><strong>Target savings:</strong> ${this.currency.format(inputs['amount-needed'])}</p>
+                            <p><strong>Target amount:</strong> ${this.currency.format(inputs['amount-needed'])}</p>
                         </div>
                         <div>
-                            <p><strong>Current savings at retirement:</strong> ${this.currency.format(futureValue)}</p>
-                            <p><strong>Annual savings needed:</strong> ${this.currency.format(Math.max(0, annualSavings))}</p>
+                            <p><strong>Future value:</strong> ${this.currency.format(futureValue)}</p>
+                            <p><strong>Annual savings:</strong> ${this.currency.format(Math.max(0, annualSavings))}</p>
                         </div>
                     </div>
                 `);
             }
 
             calculateWithdraw() {
-                const inputs = this.getInputs([
-                    'withdraw-age-now', 'withdraw-retirement-age', 'withdraw-life-expectancy',
-                    'withdraw-savings-today', 'annual-contribution', 'monthly-contribution', 
-                    'withdraw-return', 'withdraw-inflation'
-                ], {
+                const inputs = this.getInputs(['withdraw-age-now', 'withdraw-retirement-age', 'withdraw-life-expectancy',
+                    'withdraw-savings-today', 'annual-contribution', 'monthly-contribution', 'withdraw-return', 'withdraw-inflation'], {
                     'withdraw-age-now': 30, 'withdraw-retirement-age': 65, 'withdraw-life-expectancy': 85,
                     'withdraw-savings-today': 50000, 'annual-contribution': 6000, 'monthly-contribution': 500,
                     'withdraw-return': 6, 'withdraw-inflation': 2
                 });
 
-                if (inputs['withdraw-age-now'] >= inputs['withdraw-retirement-age']) {
-                    return this.showError('result-withdraw', 'Retirement age must be after current age');
-                }
-                if (inputs['withdraw-retirement-age'] >= inputs['withdraw-life-expectancy']) {
-                    return this.showError('result-withdraw', 'Life expectancy must be after retirement age');
-                }
+                if (inputs['withdraw-age-now'] >= inputs['withdraw-retirement-age']) return this.showError('result-withdraw', 'Retirement age must be after current age');
+                if (inputs['withdraw-retirement-age'] >= inputs['withdraw-life-expectancy']) return this.showError('result-withdraw', 'Life expectancy must be after retirement age');
 
                 const yearsToRetirement = inputs['withdraw-retirement-age'] - inputs['withdraw-age-now'];
-                const retirementYears = inputs['withdraw-life-expectancy'] - inputs['withdraw-retirement-age'];
-                
+                const totalContributions = inputs['annual-contribution'] + (inputs['monthly-contribution'] * 12);
                 let retirementSavings = inputs['withdraw-savings-today'];
-                const totalAnnualContribution = inputs['annual-contribution'] + (inputs['monthly-contribution'] * 12);
-                
                 for (let i = 0; i < yearsToRetirement; i++) {
-                    retirementSavings = (retirementSavings + totalAnnualContribution) * 
-                                      (1 + inputs['withdraw-return'] / 100);
+                    retirementSavings = (retirementSavings + totalContributions) * (1 + inputs['withdraw-return'] / 100);
                 }
-
-                const realReturn = (1 + inputs['withdraw-return'] / 100) / (1 + inputs['withdraw-inflation'] / 100) - 1;
                 const annualWithdrawal = retirementSavings * 0.04;
                 const monthlyWithdrawal = annualWithdrawal / 12;
-                
-                const sustainableAnnual = retirementSavings * realReturn / 
-                                      (1 - Math.pow(1 + realReturn, -retirementYears));
 
                 this.showResult('result-withdraw', `
                     <h3>Results</h3>
@@ -559,40 +623,30 @@
                         <div>
                             <p><strong>Years to retirement:</strong> ${yearsToRetirement}</p>
                             <p><strong>Retirement savings:</strong> ${this.currency.format(retirementSavings)}</p>
-                            <p><strong>Annual contribution:</strong> ${this.currency.format(totalAnnualContribution)}</p>
                         </div>
                         <div>
-                            <p><strong>Safe annual withdrawal (4%):</strong> ${this.currency.format(annualWithdrawal)}</p>
-                            <p><strong>Safe monthly withdrawal:</strong> ${this.currency.format(monthlyWithdrawal)}</p>
-                            <p><strong>Sustainable annual withdrawal:</strong> ${this.currency.format(sustainableAnnual)}</p>
+                            <p><strong>Annual withdrawal:</strong> ${this.currency.format(annualWithdrawal)}</p>
+                            <p><strong>Monthly withdrawal:</strong> ${this.currency.format(monthlyWithdrawal)}</p>
                         </div>
                     </div>
                 `);
             }
 
             calculateLong() {
-                const inputs = this.getInputs([
-                    'savings-amount', 'monthly-withdrawal', 'long-return'
-                ], {
+                const inputs = this.getInputs(['savings-amount', 'monthly-withdrawal', 'long-return'], {
                     'savings-amount': 500000, 'monthly-withdrawal': 2000, 'long-return': 4
                 });
 
-                if (inputs['monthly-withdrawal'] <= 0) {
-                    return this.showError('result-long', 'Monthly withdrawal must be greater than zero');
-                }
-                if (inputs['savings-amount'] <= 0) {
-                    return this.showError('result-long', 'Savings amount must be greater than zero');
-                }
+                if (inputs['monthly-withdrawal'] <= 0) return this.showError('result-long', 'Monthly withdrawal must be greater than zero');
+                if (inputs['savings-amount'] <= 0) return this.showError('result-long', 'Savings amount must be greater than zero');
 
                 const monthlyReturn = Math.pow(1 + inputs['long-return'] / 100, 1/12) - 1;
                 let remaining = inputs['savings-amount'];
                 let months = 0;
-                
                 while (remaining > 0 && months < 1200) {
                     remaining = remaining * (1 + monthlyReturn) - inputs['monthly-withdrawal'];
                     if (remaining > 0) months++;
                 }
-
                 const years = Math.floor(months / 12);
                 const remainingMonths = months % 12;
 
@@ -613,8 +667,7 @@
 
             getInputs(ids, defaults) {
                 return ids.reduce((acc, id) => {
-                    const value = parseFloat(document.getElementById(id)?.value);
-                    acc[id] = isNaN(value) ? defaults[id] : value;
+                    acc[id] = parseFloat(document.getElementById(id)?.value || defaults[id]);
                     return acc;
                 }, {});
             }
@@ -629,8 +682,15 @@
                 this.showResult(id, `<p style="color: var(--danger);">${message}</p>`);
             }
 
-            clear(id) { 
-                document.getElementById(id).style.display = 'none'; 
+            clear(id) { document.getElementById(id).style.display = 'none'; }
+            clearAll() { document.querySelectorAll('.result').forEach(el => el.style.display = 'none'); }
+            showModal(id) { document.getElementById(id).style.display = 'block'; }
+            scrollTo(selector) { document.querySelector(selector).scrollIntoView({ behavior: 'smooth' }); }
+            calculateAll() {
+                this.calculate('need');
+                this.calculate('save');
+                this.calculate('withdraw');
+                this.calculate('long');
             }
         }
 
